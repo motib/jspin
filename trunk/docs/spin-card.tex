@@ -1,0 +1,286 @@
+%
+%    Spin Reference Card
+%
+%  Copyright 2007 by Mordechai (Moti) Ben-Ari.
+%  This work is licensed under the Creative Commons
+%  Attribution-Noncommercial-ShareAlike 3.0 License. 
+%  To view a copy of this license, 
+%  visit http://creativecommons.org/licenses/by-nc-sa/3.0/; 
+%  or, (b) send a letter to Creative Commons, 
+%  543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.
+%
+\documentclass{leaflet}
+%\documentclass[notumble,nocombine]{leaflet}  % One page per column
+\usepackage{mathptmx}
+\usepackage{url}
+\newcommand{\sct}[1]{\subsubsection{#1}\mbox{}\\}
+\newcommand{\spc}{\hspace*{1.5em}}
+\CutLine*{1}\CutLine*{3}\CutLine*{4}\CutLine*{6}
+
+\title{\vspace*{-2ex}Spin Reference Card}
+\author{\vspace*{-2ex}Mordechai (Moti) Ben-Ari\vspace*{-2ex}}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\vspace*{-2ex}
+{\scriptsize Copyright 2007 by Mordechai (Moti) Ben-Ari.
+This work is licensed under the Creative Commons
+Attribution-Noncommercial-ShareAlike 3.0 License. 
+To view a copy of this license, 
+visit \url{http://creativecommons.org/licenses/by-nc-sa/3.0/}; 
+or, (b) send a letter to Creative Commons, 
+543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.}
+
+\sct{Datatypes}
+\texttt{bit} (1 bit)\\
+\texttt{bool} (1 bit)\\
+\texttt{byte} (8 bits unsigned)\\
+\texttt{short} (16$^{*}$ bits signed)\\
+\texttt{int} (32$^{*}$ bits signed)\\
+\texttt{unsigned} ($\leq$ 32$^{*}$ bits unsigned)\\
+\spc{}$^{*}$ - for a 32-bit machine.\\
+\texttt{pid}\\
+\texttt{chan}\\
+\texttt{mtype} = \{ name, name, ... \} (8 bits) \\
+\texttt{typedef} typename \{ sequence of declarations \}\\
+\\
+Declaration - type var [= initial value]\\
+Default initial values are zero.\\
+Array declaration - type var[N] [= initial value]\\
+Array initial value assigned to all elements.
+
+\sct{Operators (descending precedence)}
+\spc{}\verb+()+ \spc{}\verb+[]+ \spc{}\verb+.+ \\
+\spc{}\verb+!+ \spc{}\verb+~+ \spc{}\verb=++= \spc{}\verb+--+\\
+\spc{}\verb+*+ \spc{}\verb+/+ \spc{}\verb+%+\\
+\spc{}\verb=+= \spc{}\verb+-+ \\
+\spc{}\verb+<<+ \spc{}\verb+>>+ \\
+\spc{}\verb+<+ \spc{}\verb+<=+ \spc{}\verb+>+ \spc{}\verb+>= +\\
+\spc{}\verb+==+ \spc{}\verb+!=+\\
+\spc{}\verb+&+ \\
+\spc{}\verb+^+ \\
+\spc{}\verb=|= \\
+\spc{}\verb+&&+\\
+\spc{}\verb=||=\\
+\spc{}\verb+( ... -> ... : ... )+ conditional expression\\
+\spc{}\verb+=+
+
+\sct{Predefined}
+Constants - \texttt{true}, \texttt{false}\\
+Variables (read-only except \texttt{\_}):\\
+\spc{}\texttt{\_} - write-only hidden scratch variable\\
+\spc{}\texttt{\_nr\_pr} - number of processes\\
+\spc{}\texttt{\_pid} - instantiation number of executing process\\
+\spc{}\texttt{timeout} - no executable statements in the system?
+
+\sct{Preprocessor}
+\texttt{\#define} name (arguments) string\\
+\texttt{\#undef}, \texttt{\#if}, \texttt{\#ifdef}, \texttt{\#ifndef}, \texttt{\#else}, \texttt{\#endif}\\
+\texttt{\#include} "file name"\\
+\texttt{inline} name (arguments) \{ ... \}
+
+\sct{Statements} 
+Assignment - var = expression, var\verb=++=, var\verb=--=\\
+\texttt{assert}(expression)\\
+\\
+\texttt{printf}, \texttt{printm} - print to standard output\\
+\spc{}\verb=%c= (character), \verb=%d= (decimal), \verb=%e= (\texttt{mtype}),\\
+\spc{}\verb=%o= (octal), \verb=%u= (unsigned), \verb=%x= (hex)\\
+\texttt{scanf} - read from standard input in simulation mode\\
+\\
+\texttt{skip} - no operation\\
+\texttt{break} - exit from innermost \texttt{do} loop\\
+\texttt{goto} - jump to label\\
+Label prefixes with a special meaning:\\
+\spc{}\texttt{accept} - accept cycle\\
+\spc{}\texttt{end} - valid end state\\
+\spc{}\texttt{progress} - non-progress cycle\\
+\\
+\texttt{atomic} \{ ... \} - execute without interleaving\\
+\texttt{d\_step} \{ ... \} - execute deterministically (no jumping 
+in or out; deterministic choice among true guards; only the first
+statement can block).\\
+\\
+\{ ... \} \texttt{unless} \{ ... \} - exception handling.
+
+\sct{Guarded commands}
+\texttt{if} :: guard \verb=->= statements :: ... \texttt{fi}\\
+\texttt{do} :: guard \verb=->= statements :: ... \texttt{od}\\
+\texttt{else} guard - executed if all others are false.
+
+\sct{Processes}
+Declaration - \texttt{proctype} procname (parameters) \{ ... \}\\
+Activate with prefixes - \texttt{active} or \texttt{active}[N]\\
+Explicit process activation - \texttt{run} procname (arguments)\\
+Initial process - \texttt{init} \{ ... \}\\
+Declaration suffixes:\\
+\spc{}\texttt{priority} - set simulation priority\\
+\spc{}\texttt{provided} (e) - executable only if expression e is true
+
+\sct{Channels}
+\texttt{chan} ch = [ capacity ] \texttt{of} \{ type, type, ... \}\\
+\\
+\begin{tabular}{@{\hspace*{0pt}}ll}
+ch ! args & send\\
+ch !! args & sorted send\\
+\\
+ch ? args & receive and remove if \emph{first} message matches\\ 
+ch ?? args & receive and remove if \emph{any} message matches\\ 
+ch ? \verb+<+args\verb+>+ & receive if \emph{first} message matches\\ 
+ch ?? \verb+<+args\verb+>+ & receive if \emph{any} message matches\\ 
+ch ? [args] & poll \emph{first} message (side-effect free)\\ 
+ch ?? [args] & poll \emph{any} message (side-effect free)\\
+\\
+\end{tabular}
+Matching in a receive statement: constants and \texttt{mtype} symbols must match;
+variables are assigned the values in the message; 
+\texttt{eval}(expression) forces a match with the current
+value of the expression.\\
+\\
+\texttt{len}(ch) - number of messages in a channel\\
+\texttt{empty}(ch) / \texttt{nempty}(ch) - is channel empty / not empty?\\
+\texttt{full}(ch) / \texttt{nfull}(ch) - is channel full / not full?\\
+\\
+Channel use assertions:\\
+\spc{}\texttt{xr} ch - channel ch is receive-only in this process\\
+\spc{}\texttt{xs} ch - channel ch is send-only in this process
+
+\newpage
+
+\sct{Temporal logic}
+
+\vspace*{-2ex}\spc{}
+\begin{tabular}{cl}
+\verb+!+ & not\\
+\verb+&&+ & and\\
+\verb+||+ & or\\
+\verb+->+ & implies\\
+\verb+<->+ & equivalent to\\
+&\\
+\verb+[]+ & always\\
+\verb+<>+ & eventually\\
+\verb+X+ & next\\
+\verb+U+ & strong until\\
+\verb+V+ & dual of U defined as \verb+pVq <-> !(!pU!q)+
+\end{tabular}
+
+\sct{Remote references}
+Test the control state or the value of a variable:\\
+\spc{}process-name \verb+@+ label-name\\
+\spc{}proctype-name [ expression ] \verb+@+ label-name\\
+\spc{}process-name  : label-name\\
+\spc{}proctype-name [ expression ] : label-name
+
+\sct{Never claim}
+\texttt{never} \{ ... \}.\\
+Predefined constructs that can only appear in a never claim:\\
+\spc{}\texttt{\_last} - last process to execute\\
+\spc{}\texttt{enabled}(p) - is process enabled?\\
+\spc{}\texttt{np\_} - true if no process is at a progress label\\
+\spc{}\texttt{pc\_value}(p) - current control state of process\\
+\spc{}remote references\\
+See also \texttt{trace} and \texttt{notrace}.
+
+\sct{Variable declaration prefixes}
+\texttt{hidden} - hide this variable from the system state\\
+\texttt{local} - a global variable is accessed only by one process\\
+\texttt{show} - track variable in Xspin message sequence charts
+
+\sct{Verification}
+Safety:\\
+\spc{}\verb+spin -a file+\\
+\spc{}\verb+gcc -DSAFETY -o pan pan.c+\\
+\spc{}\verb+pan+ or \verb+./pan+\\
+\spc{}\verb+spin -t -p -l -g -r -s file+
+
+\newpage
+
+Liveness:\\
+\spc{}\verb+spin -a file+\\
+\spc{}\verb+gcc -o pan pan.c+\\
+\spc{}\verb+pan -a -f+ or \verb+./pan -a -f+\\
+\spc{}\verb+spin -t -p -l -g -r -s file+
+
+\sct{Spin arguments}
+\begin{tabular}{ll}
+\texttt{-a} & generate verifier and syntax check\\
+\texttt{-i} & interactive simulation\\
+\texttt{-I} & display Promela program after preprocessing\\
+\texttt{-nN} & seed for random simulation\\
+\texttt{-t} & guided simulation with trail\\
+\texttt{-tN} & guided simulation with Nth trail\\
+\texttt{-uN} & maximum number of steps is N\\
+&\\
+\texttt{-f} & translate an LTL formula into a never claim\\
+\texttt{-F} & translate an LTL formula in a file into a never claim\\
+\texttt{-N} & include never claim from a file\\
+&\\
+\texttt{-l} & display local variables\\
+\texttt{-g} & display global variables\\
+\texttt{-p} & display statements\\
+\texttt{-r} & display receive events\\
+\texttt{-s} & display send events
+\end{tabular}
+
+\sct{Compile arguments}
+\begin{tabular}{ll}
+\texttt{-DBFS} & breadth-first search\\
+\texttt{-DNP} & enable detection of non-progress cycles\\
+\texttt{-DSAFETY} & optimize for safety\\
+\\
+\texttt{-DBITSTATE} & bitstate hashing\\
+\texttt{-DCOLLAPSE} & collapse compression\\
+\texttt{-DHC} & hash-compact compression\\
+\texttt{-DMA=n} & minimized DFA with maximum n bytes\\
+\texttt{-DMEMLIM=N} & use up to N megabytes of memory
+\end{tabular}
+
+\sct{Pan arguments}
+\begin{tabular}{ll}
+\texttt{-a} & find acceptance cycles\\
+\texttt{-f} & weak fairness\\
+\texttt{-l} & find non-progress cycles
+\end{tabular}
+
+\newpage
+
+\begin{tabular}{ll}
+\texttt{-cN} & stop after Nth error\\
+\texttt{-c0} & report all errors\\
+\texttt{-e} & create trails for all errors\\
+\texttt{-i} & search for shortest path to error\\
+\texttt{-I} & approximate search for shortest path to error\\
+\texttt{-mN} & maximum search depth is N\\
+\texttt{-wN} & $2^{N}$ hash table entries\\
+\\
+\texttt{-A} & suppress reporting of assertion violations\\
+\texttt{-E} & suppress reporting of invalid end states
+\end{tabular}
+
+\sct{Caveats}
+\vspace*{-2ex}
+\begin{itemize}
+\item Expessions must be side-effect free.
+\item Local variable declarations always take effect at the beginning of a process.
+\item A \texttt{true} guard can always be selected; an \texttt{else} guard is selected only if all others are false.
+\item Macros and \texttt{inline} do \emph{not} create a new scope.
+\item Place labels before an \texttt{if} or \texttt{do}, \emph{not} before a guard.
+\item In an \texttt{if} or \texttt{do} statement, interleaving can occur between a guard and the following statement.
+\item Processes are activated and die in LIFO order.
+\item Atomic propositions in LTL formulas must be identifiers starting with lowerase letters and must be boolean variables or symbols for boolean-valued expressions. 
+\item Arrays of \texttt{bit} or \texttt{bool} are stored in bytes.
+\item The type of a message field of a channel cannot be an array;
+it can be a \texttt{typedef} that contains an array.
+\item The functions \texttt{empty} and \texttt{full} cannot be negated.
+\end{itemize}
+
+\sct{References}
+\vspace*{-2ex}
+\begin{itemize}
+\item G. J. Holzmann. \textit{The Spin Model Checker: Primer and Reference Manual},
+Addison-Wesley, 2004.\\\url{http://spinroot.com}.
+\item M. Ben-Ari. \textit{Principles of the Spin Model Checker},
+Springer, 2008.\\\url{http://www.springer.com/978-1-84628-769-5}.
+\end{itemize}
+\end{document}
