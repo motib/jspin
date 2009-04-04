@@ -14,7 +14,7 @@ public class Config {
   public static final char sep = java.io.File.separatorChar;  // shortcut
 
 	// Strings
-    static final String SOFTWARE_NAME    = "jSpin Version 4.6";
+    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.1";
     static final String JAVA_VERSION     = "1.5";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE     = "SpinSpider";
@@ -27,28 +27,22 @@ public class Config {
     static void setDefaultProperties() {
         // Directories and file names
         properties.put("SOURCE_DIRECTORY", "jspin-examples");
-        properties.put("C_COMPILER",       "c:\\mingw\\bin\\gcc.exe");
-        properties.put("SPIN",             "bin" + sep + "spin.exe");
-        properties.put("PAN",              "pan");
+        properties.put("ERIGONE",          "erigone");
         properties.put("DOT",              "bin" + sep + "dot.exe");
         properties.put("HELP_FILE_NAME",   "txt" + sep + "help.txt");
         properties.put("ABOUT_FILE_NAME",  "txt" + sep + "copyright.txt");
 
         // Options for executing Spin
         properties.put("SINGLE_QUOTE", Boolean.toString(false));
-        properties.put("COMMON_OPTIONS", "-g -l -p -r -s");
-        properties.put("CHECK_OPTIONS", "-a -v");
-        properties.put("RANDOM_OPTIONS", "-X");
-        properties.put("INTERACTIVE_OPTIONS", "-i -X");
-        properties.put("VERIFY_OPTIONS", "-a");
-        properties.put("C_COMPILER_OPTIONS", "-o pan pan.c");
-        properties.put("PAN_OPTIONS", "-X");
-        properties.put("TRAIL_OPTIONS", "-t -X");
-        properties.put("TRANSLATE_OPTIONS", "-f");
+        properties.put("COMMON_OPTIONS",      "-d");
+        properties.put("CHECK_OPTIONS",       "-c");
+        properties.put("RANDOM_OPTIONS",      "-r");
+        properties.put("INTERACTIVE_OPTIONS", "-i");
+        properties.put("TRAIL_OPTIONS",       "-g");
+        properties.put("TRANSLATE_OPTIONS",   "-b");
 
         // Settings
-        properties.put("MAX_STEPS",      "250");
-        properties.put("MAX_DEPTH",      "2000");
+        properties.put("MAX_STEPS",      "10");
         properties.put("SEED",           "0");
         properties.put("FAIRNESS",       Boolean.toString(true));
         properties.put("VERIFY_MODE",    Safety);
@@ -126,18 +120,22 @@ public class Config {
 
     static final String Spin        = "Spin";
     static final int    SpinMN      = KeyEvent.VK_S;
-    static final String Check		= "Check";
+    static final String Check		    = "Compile";
     static final int    CheckMN   	= KeyEvent.VK_K;
     static final String Random    	= "Random";
     static final int    RandomMN   	= KeyEvent.VK_R;
-    static final String Inter		= "Interactive";
-    static final int    InterMN		= KeyEvent.VK_I;
-    static final String Verify     	= "Verify";
-    static final int    VerifyMN    = KeyEvent.VK_V;
+    static final String Inter		    = "Interactive";
+    static final int    InterMN		  = KeyEvent.VK_I;
+    static final String Safety    	= "Safety";
+    static final int    SafetyMN  	= KeyEvent.VK_A;
+    static final String Acceptance   = "Acceptance";
+    static final int    AcceptanceMN = KeyEvent.VK_A;
+    static final String Fair    	  = "Fairness";
+    static final int    FairMN  	  = KeyEvent.VK_N;
     static final String Trail       = "Trail";
-    static final int    TrailMN  	= KeyEvent.VK_T;
+    static final int    TrailMN  	  = KeyEvent.VK_T;
     static final String Stop       	= "Stop";
-    static final int    StopMN   	= KeyEvent.VK_P;
+    static final int    StopMN   	  = KeyEvent.VK_P;
 
     static final String Options     = "Options";
     static final int    OptionsMN  	= KeyEvent.VK_N;
@@ -158,8 +156,6 @@ public class Config {
     static final int    SettingsMN  = KeyEvent.VK_G;
     static final String MaxSteps    = "Max steps";
     static final int    MaxStepsMN  = KeyEvent.VK_M;
-    static final String MaxDepth    = "Max depth";
-    static final int    MaxDepthMN  = KeyEvent.VK_D;
     static final String Seed        = "Seed";
     static final int    SeedMN      = KeyEvent.VK_S;
     static final String StWidth 	= "Statement width";
@@ -170,15 +166,6 @@ public class Config {
     static final int    ExcludedVMN = KeyEvent.VK_E;
     static final String ExcludedS 	= "Exclude statements";
     static final int    ExcludedSMN = KeyEvent.VK_X;
-
-    static final String Fair    	= "Weak fairness";
-    static final int    FairMN  	= KeyEvent.VK_W;
-    static final String Safety    	= "Safety";
-    static final int    SafetyMN  	= KeyEvent.VK_Y;
-    static final String Acceptance    = "Acceptance";
-    static final int    AcceptanceMN  = KeyEvent.VK_C;
-    static final String NonProgress   = "Non-progress";
-    static final int    NonProgressMN = KeyEvent.VK_N;
 
     static final String Output		= "Output";
     static final int    OutputMN   	= KeyEvent.VK_U;
@@ -204,15 +191,7 @@ public class Config {
     static final String Max      	= "Maximize";
     static final int    MaxMN    	= KeyEvent.VK_M;
 
-    static final String LTLConvert 		 = "Convert";
-    static final int 	  LTLConvertMN   = KeyEvent.VK_C;
     static final String LTLFormula 		 = " LTL formula  ";
-    static final String LTLTranslate   = "Translate";
-    static final int 	  LTLTranslateMN = KeyEvent.VK_L;
-    static final String LTLClear 		   = "Clear";
-    static final int 	  LTLClearMN 		 = KeyEvent.VK_A;
-    static final String LTLLoad 		   = "Load";
-    static final int 	  LTLLoadMN 		 = KeyEvent.VK_O;
     static final int 	  LTL_COLUMNS    = 50;
 
     // Common options
@@ -293,7 +272,7 @@ public class Config {
     // Dummy accelerators
     static String 
         AboutAC, CheckAC, DefaultAC, HelpAC, InterAC, LTLClearAC, LTLLoadAC,
-        LTLTranslateAC, MaxAC, MaxDepthAC, SeedAC, NewAC, OptionsCAC, OptionsInterAC, 
+        LTLTranslateAC, MaxAC, SeedAC, NewAC, OptionsCAC, OptionsInterAC, 
         OptionsPanAC, OptionsRandomAC,  OptionsSaveCurrentAC, 
         OptionsSaveInstallAC, OptionsTrailAC, 
         RandomAC, SaveAsAC, SaveSpinAC, 
