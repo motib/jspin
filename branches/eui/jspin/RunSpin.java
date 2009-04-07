@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 
 class RunSpin {
   private Editor editor;              // The editor object
-  private filterSpin.Filter filter;              // The filter object
+  private Filter filter;              // The filter object
   private RunThread runThread;        // Thread object for running Spin
   private SelectDialog selectDialog;  // Thread object for select dialog
 
@@ -26,7 +26,7 @@ class RunSpin {
   private String[] selections = new String[MAX_SELECTIONS];
                                       // Statements selected from
 
-  RunSpin(Editor e, JTextArea m, filterSpin.Filter f) {
+  RunSpin(Editor e, JTextArea m, Filter f) {
     editor = e;
     messageArea = m;
     filter = f;
@@ -36,6 +36,7 @@ class RunSpin {
   void run(JTextArea area, boolean filtering, String command, String parameters) {
     this.filtering = filtering;
     this.area = area;
+    this.area.setText("");
     this.command = command;
     this.parameters = parameters;
     filter.init(Config.properties);

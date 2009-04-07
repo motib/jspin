@@ -23,6 +23,7 @@ public class Config {
     static final String OPEN_FILE 	     = "Open a Promela file\n";
 	  static final String processTitle     = "Process ";
     static final String statementTitle   = "Statement ";
+    static final String SEPARATOR        = "#";
 
     static void setDefaultProperties() {
         // Directories and file names
@@ -35,11 +36,6 @@ public class Config {
         // Options for executing Spin
         properties.put("SINGLE_QUOTE", Boolean.toString(false));
         properties.put("COMMON_OPTIONS",      "-d");
-        properties.put("CHECK_OPTIONS",       "-c");
-        properties.put("RANDOM_OPTIONS",      "-r");
-        properties.put("INTERACTIVE_OPTIONS", "-i");
-        properties.put("TRAIL_OPTIONS",       "-g");
-        properties.put("TRANSLATE_OPTIONS",   "-b");
 
         // Settings
         properties.put("MAX_STEPS",      "10");
@@ -118,17 +114,19 @@ public class Config {
     static final String FindAgain  	= "Find again";
     static final int    FindAgainMN = KeyEvent.VK_A;
 
-    static final String Spin        = "Spin";
-    static final int    SpinMN      = KeyEvent.VK_S;
+    static final String Spin        = "Run";
+    static final int    SpinMN      = KeyEvent.VK_U;
     static final String Check		    = "Compile";
-    static final int    CheckMN   	= KeyEvent.VK_K;
+    static final int    CheckMN   	= KeyEvent.VK_C;
     static final String Random    	= "Random";
     static final int    RandomMN   	= KeyEvent.VK_R;
     static final String Inter		    = "Interactive";
     static final int    InterMN		  = KeyEvent.VK_I;
+    static final String LTL2BA    	= "LTL2BA";
+    static final int    LTL2BAMN  	= KeyEvent.VK_L;
     static final String Safety    	= "Safety";
-    static final int    SafetyMN  	= KeyEvent.VK_A;
-    static final String Acceptance   = "Acceptance";
+    static final int    SafetyMN  	= KeyEvent.VK_S;
+    static final String Acceptance   = "Accept";
     static final int    AcceptanceMN = KeyEvent.VK_A;
     static final String Fair    	  = "Fairness";
     static final int    FairMN  	  = KeyEvent.VK_N;
@@ -137,23 +135,16 @@ public class Config {
     static final String Stop       	= "Stop";
     static final int    StopMN   	  = KeyEvent.VK_P;
 
-    static final String Options     = "Options";
-    static final int    OptionsMN  	= KeyEvent.VK_N;
+    static final String Settings   	= "Settings";
+    static final int    SettingsMN  = KeyEvent.VK_G;
     static final String Common      = "Common";
     static final int    CommonMN  	= KeyEvent.VK_C;
-    static final String OptionsC   	= "C compiler";
-    static final int    OptionsCMN  = KeyEvent.VK_C;
-    static final String OptionsPan  = "Pan";
-    static final int    OptionsPanMN = KeyEvent.VK_A;
     static final String Default   	= "Default";
     static final int    DefaultMN 	= KeyEvent.VK_D;
     static final String SaveInstall = "Save install";
     static final int    SaveInstallMN = KeyEvent.VK_L;
     static final String SaveCurrent   = "Save current";
     static final int    SaveCurrentMN = KeyEvent.VK_S;
-
-    static final String Settings   	= "Settings";
-    static final int    SettingsMN  = KeyEvent.VK_G;
     static final String MaxSteps    = "Max steps";
     static final int    MaxStepsMN  = KeyEvent.VK_M;
     static final String Seed        = "Seed";
@@ -167,8 +158,8 @@ public class Config {
     static final String ExcludedS 	= "Exclude statements";
     static final int    ExcludedSMN = KeyEvent.VK_X;
 
-    static final String Output		= "Output";
-    static final int    OutputMN   	= KeyEvent.VK_U;
+    static final String Output		= "Display";
+    static final int    OutputMN   	= KeyEvent.VK_D;
     static final String SaveSpin    = "Save output";
     static final int    SaveSpinMN  = KeyEvent.VK_V;
     static final String Raw     	  = "Raw output";
@@ -244,39 +235,42 @@ public class Config {
     static final String FSM          = "fsm";
 
     // Accelerators
-    // Select All by default              "control A"
+    // Select All by default            = "control A"
     static final String SwitchAC        = "control B";
     static final String CopyAC          = "control C";
-    static final String SpiderAC        = "control D";
-    static final String VarWidthAC      = "control E";
+    // static final String              = "control D";
+    // static final String              = "control E";
     static final String FindAC     	    = "control F";
     static final String FindAgainAC     = "control G";
-    // Backspace by default               "control H"
-    static final String CommonAC        = "control I";
-    static final String ExcludedSAC     = "control J";
-    static final String AcceptanceAC    = "control L";
-    static final String MaxStepsAC      = "control M";
-    static final String NonProgressAC   = "control N";
+    // Backspace by default             = "control H"
+    // static final String              = "control I";
+    // static final String              = "control J";
+    // static final String              = "control L";
+    // static final String              = "control M";
+    static final String NewAC           = "control N";
     static final String OpenAC          = "control O";
     static final String ExitAC     	    = "control Q";
-    static final String DisplayRawAC    = "control R";
+    // static final String              = "control R";
     static final String SaveAC          = "control S";
-    static final String SafetyAC 	      = "control T";
-    static final String ExcludedVAC     = "control U";
+    static final String SaveAsAC	      = "control T";
+    // static final String              = "control U";
     static final String PasteAC         = "control V";
-    static final String FairAC  	      = "control W";
+    // static final String 	            = "control W";
     static final String CutAC           = "control X";
     static final String RedoAC          = "control Y";
     static final String UndoAC          = "control Z";
     
     // Dummy accelerators
     static String 
-        AboutAC, CheckAC, DefaultAC, HelpAC, InterAC, LTLClearAC, LTLLoadAC,
-        LTLTranslateAC, MaxAC, SeedAC, NewAC, OptionsCAC, OptionsInterAC, 
-        OptionsPanAC, OptionsRandomAC,  OptionsSaveCurrentAC, 
-        OptionsSaveInstallAC, OptionsTrailAC, 
-        RandomAC, SaveAsAC, SaveSpinAC, 
-        SpiderDisplayAC, StopAC, StWidthAC, TrailAC, VerifyAC, RawAC;
+        AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC, DisplayRawAC,
+        ExcludedSAC, ExcludedVAC, FairAC, HelpAC, InterAC, 
+        LTLClearAC, LTLLoadAC, LTLTranslateAC, LTL2BAAC,
+        MaxAC, MaxStepsAC, NonProcessAC,
+        OptionsCAC, OptionsInterAC, OptionsPanAC, OptionsRandomAC,
+        OptionsSaveCurrentAC, OptionsSaveInstallAC, OptionsTrailAC, 
+        RandomAC, RawAC,
+        SafetyAC, SaveSpinAC, SeedAC, SpiderAC, SpiderDisplayAC,
+        StWidthAC, StopAC, TrailAC, VarWidthAC, VerifyAC;
 
 	// Initialize configuration file
     static public void init() {
