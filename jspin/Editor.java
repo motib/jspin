@@ -23,7 +23,7 @@ class Editor implements ClipboardOwner, DocumentListener {
     String EXCFileName = ""; // File for excluded variable names
     String EXSFileName = ""; // File for excluded statements
     String PRPFileName = ""; // Property file name for this source file
-	String PRPName;		     // Property file name without path
+    String PRPName;		     // Property file name without path
 
     private JTextArea area;  		// The area for editing
     private JTextField LTLField; 	// The area for LTL formulas
@@ -38,17 +38,17 @@ class Editor implements ClipboardOwner, DocumentListener {
 		BorderFactory.createMatteBorder(2,0,0,0,Color.gray);
     private Clipboard clipboard;
     private LineNumbers lineNumbers;
-    private filterSpin.Filter filter; // For setting excluded variable names
+    private Filter filter; // For setting excluded variable names
 
     public Editor(JScrollPane jsp, JTextArea a, JTextArea m, JTextField l,
-    		javax.swing.event.UndoableEditListener ud, filterSpin.Filter f) {
+    		javax.swing.event.UndoableEditListener ud, Filter f) {
         area = a;
         area.getDocument().addDocumentListener(this);
         area.getDocument().addUndoableEditListener(ud);
         LTLField = l;
         LTLField.getDocument().addDocumentListener(this);
         messageArea = m;
-		PRPName = "";
+        PRPName = "";
         clipboard = area.getToolkit().getSystemClipboard();
         lineNumbers = new LineNumbers(area);
         jsp.setRowHeaderView(lineNumbers);
@@ -182,8 +182,8 @@ class Editor implements ClipboardOwner, DocumentListener {
 			area.setText(readFile(fc));
 			setPMLRootAndName();
 			prp = readFile(new java.io.File(PRPFileName));
-            filter.setExcluded(readFile(new java.io.File(EXCFileName)), true);
-            filter.setExcluded(readFile(new java.io.File(EXSFileName)), false);
+      filter.setExcluded(readFile(new java.io.File(EXCFileName)), true);
+      filter.setExcluded(readFile(new java.io.File(EXSFileName)), false);
 		}
 		else
 		{

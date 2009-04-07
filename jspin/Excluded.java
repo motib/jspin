@@ -14,11 +14,11 @@ class Excluded extends JFrame implements ActionListener {
     private JPanel textPanel  = new JPanel();
     private JPanel OKPanel = new JPanel();
     private Editor editor;
-    private filterSpin.Filter filter;
+    private Filter filter;
     private boolean exVar;
     private String fileName;
 
-	Excluded(Editor e, java.awt.Font font, filterSpin.Filter f, boolean v) {
+	Excluded(Editor e, java.awt.Font font, Filter f, boolean v) {
         editor = e;
         filter = f;
         exVar = v;

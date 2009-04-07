@@ -37,7 +37,7 @@ class UndoRedo {
                 putValue(Action.NAME, undo.getUndoPresentationName());
             } else {
                 setEnabled(false);
-                putValue(Action.NAME, "Undo");
+                putValue(Action.NAME, Config.Undo);
             }
         }
     }
@@ -65,7 +65,7 @@ class UndoRedo {
                 putValue(Action.NAME, undo.getRedoPresentationName());
             } else {
                 setEnabled(false);
-                putValue(Action.NAME, "Redo");
+                putValue(Action.NAME, Config.Redo);
             }
         }
     }
