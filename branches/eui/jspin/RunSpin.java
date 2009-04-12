@@ -191,13 +191,13 @@ class RunSpin {
 
     // Open file for raw Spin output
     private void rawFile() {
-      String s = editor.root + File.separator + editor.fileRoot + ".raw";
-      try {
-        rawWriter = new PrintWriter(new FileWriter(s));
-        jSpin.append(messageArea, "\nOpened " + s + "\n");
-      } catch (IOException e) {
-        jSpin.append(messageArea, "\nCannot open " + s + "\n");
-      }
+      // String s = editor.root + File.separator + editor.fileRoot + ".raw";
+      // try {
+        // rawWriter = new PrintWriter(new FileWriter(s));
+        // jSpin.append(messageArea, "\nOpened " + s + "\n");
+      // } catch (IOException e) {
+        // jSpin.append(messageArea, "\nCannot open " + s + "\n");
+      // }
     }
 
     // Select the next statement to run in interactive simulation

@@ -32,13 +32,23 @@ public class Config {
         properties.put("DOT",              "bin" + sep + "dot.exe");
         properties.put("HELP_FILE_NAME",   "txt" + sep + "help.txt");
         properties.put("ABOUT_FILE_NAME",  "txt" + sep + "copyright.txt");
-
-        // Options for executing Spin
         properties.put("SINGLE_QUOTE", Boolean.toString(false));
-        properties.put("COMMON_OPTIONS",      "-d");
 
-        // Settings
-        properties.put("MAX_STEPS",      "10");
+        // Erigone options
+        properties.put("COMPILE_OPTIONS",     "-c -dprv");
+        properties.put("RANDOM_OPTIONS",      "-r -dcmprv");
+        properties.put("INTERACTIVE_OPTIONS", "-i -dcmprv");
+        properties.put("TRAIL_OPTIONS",       "-g -dcmprv");
+        properties.put("LTL2BA_OPTIONS",      "-b -dbv");
+        properties.put("SAFETY_OPTIONS",      "-s -drv");
+        properties.put("ACCEPT_OPTIONS",      "-a -t -drv");
+        properties.put("FAIRNESS_OPTIONS",    "-f -t -drv");
+
+        // Options
+        properties.put("TOTAL_STEPS",    "10");
+        properties.put("PROGRESS_STEPS", "1");
+        properties.put("STATE_STACK",    "2");
+        properties.put("LOCATION_STACK", "3");
         properties.put("SEED",           "0");
         properties.put("FAIRNESS",       Boolean.toString(true));
         properties.put("VERIFY_MODE",    Safety);
@@ -49,7 +59,7 @@ public class Config {
         properties.put("LINES_PER_TITLE",Integer.toString(20));
 
 		    // Size of main frame
-        properties.put("WIDTH", Integer.toString(1000));
+        properties.put("WIDTH",  Integer.toString(1000));
         properties.put("HEIGHT", Integer.toString(700));
 
 		    // Select dialog
@@ -73,7 +83,6 @@ public class Config {
 		
         // Display of Spin output
         properties.put("WRAP", Boolean.toString(true));
-        properties.put("MSC",  Boolean.toString(false));
         properties.put("PROCESS_TITLE",   "Process ");
         properties.put("STATEMENT_TITLE", "Statement ");
 		
@@ -135,18 +144,20 @@ public class Config {
     static final String Stop       	= "Stop";
     static final int    StopMN   	  = KeyEvent.VK_P;
 
-    static final String Settings   	= "Settings";
-    static final int    SettingsMN  = KeyEvent.VK_G;
-    static final String Common      = "Common";
-    static final int    CommonMN  	= KeyEvent.VK_C;
+    static final String Options   	= "Options";
+    static final int    OptionsMN  = KeyEvent.VK_O;
+    static final String Limits    	= "Limits";
+    static final int    LimitsMN    = KeyEvent.VK_L;
+    static final String TotalSteps     = "Total steps";
+    static final String ProgressSteps  = "Progress steps";
+    static final String StateStack     = "State stack";
+    static final String LocationStack  = "Location stack";
     static final String Default   	= "Default";
     static final int    DefaultMN 	= KeyEvent.VK_D;
     static final String SaveInstall = "Save install";
-    static final int    SaveInstallMN = KeyEvent.VK_L;
+    static final int    SaveInstallMN = KeyEvent.VK_I;
     static final String SaveCurrent   = "Save current";
     static final int    SaveCurrentMN = KeyEvent.VK_S;
-    static final String MaxSteps    = "Max steps";
-    static final int    MaxStepsMN  = KeyEvent.VK_M;
     static final String Seed        = "Seed";
     static final int    SeedMN      = KeyEvent.VK_S;
     static final String StWidth 	= "Statement width";
@@ -263,7 +274,7 @@ public class Config {
     // Dummy accelerators
     static String 
         AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC, DisplayRawAC,
-        ExcludedSAC, ExcludedVAC, FairAC, HelpAC, InterAC, 
+        ExcludedSAC, ExcludedVAC, FairAC, HelpAC, InterAC, LimitsAC,
         LTLClearAC, LTLLoadAC, LTLTranslateAC, LTL2BAAC,
         MaxAC, MaxStepsAC, NonProcessAC,
         OptionsCAC, OptionsInterAC, OptionsPanAC, OptionsRandomAC,
