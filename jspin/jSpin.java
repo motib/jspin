@@ -74,34 +74,14 @@ public class jSpin extends JFrame implements ActionListener {
     private JMenuItem menuItemAcceptance = new JMenuItem(Config.Acceptance);
     private JMenuItem menuItemFairness = new JMenuItem(Config.Fair);
     private JMenuItem menuItemStop = new JMenuItem(Config.Stop);
-
-    // private JMenu menuLTLConvert = new JMenu();
-    // private JMenuItem menuItemTranslate = new JMenuItem(Config.LTLTranslate);
-    // private JMenuItem menuItemClear = new JMenuItem(Config.LTLClear);
-    // private JMenuItem menuItemLoad = new JMenuItem(Config.LTLLoad);
-
-    private JMenu menuOptions = new JMenu();
-    private JMenuItem menuItemOptionsCheck = new JMenuItem(Config.Check);
-    private JMenuItem menuItemOptionsCommon = new JMenuItem(Config.Common);
-    private JMenuItem menuItemOptionsRandom = new JMenuItem(Config.Random);
-    private JMenuItem menuItemOptionsInter = new JMenuItem(Config.Inter);
-    // private JMenuItem menuItemOptionsVerify = new JMenuItem(Config.Verify);
-    // private JMenuItem menuItemOptionsC = new JMenuItem(Config.OptionsC);
-    // private JMenuItem menuItemOptionsPan = new JMenuItem(Config.OptionsPan);
     private JMenuItem menuItemOptionsTrail = new JMenuItem(Config.Trail);
     private JMenuItem menuItemDefault = new JMenuItem(Config.Default);
     private JMenuItem menuItemOptionsSaveInstall = new JMenuItem(Config.SaveInstall);
     private JMenuItem menuItemOptionsSaveCurrent = new JMenuItem(Config.SaveCurrent);
 
-    private JMenu menuSettings = new JMenu();
-    private JMenuItem menuItemMaxSteps = new JMenuItem(Config.MaxSteps);
-    // private JMenuItem menuItemMaxDepth = new JMenuItem(Config.MaxDepth);
+    private JMenu menuOptions = new JMenu();
+    private JMenuItem menuItemLimits = new JMenuItem(Config.Limits);
     private JMenuItem menuItemSeed = new JMenuItem(Config.Seed);
-    // private JCheckBoxMenuItem menuItemFair = new JCheckBoxMenuItem(Config.Fair);
-    // private JRadioButtonMenuItem menuItemSafety = new JRadioButtonMenuItem(Config.Safety, false);
-    // private JRadioButtonMenuItem menuItemAcceptance = new JRadioButtonMenuItem(Config.Acceptance, false);
-    // private JRadioButtonMenuItem menuItemNonProgress = new JRadioButtonMenuItem(Config.NonProgress, false);
-    // private ButtonGroup buttonGroup = new ButtonGroup();
 
     private JMenu menuOutput = new JMenu();
     private JMenuItem menuItemMax = new JMenuItem(Config.Max);
@@ -109,8 +89,8 @@ public class jSpin extends JFrame implements ActionListener {
     private JMenuItem menuItemStWidth = new JMenuItem(Config.StWidth);
     private JMenuItem menuItemExcludedV = new JMenuItem(Config.ExcludedV);
     private JMenuItem menuItemExcludedS = new JMenuItem(Config.ExcludedS);
-    private JCheckBoxMenuItem menuItemRaw = new JCheckBoxMenuItem(Config.Raw);
-    private JMenuItem menuItemDisplayRaw  = new JMenuItem(Config.DisplayRaw);
+    // private JCheckBoxMenuItem menuItemRaw = new JCheckBoxMenuItem(Config.Raw);
+    // private JMenuItem menuItemDisplayRaw  = new JMenuItem(Config.DisplayRaw);
     private JMenuItem menuItemSaveSpin = new JMenuItem(Config.SaveSpin);
 
     private JMenu menuSpider = new JMenu();
@@ -136,17 +116,11 @@ public class jSpin extends JFrame implements ActionListener {
     private JButton toolStop   = new JButton(Config.Stop);
     private JButton toolSpider = new JButton(Config.Spider);
 
-    // private JLabel    toolLabelFair = new JLabel(Config.Fair);
-    // private JCheckBox toolCheckFair = new JCheckBox();
-    // private JComboBox toolMode = new JComboBox();
     private JButton   toolMax = new JButton(Config.Max);
     private boolean   maxedDivider;
     private int       currentDivider;
 
     private JLabel LTLLabel = new JLabel(Config.LTLFormula);
-    // private JButton LTLTranslateButton = new JButton(Config.LTLTranslate);
-    // private JButton LTLClearButton = new JButton(Config.LTLClear);
-    // private JButton LTLLoadButton = new JButton(Config.LTLLoad);
 
     public void actionPerformed(ActionEvent e) {
         // File menu actions
@@ -211,45 +185,45 @@ public class jSpin extends JFrame implements ActionListener {
         else if ((e.getSource() == menuItemCheck) || (e.getSource() == toolCheck)) {
             runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("ERIGONE"),
-                Config.getStringProperty("COMMON_OPTIONS") + " -c " +
+                Config.getStringProperty("COMPILE_OPTIONS") + " " +
                 editor.fileName);
         }
         else if ((e.getSource() == menuItemRandom) || (e.getSource() == toolRandom)) {
             runSpin.run(trailArea, false,
                 Config.getStringProperty("ERIGONE"),
-                Config.getStringProperty("COMMON_OPTIONS") + " -r " +
+                Config.getStringProperty("RANDOM_OPTIONS") + " " +
                 (Config.getIntProperty("SEED") != 0 ? 
                    ("-n" + Config.getIntProperty("SEED") + " ") : "") +
-                " -e" + Config.getStringProperty("MAX_STEPS") + " " + 
+                " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
                 editor.fileName);
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemInter) || (e.getSource() == toolInter)) {
             runSpin.run(trailArea, false,
                 Config.getStringProperty("ERIGONE"),
-                Config.getStringProperty("COMMON_OPTIONS") + " -i " +
+                Config.getStringProperty("INTERACTIVE_OPTIONS") + " " +
                 editor.fileName);
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemTrail) || (e.getSource() == toolTrail)) {
             runSpin.run(trailArea, false,
                 Config.getStringProperty("ERIGONE"),  
-                Config.getStringProperty("COMMON_OPTIONS") + " -g " +
-                " -e" + Config.getStringProperty("MAX_STEPS") + " " + 
+                Config.getStringProperty("TRAIL_OPTIONS") + " " +
+                " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
                 editor.fileName);
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemLTL2BA) || (e.getSource() == toolLTL2BA)) {
             runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("ERIGONE"),  
-                Config.getStringProperty("COMMON_OPTIONS") + " -b " +
+                Config.getStringProperty("LTL2BA_OPTIONS") + " " +
                 editor.fileName);
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemSafety) || (e.getSource() == toolSafety)) {
             runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("ERIGONE"),
-                Config.getStringProperty("COMMON_OPTIONS") + " -s " +
+                Config.getStringProperty("SAFETY_OPTIONS") + " " +
                 (!LTLField.getText().equals("") ? ("-t ") : "") +
                 editor.fileName);
             isSpinRunning();
@@ -262,7 +236,7 @@ public class jSpin extends JFrame implements ActionListener {
             }
             runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("ERIGONE"),
-                Config.getStringProperty("COMMON_OPTIONS") + " -a -t " +
+                Config.getStringProperty("ACCEPT_OPTIONS") + " " +
                 editor.fileName);
             isSpinRunning();
         }
@@ -274,7 +248,7 @@ public class jSpin extends JFrame implements ActionListener {
             }
             runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("ERIGONE"),
-                Config.getStringProperty("COMMON_OPTIONS") + " -f -t " +
+                Config.getStringProperty("FAIRNESS_OPTIONS") + " " +
                 editor.fileName);
             isSpinRunning();
         }
@@ -282,13 +256,11 @@ public class jSpin extends JFrame implements ActionListener {
             runSpin.killSpin();
 
         // Options menu actions
-        else if  (e.getSource() == menuItemOptionsCommon)
-            new Options();
-        else if ((e.getSource() == menuItemOptionsCheck) || 
-                 (e.getSource() == menuItemOptionsRandom) ||
-                 (e.getSource() == menuItemOptionsInter) ||
-                 (e.getSource() == menuItemOptionsTrail))
-            changeOption(e.getActionCommand().toUpperCase().replace(' ','_') + "_OPTIONS", false);
+        else if (e.getSource() == menuItemLimits)
+            new Limits();
+        else if (e.getSource() == menuItemSeed)
+            changeOption("SEED", true);
+
         else if (e.getSource() == menuItemDefault)
             Config.setDefaultProperties();
 
@@ -305,12 +277,6 @@ public class jSpin extends JFrame implements ActionListener {
                    "Saved jSpin configuration file config.cfg in " +
                    (currentConfig ? "current" : "installation") + " directory\n");
         }
-
-        // Settings menu actions
-        else if (e.getSource() == menuItemMaxSteps)
-            changeOption("MAX_STEPS", true);
-        else if (e.getSource() == menuItemSeed)
-            changeOption("SEED", true);
 
         // Output menu actions
         else if ((e.getSource() == menuItemMax) || 
@@ -337,13 +303,13 @@ public class jSpin extends JFrame implements ActionListener {
             if(OUTfileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
             	editor.writeFile(OUTfileChooser.getSelectedFile(), trailArea);
         }
-        else if (e.getSource() == menuItemRaw) {
-            boolean raw = !Config.getBooleanProperty("RAW");
-            Config.setBooleanProperty("RAW", raw);
-            menuItemRaw.setSelected(raw);
-        }
-        else if (e.getSource() == menuItemDisplayRaw)
-            displayFile(editor.root + java.io.File.separator + editor.fileRoot + ".raw");
+        // else if (e.getSource() == menuItemRaw) {
+            // boolean raw = !Config.getBooleanProperty("RAW");
+            // Config.setBooleanProperty("RAW", raw);
+            // menuItemRaw.setSelected(raw);
+        // }
+        // else if (e.getSource() == menuItemDisplayRaw)
+            // displayFile(editor.root + java.io.File.separator + editor.fileRoot + ".raw");
 
         // Spider menu actions
         else if ((e.getSource() == menuItemSpider) || (e.getSource() == toolSpider)) {
@@ -533,14 +499,14 @@ public class jSpin extends JFrame implements ActionListener {
         // menuBar.add(menuOptions);
         // menuOptions.setText(Config.Options);
         // menuOptions.setMnemonic(Config.OptionsMN);
-        menuBar.add(menuSettings);
-        menuSettings.setText(Config.Settings);
-        menuSettings.setMnemonic(Config.SettingsMN);
-        initMenuItem(menuSettings, menuItemMaxSteps, Config.MaxStepsMN, Config.MaxStepsAC);
-        // initMenuItem(menuSettings, menuItemMaxDepth, Config.MaxDepthMN, Config.MaxDepthAC);
-        menuSettings.addSeparator();
-        initMenuItem(menuSettings, menuItemSeed, Config.SeedMN, Config.SeedAC);
-        menuSettings.addSeparator();
+        menuBar.add(menuOptions);
+        menuOptions.setText(Config.Options);
+        menuOptions.setMnemonic(Config.OptionsMN);
+        initMenuItem(menuOptions, menuItemLimits, Config.LimitsMN, Config.LimitsAC);
+        // initMenuItem(menuOptions, menuItemMaxDepth, Config.MaxDepthMN, Config.MaxDepthAC);
+        menuOptions.addSeparator();
+        initMenuItem(menuOptions, menuItemSeed, Config.SeedMN, Config.SeedAC);
+        menuOptions.addSeparator();
         // initMenuItem(menuOptions, menuItemOptionsCommon, Config.CommonMN, Config.CommonAC);
         // menuOptions.addSeparator();
         // initMenuItem(menuOptions, menuItemOptionsCheck, Config.CheckMN, Config.CheckAC);
@@ -548,9 +514,9 @@ public class jSpin extends JFrame implements ActionListener {
         // initMenuItem(menuOptions, menuItemOptionsInter, Config.InterMN, Config.OptionsInterAC);
         // initMenuItem(menuOptions, menuItemOptionsTrail, Config.TrailMN, Config.OptionsTrailAC);
         // menuOptions.addSeparator();
-        initMenuItem(menuSettings, menuItemDefault, Config.DefaultMN, Config.DefaultAC);
-        initMenuItem(menuSettings, menuItemOptionsSaveInstall, Config.SaveInstallMN, Config.OptionsSaveInstallAC);
-        initMenuItem(menuSettings, menuItemOptionsSaveCurrent, Config.SaveCurrentMN, Config.OptionsSaveCurrentAC);
+        initMenuItem(menuOptions, menuItemDefault, Config.DefaultMN, Config.DefaultAC);
+        initMenuItem(menuOptions, menuItemOptionsSaveInstall, Config.SaveInstallMN, Config.OptionsSaveInstallAC);
+        initMenuItem(menuOptions, menuItemOptionsSaveCurrent, Config.SaveCurrentMN, Config.OptionsSaveCurrentAC);
 
 
         menuBar.add(menuOutput);
@@ -565,10 +531,10 @@ public class jSpin extends JFrame implements ActionListener {
         initMenuItem(menuOutput, menuItemVarWidth, Config.VarWidthMN, Config.VarWidthAC);
         menuOutput.addSeparator();
         initMenuItem(menuOutput, menuItemSaveSpin, Config.SaveSpinMN, Config.SaveSpinAC);
-        menuOutput.addSeparator();
-        initMenuItem(menuOutput, menuItemRaw, Config.RawMN, Config.RawAC);
-        initMenuItem(menuOutput, menuItemDisplayRaw, Config.DisplayRawMN, Config.DisplayRawAC);
-        menuItemRaw.setSelected(Config.getBooleanProperty("RAW"));
+        // menuOutput.addSeparator();
+        // initMenuItem(menuOutput, menuItemRaw, Config.RawMN, Config.RawAC);
+        // initMenuItem(menuOutput, menuItemDisplayRaw, Config.DisplayRawMN, Config.DisplayRawAC);
+        // menuItemRaw.setSelected(Config.getBooleanProperty("RAW"));
 
         // menuBar.add(menuSpider);
         // menuSpider.setText(Config.Spider);
@@ -605,8 +571,8 @@ public class jSpin extends JFrame implements ActionListener {
         toolBar.setBorder(new LineBorder(java.awt.Color.BLUE));
 
         toolBar.add(toolOpen);
-        initToolButton(toolOpen, Config.OpenMN);
-        initToolButton(toolSave, Config.SaveMN);
+        initToolButton(toolOpen, -1);
+        initToolButton(toolSave, -1);
         toolBar.addSeparator();
         initToolButton(toolCheck, Config.CheckMN);
         initToolButton(toolRandom, Config.RandomMN);
