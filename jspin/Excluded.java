@@ -25,7 +25,7 @@ class Excluded extends JFrame implements ActionListener {
         fileName = exVar ? editor.EXCFileName : editor.EXSFileName;
         String read = editor.readFile(new java.io.File(fileName));
         if (read.startsWith("Error")) read = "";
-        names =  new JTextArea(read, 9, 32);
+        names =  new JTextArea(read, 8, 20);
         names.setFont(font);
         textPanel.add(new JScrollPane(names));
         OKPanel.add(okButton);
