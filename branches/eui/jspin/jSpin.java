@@ -296,7 +296,8 @@ public class jSpin extends JFrame implements ActionListener {
         else if (e.getSource() == menuItemStWidth)
             changeOption("STATEMENT_WIDTH", true);
         else if (e.getSource() == menuItemVarWidth)
-            changeOption("VARIABLE_WIDTH", true);
+          new Trace();
+//            changeOption("VARIABLE_WIDTH", true);
         else if (e.getSource() == menuItemSaveSpin) {
             java.io.File outFile = new java.io.File(editor.OUTFileName);
             OUTfileChooser.setSelectedFile(outFile);
