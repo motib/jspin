@@ -85,10 +85,7 @@ public class jSpin extends JFrame implements ActionListener {
 
     private JMenu menuOutput = new JMenu();
     private JMenuItem menuItemMax = new JMenuItem(Config.Max);
-    private JMenuItem menuItemVarWidth = new JMenuItem(Config.VarWidth);
-    private JMenuItem menuItemStWidth = new JMenuItem(Config.StWidth);
-    private JMenuItem menuItemExcludedV = new JMenuItem(Config.ExcludedV);
-    private JMenuItem menuItemExcludedS = new JMenuItem(Config.ExcludedS);
+    private JMenuItem menuItemTraceOptions = new JMenuItem(Config.TraceOptions);
     // private JCheckBoxMenuItem menuItemRaw = new JCheckBoxMenuItem(Config.Raw);
     // private JMenuItem menuItemDisplayRaw  = new JMenuItem(Config.DisplayRaw);
     private JMenuItem menuItemSaveSpin = new JMenuItem(Config.SaveSpin);
@@ -289,15 +286,8 @@ public class jSpin extends JFrame implements ActionListener {
             }
             maxedDivider = ! maxedDivider;
         }
-        else if (e.getSource() == menuItemExcludedV)
-            new Excluded(editor, font, filter, true);
-        else if (e.getSource() == menuItemExcludedS)
-            new Excluded(editor, font, filter, false);
-        else if (e.getSource() == menuItemStWidth)
-            changeOption("STATEMENT_WIDTH", true);
-        else if (e.getSource() == menuItemVarWidth)
-          new Trace();
-//            changeOption("VARIABLE_WIDTH", true);
+        else if (e.getSource() == menuItemTraceOptions)
+          new Trace(editor, filter, font);
         else if (e.getSource() == menuItemSaveSpin) {
             java.io.File outFile = new java.io.File(editor.OUTFileName);
             OUTfileChooser.setSelectedFile(outFile);
@@ -525,11 +515,12 @@ public class jSpin extends JFrame implements ActionListener {
         menuOutput.setMnemonic(Config.OutputMN);
         initMenuItem(menuOutput, menuItemMax, Config.MaxMN, Config.MaxAC);
         menuOutput.addSeparator();
-        initMenuItem(menuOutput, menuItemExcludedV, Config.ExcludedVMN, Config.ExcludedVAC);
-        initMenuItem(menuOutput, menuItemExcludedS, Config.ExcludedSMN, Config.ExcludedSAC);
-        menuOutput.addSeparator();
-        initMenuItem(menuOutput, menuItemStWidth, Config.StWidthMN, Config.StWidthAC);
-        initMenuItem(menuOutput, menuItemVarWidth, Config.VarWidthMN, Config.VarWidthAC);
+        initMenuItem(menuOutput, menuItemTraceOptions, Config.TraceOptionsMN, Config.TraceOptionsAC);
+        // initMenuItem(menuOutput, menuItemExcludedV, Config.ExcludedVMN, Config.ExcludedVAC);
+        // initMenuItem(menuOutput, menuItemExcludedS, Config.ExcludedSMN, Config.ExcludedSAC);
+        // menuOutput.addSeparator();
+        // initMenuItem(menuOutput, menuItemStWidth, Config.StWidthMN, Config.StWidthAC);
+        // initMenuItem(menuOutput, menuItemVarWidth, Config.VarWidthMN, Config.VarWidthAC);
         menuOutput.addSeparator();
         initMenuItem(menuOutput, menuItemSaveSpin, Config.SaveSpinMN, Config.SaveSpinAC);
         // menuOutput.addSeparator();

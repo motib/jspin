@@ -160,14 +160,12 @@ public class Config {
     static final int    SaveCurrentMN = KeyEvent.VK_S;
     static final String Seed        = "Seed";
     static final int    SeedMN      = KeyEvent.VK_S;
-    static final String StWidth 	= "Statement width";
-    static final int    StWidthMN  = KeyEvent.VK_S;
-    static final String VarWidth 	= "Variable width";
-    static final int    VarWidthMN  = KeyEvent.VK_V;
-    static final String ExcludedV 	= "Exclude variables";
-    static final int    ExcludedVMN = KeyEvent.VK_E;
-    static final String ExcludedS 	= "Exclude statements";
-    static final int    ExcludedSMN = KeyEvent.VK_X;
+    static final String TraceOptions = "Trace options";
+    static final int    TraceOptionsMN = KeyEvent.VK_T;
+    static final String Excluded  	= "Excluded";
+    static final String Variables   = "Variables";
+    static final String Statements  = "Statements";
+    static final String Width 	= "Width";
 
     static final String Output		= "Display";
     static final int    OutputMN   	= KeyEvent.VK_D;
@@ -196,24 +194,9 @@ public class Config {
     static final String LTLFormula 		 = " LTL formula  ";
     static final int 	  LTL_COLUMNS    = 50;
 
-    // Common options
   	static final String OK           = "OK";
     static final int    OKMN         = KeyEvent.VK_O;
     static final String Cancel       = "Cancel";
-    static final String Statements   = "Statements";
-    static final int    StatementsMN = KeyEvent.VK_S;
-    static final String Globals      = "Globals";
-    static final int    GlobalsMN    = KeyEvent.VK_G;
-    static final String Locals       = "Locals";
-    static final int    LocalsMN     = KeyEvent.VK_L;
-    static final String Sent         = "Sent";
-    static final int    SentMN       = KeyEvent.VK_T;
-    static final String Received     = "Received";
-    static final int    ReceivedMN   = KeyEvent.VK_R;
-    static final String ClearAll     = "Clear all";
-    static final int    ClearAllMN   = KeyEvent.VK_C;
-    static final String SetAll       = "Set all";
-    static final int    SetAllMN     = KeyEvent.VK_A;
 
     // SpinSpider options
     static final String NoTrail      = "No trail";
@@ -238,7 +221,7 @@ public class Config {
     static final int    TrailBoldMN	 = KeyEvent.VK_B;
     static final String Processes    = "Processes";
     static final int    MAX_PROCESS  = 5;
-    static final String Variables    = "Variables";
+    // static final String Variables    = "Variables";
     static final String Format       = "Format";
     static final String DOT          = "dot";
     static final String PNG          = "png";
@@ -249,19 +232,19 @@ public class Config {
     // Select All by default            = "control A"
     static final String SwitchAC        = "control B";
     static final String CopyAC          = "control C";
-    // static final String              = "control D";
+    static final String SeedAC          = "control D";
     // static final String              = "control E";
     static final String FindAC     	    = "control F";
     static final String FindAgainAC     = "control G";
     // Backspace by default             = "control H"
     // static final String              = "control I";
     // static final String              = "control J";
-    // static final String              = "control L";
+    static final String LimitsAC        = "control L";
     // static final String              = "control M";
     static final String NewAC           = "control N";
     static final String OpenAC          = "control O";
     static final String ExitAC     	    = "control Q";
-    // static final String              = "control R";
+    static final String TraceOptionsAC  = "control R";
     static final String SaveAC          = "control S";
     static final String SaveAsAC	      = "control T";
     // static final String              = "control U";
@@ -274,13 +257,13 @@ public class Config {
     // Dummy accelerators
     static String 
         AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC, DisplayRawAC,
-        ExcludedSAC, ExcludedVAC, FairAC, HelpAC, InterAC, LimitsAC,
+        ExcludedSAC, ExcludedVAC, FairAC, HelpAC, InterAC, 
         LTLClearAC, LTLLoadAC, LTLTranslateAC, LTL2BAAC,
         MaxAC, MaxStepsAC, NonProcessAC,
         OptionsCAC, OptionsInterAC, OptionsPanAC, OptionsRandomAC,
         OptionsSaveCurrentAC, OptionsSaveInstallAC, OptionsTrailAC, 
         RandomAC, RawAC,
-        SafetyAC, SaveSpinAC, SeedAC, SpiderAC, SpiderDisplayAC,
+        SafetyAC, SaveSpinAC, SpiderAC, SpiderDisplayAC,
         StWidthAC, StopAC, TrailAC, VarWidthAC, VerifyAC;
 
 	// Initialize configuration file
