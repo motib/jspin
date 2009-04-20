@@ -17,7 +17,13 @@ public class Filter {
     private static boolean msc;
     
     private String title;  		// Title string
+    private String process;
+    private String statement;
     private int lines;		    // Line counter to redisplay title
+    private boolean program;
+
+    private static final int COLS_LINE_NUMBER = 2;
+    private static final String blanks = "    ";
 
     // Map from variable names to values
     private TreeMap<String, String> variables = new TreeMap<String, String>();
@@ -33,6 +39,7 @@ public class Filter {
 		variables.clear();
 		title = "";
 		lines = -1;
+    program = true;
     this.properties = properties;
     processTitle    = properties.getProperty("PROCESS_TITLE");
     statementTitle  = properties.getProperty("STATEMENT_TITLE");
@@ -41,6 +48,8 @@ public class Filter {
     statementWidth  = Integer.valueOf(properties.getProperty("STATEMENT_WIDTH"));
     linesPerTitle   = Integer.valueOf(properties.getProperty("LINES_PER_TITLE"));
     msc             = Boolean.valueOf(properties.getProperty("MSC"));
+    process   = formatItem("", processWidth);
+    statement = formatItem("", statementWidth);
 	}
 
   // Parse string to initialize excluded arrays
@@ -79,8 +88,107 @@ public class Filter {
      return false;
   }
 
+  public String filterVerification(String s) {
+    int i;
+    if (s.startsWith("Erigone"))
+        return s + "\n";
+    else if (s.startsWith("execution mode")) {
+      i = s.indexOf(",");
+      return s.substring(0, i+1) + "\n" +
+             s.substring(i+1) + "\n";
+    }
+    else if (s.startsWith("verification terminated=successfully,"))
+      return "\n" + s + "\n\n";
+    else if (s.startsWith("verification terminated")) {
+      i = s.indexOf(",");
+      return "\n" + s.substring(0, i+1) + "\n" +
+             s.substring(i+1) + "\n\n";
+    }
+    else
+      return s + "\n";
+  }
+
+  private String extract(String s, String pattern) {
+    int i = s.indexOf(pattern) + pattern.length();
+    return s.substring(i, s.indexOf(",", i+1));
+  }
+
+  private String extractBraces(String s, String pattern) {
+    int i = s.indexOf(pattern) + pattern.length();
+    String t = s.substring(i, s.indexOf(",", i+1));
+    return t.substring(1, t.length()-1);
+  }
+
+  private int extractNum(String s, String pattern) {
+    int i = s.indexOf(pattern) + pattern.length();
+    String t = s.substring(i, s.indexOf(",", i+1));
+    try {
+      return Integer.parseInt(t);
+    }
+    catch(NumberFormatException e) {
+      return -1;
+    }
+  }
+
+  public String filterSimulation(String s) {
+    int i;
+    if (program) {
+      if (s.startsWith("Erigone"))
+          return s + "\n";
+      else if (s.startsWith("execution mode")) {
+        i = s.indexOf(",");
+        return s.substring(0, i+1) + "\n" +
+               s.substring(i+1) + "\n";
+      }
+      else if (s.startsWith("type=")) {
+        variables.put(extract(s, "name="), "");
+        return "";
+      }
+      else if (s.startsWith("symbol table end=")) {
+        title = formatItem(processTitle,   processWidth)   + " " +
+                formatItem(statementTitle, statementWidth) + " " + 
+                collectionToString(variables.keySet()) + "\n";
+        lines = -1;
+        return "";
+      }
+      else if (s.startsWith("transitions end=")) {
+        program = false;
+        return "";
+      }
+      else
+        return "";
+    }
+    else {
+      if (s.startsWith("initial state=") || s.startsWith("next state=")) {
+        storeVariables(s);
+        return "";
+      }
+      else if (s.startsWith("process=") && (s.indexOf("initial=") == -1)) {
+        process   = formatItem(extract(s, "process="), processWidth);
+        String ln = extract(s, "line=");
+        statement = formatItem(
+          (ln.length() < COLS_LINE_NUMBER ? 
+            blanks.substring(0, COLS_LINE_NUMBER - ln.length()) : "") + 
+          ln + ". " +
+          extractBraces(s, "statement="), statementWidth); 
+        lines = (lines + 1) % linesPerTitle;
+        if (lines == 0)
+          return title + variablesToString(s);
+        else
+          return variablesToString(s);
+      }
+      else if (s.startsWith("simulation terminated")) {
+        i = s.indexOf(",");
+        return "\n" + s.substring(0, i+1) + "\n" +
+               s.substring(i+1) + "\n\n";
+      }
+      else
+        return "";
+    }
+  }
+
   // Filter string s and return new string or "" to ignore
-  public String filter(String s) {
+  public String filterSimulationx(String s) {
     try {
       // Variables and queues start with double tab
       if (s.startsWith("\t\t"))
@@ -231,4 +339,24 @@ public class Filter {
 			s = s + formatItem(it.next(), variableWidth) + " ";
 		return s;
 	}	
+
+	private void storeVariables(String s) {
+    Collection<String> c = variables.keySet();
+		String t, num;
+		Iterator<String> it = c.iterator();
+		while (it.hasNext()) {
+      t = it.next();
+      num = extract(s, t + "=");
+      variables.put(t, num);
+    }
+	}	
+
+	private String variablesToString(String s) {
+    Collection<String> c = variables.keySet();
+		String t = process + " " + statement + " ";
+		Iterator<String> it = c.iterator();
+		while (it.hasNext())
+			t = t + formatItem(variables.get(it.next()), variableWidth) + " ";
+		return t + "\n";
+	}
 }

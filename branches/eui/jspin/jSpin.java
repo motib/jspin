@@ -22,6 +22,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class jSpin extends JFrame implements ActionListener {
+    public enum FilterTypes {COMPILATION, TRANSLATION, SIMULATION, VERIFICATION};
+
 	// Contained objects. Create only after initializing configuration.
     private Editor editor;
     private RunSpin runSpin;
@@ -180,13 +182,13 @@ public class jSpin extends JFrame implements ActionListener {
 
         // Run menu actions
         else if ((e.getSource() == menuItemCheck) || (e.getSource() == toolCheck)) {
-            runSpin.runAndWait(trailArea, false,
+            runSpin.runAndWait(trailArea, FilterTypes.COMPILATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("COMPILE_OPTIONS") + " " +
                 editor.fileName);
         }
         else if ((e.getSource() == menuItemRandom) || (e.getSource() == toolRandom)) {
-            runSpin.run(trailArea, false,
+            runSpin.run(trailArea, FilterTypes.SIMULATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("RANDOM_OPTIONS") + " " +
                 (Config.getIntProperty("SEED") != 0 ? 
@@ -196,14 +198,14 @@ public class jSpin extends JFrame implements ActionListener {
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemInter) || (e.getSource() == toolInter)) {
-            runSpin.run(trailArea, false,
-                Config.getStringProperty("ERIGONE"),
+            runSpin.run(trailArea, FilterTypes.SIMULATION,
+                Config.getStringProperty("ERIGO`NE"),
                 Config.getStringProperty("INTERACTIVE_OPTIONS") + " " +
                 editor.fileName);
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemTrail) || (e.getSource() == toolTrail)) {
-            runSpin.run(trailArea, false,
+            runSpin.run(trailArea, FilterTypes.SIMULATION,
                 Config.getStringProperty("ERIGONE"),  
                 Config.getStringProperty("TRAIL_OPTIONS") + " " +
                 " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
@@ -211,14 +213,14 @@ public class jSpin extends JFrame implements ActionListener {
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemLTL2BA) || (e.getSource() == toolLTL2BA)) {
-            runSpin.runAndWait(trailArea, false,
+            runSpin.runAndWait(trailArea, FilterTypes.TRANSLATION,
                 Config.getStringProperty("ERIGONE"),  
                 Config.getStringProperty("LTL2BA_OPTIONS") + " " +
                 editor.fileName);
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemSafety) || (e.getSource() == toolSafety)) {
-            runSpin.runAndWait(trailArea, false,
+            runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("SAFETY_OPTIONS") + " " +
                 (!LTLField.getText().equals("") ? ("-t ") : "") +
@@ -231,7 +233,7 @@ public class jSpin extends JFrame implements ActionListener {
                      "Need LTL formula for acceptance verification\n");
               return;
             }
-            runSpin.runAndWait(trailArea, false,
+            runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("ACCEPT_OPTIONS") + " " +
                 editor.fileName);
@@ -243,7 +245,7 @@ public class jSpin extends JFrame implements ActionListener {
                      "Need LTL formula for fairness verification\n");
               return;
             }
-            runSpin.runAndWait(trailArea, false,
+            runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("FAIRNESS_OPTIONS") + " " +
                 editor.fileName);

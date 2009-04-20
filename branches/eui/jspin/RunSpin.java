@@ -21,7 +21,7 @@ class RunSpin {
   private PrintWriter rawWriter;      // To write raw spin output
 
   private String command, parameters; // The command being executed
-  private boolean filtering;          // Should the output be filtered
+  private jSpin.FilterTypes filtering;      // Output filtering mode
   private static final int MAX_SELECTIONS = 50;
   private String[] selections = new String[MAX_SELECTIONS];
                                       // Statements selected from
@@ -33,7 +33,7 @@ class RunSpin {
   }
 
   // Called by jSpin to run Spin
-  void run(JTextArea area, boolean filtering, String command, String parameters) {
+  void run(JTextArea area, jSpin.FilterTypes filtering, String command, String parameters) {
     this.filtering = filtering;
     this.area = area;
     this.area.setText("");
@@ -56,7 +56,7 @@ class RunSpin {
   }
 
   // Run Spin and wait for it to complete
-  void runAndWait(JTextArea area, boolean filtering, String command, String parameters) {
+  void runAndWait(JTextArea area, jSpin.FilterTypes filtering, String command, String parameters) {
     run(area, filtering, command, parameters);
     if (runThread == null) return; // If file not open
     try {
@@ -123,8 +123,10 @@ class RunSpin {
             output.write("\n");
             output.flush();
           } 
-          else if (filtering)
-            jSpin.append(area, filter.filter(s));
+          else if (filtering == jSpin.FilterTypes.SIMULATION)
+            jSpin.append(area, filter.filterSimulation(s));
+          else if (filtering == jSpin.FilterTypes.VERIFICATION)
+            jSpin.append(area, filter.filterVerification(s));
           else
             jSpin.append(area, s + "\n");
         }
@@ -211,7 +213,7 @@ class RunSpin {
         if (Config.getBooleanProperty("RAW"))
           rawWriter.println(s);
         while (!s.startsWith("Make Selection")) {
-          filtered = filter.filter(s);
+          filtered = filter.filterSimulation(s);
           if ((numOptions < MAX_SELECTIONS) &&
               (Config.getBooleanProperty("UNEXECUTABLE") ||
                s.indexOf("unexecutable") == -1)) {
