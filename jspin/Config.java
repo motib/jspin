@@ -37,7 +37,7 @@ public class Config {
         // Erigone options
         properties.put("COMPILE_OPTIONS",     "-c -dprv");
         properties.put("RANDOM_OPTIONS",      "-r -dcmprv");
-        properties.put("INTERACTIVE_OPTIONS", "-i -dcmprv");
+        properties.put("INTERACTIVE_OPTIONS", "-i -dmprv");
         properties.put("TRAIL_OPTIONS",       "-g -dcmprv");
         properties.put("LTL2BA_OPTIONS",      "-b -dbv");
         properties.put("SAFETY_OPTIONS",      "-s -drv");
