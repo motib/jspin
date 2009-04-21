@@ -199,7 +199,7 @@ public class jSpin extends JFrame implements ActionListener {
         }
         else if ((e.getSource() == menuItemInter) || (e.getSource() == toolInter)) {
             runSpin.run(trailArea, FilterTypes.SIMULATION,
-                Config.getStringProperty("ERIGO`NE"),
+                Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("INTERACTIVE_OPTIONS") + " " +
                 editor.fileName);
             isSpinRunning();

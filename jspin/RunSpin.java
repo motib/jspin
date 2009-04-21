@@ -18,7 +18,7 @@ class RunSpin {
 
   private JTextArea messageArea;      // The message area
   private JTextArea area;             // Output area display
-  private PrintWriter rawWriter;      // To write raw spin output
+  // private PrintWriter rawWriter;      // To write raw spin output
 
   private String command, parameters; // The command being executed
   private jSpin.FilterTypes filtering;      // Output filtering mode
@@ -91,8 +91,8 @@ class RunSpin {
 
     public void run() {
       try {
-        if (Config.getBooleanProperty("RAW"))
-          rawFile();
+        // if (Config.getBooleanProperty("RAW"))
+          // rawFile();
         // Use ProcessBuilder to run Spin, redirecting ErrorStream
         String[] sa = stringToArray(command, parameters);
 // for (int i = 0; i < sa.length; i++) System.out.println(sa[i]);
@@ -112,17 +112,16 @@ class RunSpin {
         boolean running = true;
         while (running) {
           s = input.readLine();
-          if (Config.getBooleanProperty("RAW"))
-            rawWriter.println(s);
+          // if (Config.getBooleanProperty("RAW"))
+            // rawWriter.println(s);
           if (s == null)
             running = false;
-          else if (s.startsWith("Select a statement") || 
-                   s.startsWith("Select stmnt"))
-            running = select(area, p, input, output);
-          else if (s.startsWith("spin: type return")) {
-            output.write("\n");
-            output.flush();
-          } 
+          else if (s.startsWith("choose from="))
+            running = select(s, area, p, input, output);
+          // else if (s.startsWith("spin: type return")) {
+            // output.write("\n");
+            // output.flush();
+          // } 
           else if (filtering == jSpin.FilterTypes.SIMULATION)
             jSpin.append(area, filter.filterSimulation(s));
           else if (filtering == jSpin.FilterTypes.VERIFICATION)
@@ -132,8 +131,8 @@ class RunSpin {
         }
         // Wait for Spin process to end
         p.waitFor();
-        if (Config.getBooleanProperty("RAW"))
-          rawWriter.close();
+        // if (Config.getBooleanProperty("RAW"))
+          // rawWriter.close();
         // If syntax error, set cursor to line in editor
         if (area.getText().indexOf("Error: syntax error") != -1) {
           s = area.getText();
@@ -192,7 +191,7 @@ class RunSpin {
     }
 
     // Open file for raw Spin output
-    private void rawFile() {
+    // private void rawFile() {
       // String s = editor.root + File.separator + editor.fileRoot + ".raw";
       // try {
         // rawWriter = new PrintWriter(new FileWriter(s));
@@ -200,35 +199,29 @@ class RunSpin {
       // } catch (IOException e) {
         // jSpin.append(messageArea, "\nCannot open " + s + "\n");
       // }
+    // }
+
+  private int extractNum(String s, String pattern) {
+    int i = s.indexOf(pattern) + pattern.length();
+    String t = s.substring(i, s.indexOf(",", i+1));
+    try {
+      return Integer.parseInt(t);
     }
+    catch(NumberFormatException e) {
+      return -1;
+    }
+  }
 
     // Select the next statement to run in interactive simulation
     private boolean select(
+        String s,
         JTextArea area, Process p, 
         BufferedReader input, OutputStreamWriter output) {
-      int numOptions = 0;
-      String filtered;
+      int numOptions = extractNum(s, "to=") + 1;
+      if (numOptions >= MAX_SELECTIONS) return false;
       try {
-        String s = input.readLine();
-        if (Config.getBooleanProperty("RAW"))
-          rawWriter.println(s);
-        while (!s.startsWith("Make Selection")) {
-          filtered = filter.filterSimulation(s);
-          if ((numOptions < MAX_SELECTIONS) &&
-              (Config.getBooleanProperty("UNEXECUTABLE") ||
-               s.indexOf("unexecutable") == -1)) {
-              selections[numOptions] = new String(filtered.substring(7));
-              numOptions++;
-          }
-          s = input.readLine();
-          if (Config.getBooleanProperty("RAW"))
-            rawWriter.println(s);
-        }
-        if (numOptions == 0) {
-            output.write("q\n");
-            output.flush();
-            return false;
-        }
+        for (int i=0; i < numOptions; i++)
+          selections[i] = i + "";
         // Get selection from dialog
         int selectedValue = -1;
         selectDialog = 
@@ -245,6 +238,7 @@ class RunSpin {
           if (selectDialog == null) break;
           else selectedValue = selectDialog.getValue();
         }
+System.out.println("selected1=" + selectedValue);
         // For Macintosh (?) - Angelika's problem (?)
         if (selectDialog != null) { 
           selectDialog.interrupt();
@@ -257,15 +251,13 @@ class RunSpin {
             output.flush();
             return false;
         }
-        selectedValue = Integer.valueOf(
-          selections[selectedValue-1].substring(
-            0, selections[selectedValue-1].indexOf(':')));
+        // selectedValue = Integer.valueOf(
+          // selections[selectedValue-1].substring(
+            // 0, selections[selectedValue-1].indexOf(':')));
+// System.out.println("selected2=" + selectedValue);
         // Send selection to Spin
         output.write(selectedValue + "\n");
         output.flush();
-        s = input.readLine(); // Eat extra new line
-        if (Config.getBooleanProperty("RAW"))
-            rawWriter.println(s);
         return true;
       } catch (Exception e) {
         System.err.println(e);

@@ -6,6 +6,9 @@
 package jspin;
 import java.util.*;
 public class Filter {
+    private static final int COLS_LINE_NUMBER = 2;
+    private static final String blanks = "                             ";
+
     // Properties and copies of the data from the properties
     private Properties properties;
     private static String processTitle;
@@ -14,16 +17,12 @@ public class Filter {
     private static int variableWidth;
     private static int statementWidth;
     private static int linesPerTitle;
-    private static boolean msc;
-    
-    private String title;  		// Title string
-    private String process;
-    private String statement;
-    private int lines;		    // Line counter to redisplay title
-    private boolean program;
 
-    private static final int COLS_LINE_NUMBER = 2;
-    private static final String blanks = "    ";
+    private String title;  		// Title string
+    private String process;   // Process string
+    private String statement; // Statement string
+    private int lines;		    // Line counter to redisplay title
+    private boolean program;  // Flag for end of program listing
 
     // Map from variable names to values
     private TreeMap<String, String> variables = new TreeMap<String, String>();
@@ -47,9 +46,8 @@ public class Filter {
     variableWidth   = Integer.valueOf(properties.getProperty("VARIABLE_WIDTH"));
     statementWidth  = Integer.valueOf(properties.getProperty("STATEMENT_WIDTH"));
     linesPerTitle   = Integer.valueOf(properties.getProperty("LINES_PER_TITLE"));
-    msc             = Boolean.valueOf(properties.getProperty("MSC"));
-    process   = formatItem("", processWidth);
-    statement = formatItem("", statementWidth);
+    process   = formatItem("", processWidth,   true);
+    statement = formatItem("", statementWidth, true);
 	}
 
   // Parse string to initialize excluded arrays
@@ -141,15 +139,16 @@ public class Filter {
                s.substring(i+1) + "\n";
       }
       else if (s.startsWith("type=")) {
-        variables.put(extract(s, "name="), "");
+        String varName = extract(s, "name=");
+        if (!checkExcluded(varName, true))
+          variables.put(varName, "");
         return "";
       }
       else if (s.startsWith("symbol table end=")) {
-        title = formatItem(processTitle,   processWidth)   + " " +
-                formatItem(statementTitle, statementWidth) + " " + 
+        title = formatItem(processTitle,   processWidth,   true) + " " +
+                formatItem(statementTitle, statementWidth, true) + " " + 
                 collectionToString(variables.keySet()) + "\n";
-        lines = -1;
-        return "";
+        return "\n";
       }
       else if (s.startsWith("transitions end=")) {
         program = false;
@@ -159,18 +158,16 @@ public class Filter {
         return "";
     }
     else {
-      if (s.startsWith("initial state=") || s.startsWith("next state=")) {
+      if (s.startsWith("next state=") || s.startsWith("initial state=")) {
         storeVariables(s);
         return "";
       }
       else if (s.startsWith("process=") && (s.indexOf("initial=") == -1)) {
-        process   = formatItem(extract(s, "process="), processWidth);
-        String ln = extract(s, "line=");
-        statement = formatItem(
-          (ln.length() < COLS_LINE_NUMBER ? 
-            blanks.substring(0, COLS_LINE_NUMBER - ln.length()) : "") + 
-          ln + ". " +
-          extractBraces(s, "statement="), statementWidth); 
+        String st = extractBraces(s, "statement=");
+        if (checkExcluded(st, false)) return "";
+        String ln = formatItem(extract(s, "line="), COLS_LINE_NUMBER, false);
+        process   = formatItem(extract(s, "process="), processWidth, true);
+        statement = formatItem(ln + " " + st, statementWidth, true); 
         lines = (lines + 1) % linesPerTitle;
         if (lines == 0)
           return title + variablesToString(s);
@@ -187,130 +184,13 @@ public class Filter {
     }
   }
 
-  // Filter string s and return new string or "" to ignore
-  public String filterSimulationx(String s) {
-    try {
-      // Variables and queues start with double tab
-      if (s.startsWith("\t\t"))
-        return filterVariable(s);
-
-      // Filter statements
-      else if ((s.indexOf("proc") != -1) && (s.indexOf("line") != -1))
-        return filterStatement(s);
-
-      // Display some messages unmodified
-      else if ((s.startsWith("pan:")) || 
-               (s.startsWith("spin:")) ||  
-               (s.startsWith("tl_spin:")) ||
-               (s.startsWith("Error:")) ||
-               (s.startsWith("error:")) )
-        return s + "\n";
-      else if (s.indexOf("<<<<<") != -1)
-        return s + "\n";
-
-      // Display choices that have no proc and line number
-      else if (s.indexOf("choice") != -1)
-        return s.substring(s.indexOf("choice")) + "\n";
-
-      // Display error count with bullets to emphasize
-      else if (s.indexOf("errors:") != -1)
-        return 
-          s.substring(0, s.indexOf("errors:")) + "\u2022\u2022\u2022 " + 
-          s.substring(s.indexOf("errors:")) + " \u2022\u2022\u2022\n";
-
-      // Display MSC lines (without MSC:) if msc is true
-      else if (msc && s.trim().startsWith("MSC:"))
-          return s.substring(s.indexOf("MSC:")+5) + "\n";
-
-      // Display printf lines if msc is false
-      else if (!msc && !s.equals(""))
-        return s + "\n";
-      else
-        return "";
-    } catch (Exception e) {
-        System.err.println("\n + Error in filter for:\n" + s + "\n");
-        e.printStackTrace();
-        return "";
-    }
-  }
-
-  // Filter variables (including queues)
-  private String filterVariable(String s) {
-    String varName, varValue;
-    if (s.startsWith("\t\tqueue")) {
-      varName = s.substring(s.indexOf('(')+1, s.indexOf(')'));
-      varValue = s.substring(s.indexOf(':')+1).trim();
-    } 
-    else {
-      varName = s.substring(2, s.indexOf('=')-1); 
-      varValue = s.substring(s.indexOf('=')+1).trim();
-    }
-    if (checkExcluded(varName, true)) return "";
-    // Construct new title if new variables encountered
-    boolean newTitle = !variables.containsKey(varName); 
-    variables.put(varName, varValue);
-    if (newTitle) {
-        title = formatItem(processTitle, processWidth)     + " " +
-                formatItem(statementTitle, statementWidth) + " " + 
-                collectionToString(variables.keySet()) + "\n";
-        lines = -1;
-    }
-    return "";
-  }
-
-  // Filter statements
-  private String filterStatement(String s) {
-    String u = "";
-    // Get process name
-    String proc = 
-      s.substring(s.indexOf("proc")+4, s.indexOf(")")+1).trim();
-    proc = proc.substring(0, proc.indexOf("(")) +  
-      strip(proc.substring(proc.indexOf("(")));
-
-    // Get line number and statement name
-    String statement = "";
-    if (s.indexOf('[') != -1) {
-      statement = formatItem(
-        s.substring(s.indexOf("line")+4,s.indexOf("\"")).trim(), 3);
-      statement = statement + " " +
-        strip(s.substring(s.indexOf('[')+1, s.lastIndexOf(']')));
-    }
-
-    if (checkExcluded(statement, false)) return "";
-
-    // For choice, display just process and statement
-    if (s.indexOf("choice") != -1)
-      u = s.substring(s.indexOf("choice"), s.indexOf(':')+2) + 
-        proc + " " + statement + "\n";
-    // Display table line (unless goto/else/break)
-    else if ((statement.indexOf("goto") == -1) && 
-             !statement.equals("else") &&
-             !statement.equals("break")) {
-      u = formatItem(proc, processWidth)         + " " + 
-          formatItem(statement, statementWidth)  + " " + 
-          collectionToString(variables.values()) + "\n";
-
-      // Display title if needed
-      lines = (lines + 1) % linesPerTitle;
-      if (lines == 0) u = title + u;
-    }
-    return u;
-  }
-  
-  // Strip balanced parentheses
-  private String strip(String s) {
-    while ( (s.charAt(0)=='(') && (s.charAt(s.length()-1)==')'))
-            s = s.substring(1, s.length()-1);
-    return s;
-  }
-
 	/** 
     Format a variable name or value s into a field of length len
     If item is too long, shorten it
         But, for array variables, shorten the name, not the index
 		If item is too short, pad it
   */
-	private String formatItem(String s, int len) {
+	private String formatItem(String s, int len, boolean left) {
 		if (s.length() > len) { 
 			if (s.indexOf("[") != -1) { 
 				String subscript = 
@@ -323,8 +203,10 @@ public class Filter {
 			else
 				return s.substring(0,len);
 		}
-		else if (s.length() < len)
-			return (s + "                         ").substring(0,len);
+		else if (left && (s.length() < len))
+			return s + blanks.substring(0,len-s.length());
+		else if (!left && (s.length() < len))
+			return blanks.substring(0,len-s.length()) + s;
 		else
 			return s;
 	}
@@ -336,7 +218,7 @@ public class Filter {
 		String s = "";
 		Iterator<String> it = c.iterator();
 		while (it.hasNext()) 
-			s = s + formatItem(it.next(), variableWidth) + " ";
+			s = s + formatItem(it.next(), variableWidth, false) + " ";
 		return s;
 	}	
 
@@ -356,7 +238,7 @@ public class Filter {
 		String t = process + " " + statement + " ";
 		Iterator<String> it = c.iterator();
 		while (it.hasNext())
-			t = t + formatItem(variables.get(it.next()), variableWidth) + " ";
+			t = t + formatItem(variables.get(it.next()), variableWidth, false) + " ";
 		return t + "\n";
 	}
 }
