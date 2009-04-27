@@ -22,7 +22,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class jSpin extends JFrame implements ActionListener {
-    public enum FilterTypes {COMPILATION, TRANSLATION, SIMULATION, VERIFICATION};
+    public enum FilterTypes {COMPILATION, TRANSLATION, SIMULATION, INTERACTIVE, VERIFICATION};
 
 	// Contained objects. Create only after initializing configuration.
     private Editor editor;
@@ -198,7 +198,7 @@ public class jSpin extends JFrame implements ActionListener {
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemInter) || (e.getSource() == toolInter)) {
-            runSpin.run(trailArea, FilterTypes.SIMULATION,
+            runSpin.run(trailArea, FilterTypes.INTERACTIVE,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("INTERACTIVE_OPTIONS") + " " +
                 editor.fileName);
@@ -273,7 +273,7 @@ public class jSpin extends JFrame implements ActionListener {
             boolean currentConfig = e.getSource() == menuItemOptionsSaveCurrent;
             Config.saveFile(currentConfig);
             append(messageArea, 
-                   "Saved jSpin configuration file config.cfg in " +
+                   "Saved configuration file config.cfg in " +
                    (currentConfig ? "current" : "installation") + " directory\n");
         }
 
@@ -296,14 +296,6 @@ public class jSpin extends JFrame implements ActionListener {
             if(OUTfileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
             	editor.writeFile(OUTfileChooser.getSelectedFile(), trailArea);
         }
-        // else if (e.getSource() == menuItemRaw) {
-            // boolean raw = !Config.getBooleanProperty("RAW");
-            // Config.setBooleanProperty("RAW", raw);
-            // menuItemRaw.setSelected(raw);
-        // }
-        // else if (e.getSource() == menuItemDisplayRaw)
-            // displayFile(editor.root + java.io.File.separator + editor.fileRoot + ".raw");
-
         // Spider menu actions
         else if ((e.getSource() == menuItemSpider) || (e.getSource() == toolSpider)) {
         	if (editor.file == null) {
@@ -489,24 +481,13 @@ public class jSpin extends JFrame implements ActionListener {
         menuSpin.addSeparator();
         initMenuItem(menuSpin, menuItemStop, Config.StopMN, Config.StopAC);
 
-        // menuBar.add(menuOptions);
-        // menuOptions.setText(Config.Options);
-        // menuOptions.setMnemonic(Config.OptionsMN);
         menuBar.add(menuOptions);
         menuOptions.setText(Config.Options);
         menuOptions.setMnemonic(Config.OptionsMN);
         initMenuItem(menuOptions, menuItemLimits, Config.LimitsMN, Config.LimitsAC);
-        // initMenuItem(menuOptions, menuItemMaxDepth, Config.MaxDepthMN, Config.MaxDepthAC);
         menuOptions.addSeparator();
         initMenuItem(menuOptions, menuItemSeed, Config.SeedMN, Config.SeedAC);
         menuOptions.addSeparator();
-        // initMenuItem(menuOptions, menuItemOptionsCommon, Config.CommonMN, Config.CommonAC);
-        // menuOptions.addSeparator();
-        // initMenuItem(menuOptions, menuItemOptionsCheck, Config.CheckMN, Config.CheckAC);
-        // initMenuItem(menuOptions, menuItemOptionsRandom, Config.RandomMN, Config.OptionsRandomAC);
-        // initMenuItem(menuOptions, menuItemOptionsInter, Config.InterMN, Config.OptionsInterAC);
-        // initMenuItem(menuOptions, menuItemOptionsTrail, Config.TrailMN, Config.OptionsTrailAC);
-        // menuOptions.addSeparator();
         initMenuItem(menuOptions, menuItemDefault, Config.DefaultMN, Config.DefaultAC);
         initMenuItem(menuOptions, menuItemOptionsSaveInstall, Config.SaveInstallMN, Config.OptionsSaveInstallAC);
         initMenuItem(menuOptions, menuItemOptionsSaveCurrent, Config.SaveCurrentMN, Config.OptionsSaveCurrentAC);
@@ -518,18 +499,8 @@ public class jSpin extends JFrame implements ActionListener {
         initMenuItem(menuOutput, menuItemMax, Config.MaxMN, Config.MaxAC);
         menuOutput.addSeparator();
         initMenuItem(menuOutput, menuItemTraceOptions, Config.TraceOptionsMN, Config.TraceOptionsAC);
-        // initMenuItem(menuOutput, menuItemExcludedV, Config.ExcludedVMN, Config.ExcludedVAC);
-        // initMenuItem(menuOutput, menuItemExcludedS, Config.ExcludedSMN, Config.ExcludedSAC);
-        // menuOutput.addSeparator();
-        // initMenuItem(menuOutput, menuItemStWidth, Config.StWidthMN, Config.StWidthAC);
-        // initMenuItem(menuOutput, menuItemVarWidth, Config.VarWidthMN, Config.VarWidthAC);
         menuOutput.addSeparator();
         initMenuItem(menuOutput, menuItemSaveSpin, Config.SaveSpinMN, Config.SaveSpinAC);
-        // menuOutput.addSeparator();
-        // initMenuItem(menuOutput, menuItemRaw, Config.RawMN, Config.RawAC);
-        // initMenuItem(menuOutput, menuItemDisplayRaw, Config.DisplayRawMN, Config.DisplayRawAC);
-        // menuItemRaw.setSelected(Config.getBooleanProperty("RAW"));
-
         // menuBar.add(menuSpider);
         // menuSpider.setText(Config.Spider);
         // menuSpider.setMnemonic(Config.SpiderMN);
@@ -664,7 +635,7 @@ public class jSpin extends JFrame implements ActionListener {
         if (version.compareTo(Config.JAVA_VERSION) < 0) {
             JOptionPane.showMessageDialog(null, 
                 "Your Java version is " + version + "\n" + 
-                "jSpin needs least " + Config.JAVA_VERSION, "Version error", 
+                "Use at least version " + Config.JAVA_VERSION, "Version error", 
                 JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }

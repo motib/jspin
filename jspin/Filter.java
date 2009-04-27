@@ -19,6 +19,7 @@ public class Filter {
     private static int linesPerTitle;
 
     private String title;  		// Title string
+    private String varTitle;  // Title string, just variables
     private String process;   // Process string
     private String statement; // Statement string
     private int lines;		    // Line counter to redisplay title
@@ -106,18 +107,18 @@ public class Filter {
       return s + "\n";
   }
 
-  private String extract(String s, String pattern) {
+  public static String extract(String s, String pattern) {
     int i = s.indexOf(pattern) + pattern.length();
     return s.substring(i, s.indexOf(",", i+1));
   }
 
-  private String extractBraces(String s, String pattern) {
+  public static String extractBraces(String s, String pattern) {
     int i = s.indexOf(pattern) + pattern.length();
     String t = s.substring(i, s.indexOf(",", i+1));
     return t.substring(1, t.length()-1);
   }
 
-  private int extractNum(String s, String pattern) {
+  public static int extractNum(String s, String pattern) {
     int i = s.indexOf(pattern) + pattern.length();
     String t = s.substring(i, s.indexOf(",", i+1));
     try {
@@ -145,9 +146,10 @@ public class Filter {
         return "";
       }
       else if (s.startsWith("symbol table end=")) {
+        varTitle = collectionToString(variables.keySet());
         title = formatItem(processTitle,   processWidth,   true) + " " +
                 formatItem(statementTitle, statementWidth, true) + " " + 
-                collectionToString(variables.keySet()) + "\n";
+                varTitle + "\n";
         return "\n";
       }
       else if (s.startsWith("transitions end=")) {
@@ -170,9 +172,9 @@ public class Filter {
         statement = formatItem(ln + " " + st, statementWidth, true); 
         lines = (lines + 1) % linesPerTitle;
         if (lines == 0)
-          return title + variablesToString(s);
+          return title + variablesToString(true);
         else
-          return variablesToString(s);
+          return variablesToString(true);
       }
       else if (s.startsWith("simulation terminated")) {
         i = s.indexOf(",");
@@ -222,7 +224,7 @@ public class Filter {
 		return s;
 	}	
 
-	private void storeVariables(String s) {
+	public void storeVariables(String s) {
     Collection<String> c = variables.keySet();
 		String t, num;
 		Iterator<String> it = c.iterator();
@@ -233,9 +235,13 @@ public class Filter {
     }
 	}	
 
-	private String variablesToString(String s) {
+  public String getTitle() {
+    return varTitle;
+  }
+
+	public String variablesToString(boolean processes) {
     Collection<String> c = variables.keySet();
-		String t = process + " " + statement + " ";
+		String t = (processes ? process + " " + statement + " " : "");
 		Iterator<String> it = c.iterator();
 		while (it.hasNext())
 			t = t + formatItem(variables.get(it.next()), variableWidth, false) + " ";
