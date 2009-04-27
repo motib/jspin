@@ -1,4 +1,4 @@
-/* Copyright 2003-8 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
+/* Copyright 2003-9 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
 package jspin;
 import java.io.*;
 import java.awt.event.*;
@@ -14,11 +14,10 @@ public class Config {
   public static final char sep = java.io.File.separatorChar;  // shortcut
 
 	// Strings
-    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.1";
+    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.2";
     static final String JAVA_VERSION     = "1.5";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE     = "SpinSpider";
-    static final String OPTIONS_TITLE    = "Display";
     static final String SELECT  	       = "Select a statement";
     static final String OPEN_FILE 	     = "Open a Promela file\n";
 	  static final String processTitle     = "Process ";
@@ -27,7 +26,7 @@ public class Config {
 
     static void setDefaultProperties() {
         // Directories and file names
-        properties.put("SOURCE_DIRECTORY", "jspin-examples");
+        properties.put("SOURCE_DIRECTORY", "examples");
         properties.put("ERIGONE",          "erigone");
         properties.put("DOT",              "bin" + sep + "dot.exe");
         properties.put("HELP_FILE_NAME",   "txt" + sep + "help.txt");
@@ -50,9 +49,6 @@ public class Config {
         properties.put("STATE_STACK",    "2");
         properties.put("LOCATION_STACK", "3");
         properties.put("SEED",           "0");
-        properties.put("FAIRNESS",       Boolean.toString(true));
-        properties.put("VERIFY_MODE",    Safety);
-        // properties.put("RAW",            Boolean.toString(false));
         properties.put("PROCESS_WIDTH",  Integer.toString(7));
         properties.put("STATEMENT_WIDTH",Integer.toString(18));
         properties.put("VARIABLE_WIDTH", Integer.toString(10));
@@ -66,7 +62,6 @@ public class Config {
         properties.put("SELECT_BUTTON", Integer.toString(220)); 
         properties.put("SELECT_HEIGHT", Integer.toString(60));
         properties.put("SELECT_MENU",   Integer.toString(5));
-        properties.put("UNEXECUTABLE",  Boolean.toString(false));
 
 		    // Location of dividers in JSplitPanes: Left-right and top-bottom
         properties.put("LR_DIVIDER", Integer.toString(400));
@@ -91,25 +86,25 @@ public class Config {
     }
 
     // Component names and mnemonics
-    static final String File 		= "File";
-    static final int    FileMN		= KeyEvent.VK_F;
-    static final String New			= "New";
-    static final int    NewMN       = KeyEvent.VK_N;
-    static final String Open        = "Open";
-    static final int    OpenMN      = KeyEvent.VK_O;
-    static final String Save        = "Save";
-    static final int    SaveMN      = KeyEvent.VK_S;
-    static final String SaveAs   	= "Save as";
-    static final int    SaveAsMN    = KeyEvent.VK_A;
-    static final String Switch      = "Switch file";
-    static final int    SwitchMN    = KeyEvent.VK_F;
-    static final String Exit       	= "Exit";
-    static final int    ExitMN      = KeyEvent.VK_X;
+    static final String File 		 = "File";
+    static final int    FileMN	 = KeyEvent.VK_F;
+    static final String New			 = "New";
+    static final int    NewMN    = KeyEvent.VK_N;
+    static final String Open     = "Open";
+    static final int    OpenMN   = KeyEvent.VK_O;
+    static final String Save     = "Save";
+    static final int    SaveMN   = KeyEvent.VK_S;
+    static final String SaveAs   = "Save as";
+    static final int    SaveAsMN = KeyEvent.VK_A;
+    static final String Switch   = "Switch file";
+    static final int    SwitchMN = KeyEvent.VK_F;
+    static final String Exit     = "Exit";
+    static final int    ExitMN   = KeyEvent.VK_X;
 
     static final String Editor      = "Edit";
-    static final int    EditorMN  	= KeyEvent.VK_E;
+    static final int    EditorMN    = KeyEvent.VK_E;
     static final String Undo       	= "Undo";
-    static final int    UndoMN 		= KeyEvent.VK_U;
+    static final int    UndoMN 		  = KeyEvent.VK_U;
     static final String Redo       	= "Redo";
     static final int    RedoMN      = KeyEvent.VK_R;
     static final String Copy       	= "Copy";
@@ -123,80 +118,80 @@ public class Config {
     static final String FindAgain  	= "Find again";
     static final int    FindAgainMN = KeyEvent.VK_A;
 
-    static final String Spin        = "Run";
-    static final int    SpinMN      = KeyEvent.VK_U;
-    static final String Check		    = "Compile";
-    static final int    CheckMN   	= KeyEvent.VK_C;
-    static final String Random    	= "Random";
-    static final int    RandomMN   	= KeyEvent.VK_R;
-    static final String Inter		    = "Interactive";
-    static final int    InterMN		  = KeyEvent.VK_I;
-    static final String LTL2BA    	= "LTL2BA";
-    static final int    LTL2BAMN  	= KeyEvent.VK_L;
-    static final String Safety    	= "Safety";
-    static final int    SafetyMN  	= KeyEvent.VK_S;
+    static final String Spin         = "Run";
+    static final int    SpinMN       = KeyEvent.VK_U;
+    static final String Check		     = "Compile";
+    static final int    CheckMN   	 = KeyEvent.VK_C;
+    static final String Random    	 = "Random";
+    static final int    RandomMN   	 = KeyEvent.VK_R;
+    static final String Inter		     = "Interactive";
+    static final int    InterMN		   = KeyEvent.VK_I;
+    static final String LTL2BA    	 = "LTL2BA";
+    static final int    LTL2BAMN  	 = KeyEvent.VK_L;
+    static final String Safety    	 = "Safety";
+    static final int    SafetyMN  	 = KeyEvent.VK_S;
     static final String Acceptance   = "Accept";
     static final int    AcceptanceMN = KeyEvent.VK_A;
-    static final String Fair    	  = "Fairness";
-    static final int    FairMN  	  = KeyEvent.VK_N;
-    static final String Trail       = "Trail";
-    static final int    TrailMN  	  = KeyEvent.VK_T;
-    static final String Stop       	= "Stop";
-    static final int    StopMN   	  = KeyEvent.VK_P;
+    static final String Fair    	   = "Fairness";
+    static final int    FairMN  	   = KeyEvent.VK_N;
+    static final String Trail        = "Trail";
+    static final int    TrailMN  	   = KeyEvent.VK_T;
+    static final String Stop       	 = "Stop";
+    static final int    StopMN   	   = KeyEvent.VK_P;
 
-    static final String Options   	= "Options";
-    static final int    OptionsMN  = KeyEvent.VK_O;
-    static final String Limits    	= "Limits";
-    static final int    LimitsMN    = KeyEvent.VK_L;
+    static final String Options        = "Options";
+    static final int    OptionsMN      = KeyEvent.VK_O;
+    static final String Limits    	   = "Limits";
+    static final int    LimitsMN       = KeyEvent.VK_L;
     static final String TotalSteps     = "Total steps";
     static final String ProgressSteps  = "Progress steps";
     static final String StateStack     = "State stack";
     static final String LocationStack  = "Location stack";
-    static final String Default   	= "Default";
-    static final int    DefaultMN 	= KeyEvent.VK_D;
-    static final String SaveInstall = "Save install";
-    static final int    SaveInstallMN = KeyEvent.VK_I;
-    static final String SaveCurrent   = "Save current";
-    static final int    SaveCurrentMN = KeyEvent.VK_S;
-    static final String Seed        = "Seed";
-    static final int    SeedMN      = KeyEvent.VK_S;
-    static final String TraceOptions = "Trace options";
+    static final String Default   	   = "Default";
+    static final int    DefaultMN 	   = KeyEvent.VK_D;
+    static final String SaveInstall    = "Save install";
+    static final int    SaveInstallMN  = KeyEvent.VK_I;
+    static final String SaveCurrent    = "Save current";
+    static final int    SaveCurrentMN  = KeyEvent.VK_S;
+    static final String Seed           = "Seed";
+    static final int    SeedMN         = KeyEvent.VK_S;
+    static final String TraceOptions   = "Trace options";
     static final int    TraceOptionsMN = KeyEvent.VK_T;
-    static final String Excluded  	= "Excluded";
-    static final String Variables   = "Variables";
-    static final String Statements  = "Statements";
-    static final String Width 	= "Width";
+    static final String Excluded  	   = "Excluded";
+    static final String Variables      = "Variables";
+    static final String Statements     = "Statements";
+    static final String Width 	       = "Width";
 
-    static final String Output		= "Display";
-    static final int    OutputMN   	= KeyEvent.VK_D;
+    static final String Display		  = "Display";
+    static final int    DisplayMN  	= KeyEvent.VK_D;
     static final String SaveSpin    = "Save output";
     static final int    SaveSpinMN  = KeyEvent.VK_V;
 
-    static final String Spider		    = "SpinSpider";
+    static final String Spider		      = "SpinSpider";
     static final int    SpiderMN   	    = KeyEvent.VK_D;
     static final String SpiderDisplay   = "Display debug";
     static final int    SpiderDisplayMN = KeyEvent.VK_L;
-    static final String Run  		    = "Run";
-    static final int    RunMN   	    = KeyEvent.VK_R;
+    static final String Run  		        = "Run";
+    static final int    RunMN   	      = KeyEvent.VK_R;
 
     static final String Help		= "Help";
-    static final int    HelpMN    	= KeyEvent.VK_H;
-    static final String About    	= "About";
-    static final int    AboutMN    	= KeyEvent.VK_A;
+    static final int    HelpMN  = KeyEvent.VK_H;
+    static final String About   = "About";
+    static final int    AboutMN = KeyEvent.VK_A;
 
-    static final String Max      	= "Maximize";
-    static final int    MaxMN    	= KeyEvent.VK_M;
+    static final String Max     = "Maximize";
+    static final int    MaxMN   = KeyEvent.VK_M;
 
-    static final String LTLFormula 		 = " LTL formula  ";
-    static final int 	  LTL_COLUMNS    = 50;
+    static final String LTLFormula 	= " LTL formula  ";
+    static final int 	  LTL_COLUMNS = 50;
 
-  	static final String OK           = "OK";
-    static final int    OKMN         = KeyEvent.VK_O;
-    static final String Cancel       = "Cancel";
+  	static final String OK     = "OK";
+    static final int    OKMN   = KeyEvent.VK_O;
+    static final String Cancel = "Cancel";
 
     // SpinSpider options
     static final String NoTrail      = "No trail";
-    static final int    NoTrailMN	 = KeyEvent.VK_T;
+    static final int    NoTrailMN	   = KeyEvent.VK_T;
     static final String EmphTrail    = "Emphasize trail";
     static final int    EmphTrailMN	 = KeyEvent.VK_E;
     static final String OnlyTrail    = "Only trail";
@@ -204,7 +199,7 @@ public class Config {
     static final String Automata     = "Automata";
     static final int    AutomataMN	 = KeyEvent.VK_A;
     static final String Debug        = "Debug";
-    static final int    DebugMN		 = KeyEvent.VK_D;
+    static final int    DebugMN		   = KeyEvent.VK_D;
     static final String DotSize      = "Dot size";
     static final String DotSmall     = "Small";
     static final int    DotSmallMN	 = KeyEvent.VK_M;
@@ -217,7 +212,6 @@ public class Config {
     static final int    TrailBoldMN	 = KeyEvent.VK_B;
     static final String Processes    = "Processes";
     static final int    MAX_PROCESS  = 5;
-    // static final String Variables    = "Variables";
     static final String Format       = "Format";
     static final String DOT          = "dot";
     static final String PNG          = "png";
@@ -252,15 +246,11 @@ public class Config {
     
     // Dummy accelerators
     static String 
-        AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC, // DisplayRawAC,
-        ExcludedSAC, ExcludedVAC, FairAC, HelpAC, InterAC, 
-        LTLClearAC, LTLLoadAC, LTLTranslateAC, LTL2BAAC,
-        MaxAC, MaxStepsAC, NonProcessAC,
-        OptionsCAC, OptionsInterAC, OptionsPanAC, OptionsRandomAC,
-        OptionsSaveCurrentAC, OptionsSaveInstallAC, OptionsTrailAC, 
-        RandomAC, // RawAC,
-        SafetyAC, SaveSpinAC, SpiderAC, SpiderDisplayAC,
-        StWidthAC, StopAC, TrailAC, VarWidthAC, VerifyAC;
+        AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC,
+        FairAC, HelpAC, InterAC, LTL2BAAC, MaxAC, 
+        OptionsSaveCurrentAC, OptionsSaveInstallAC, 
+        RandomAC, SafetyAC, SaveSpinAC, SpiderAC, SpiderDisplayAC,
+        StopAC, TrailAC;
 
 	// Initialize configuration file
     static public void init() {

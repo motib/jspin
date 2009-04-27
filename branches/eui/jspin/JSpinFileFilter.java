@@ -1,6 +1,6 @@
 /* Copyright 2005 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
 /*
- * File filter for jSpin
+ * File filter for EUI
 */
 
 package jspin;
