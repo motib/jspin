@@ -11,20 +11,22 @@ import java.awt.event.*;
 import java.util.StringTokenizer;
 
 class RunSpin {
-  private Editor editor;              // The editor object
-  private Filter filter;              // The filter object
-  private RunThread runThread;        // Thread object for running Spin
-  private SelectDialog selectDialog;  // Thread object for select dialog
+  private Editor editor;               // The editor object
+  private Filter filter;               // The filter object
+  private RunThread runThread;         // Thread object for running Spin
+  private SelectDialog selectDialog;   // Thread object for select dialog
 
-  private JTextArea messageArea;      // The message area
-  private JTextArea area;             // Output area display
-  // private PrintWriter rawWriter;      // To write raw spin output
+  private JTextArea messageArea;       // The message area
+  private JTextArea area;              // Output area display
 
-  private String command, parameters; // The command being executed
-  private jSpin.FilterTypes filtering;      // Output filtering mode
+  private String command, parameters;  // The command being executed
+  private jSpin.FilterTypes filtering; // Output filtering mode
+
+  // For interactive mode
+  // (Executable) transitions and selections in popup menu
   private static final int MAX_SELECTIONS = 50;
   private String[] selections = new String[MAX_SELECTIONS];
-                                      // Statements selected from
+  private int numSelections;
 
   RunSpin(Editor e, JTextArea m, Filter f) {
     editor = e;
@@ -91,11 +93,8 @@ class RunSpin {
 
     public void run() {
       try {
-        // if (Config.getBooleanProperty("RAW"))
-          // rawFile();
         // Use ProcessBuilder to run Spin, redirecting ErrorStream
         String[] sa = stringToArray(command, parameters);
-// for (int i = 0; i < sa.length; i++) System.out.println(sa[i]);
         ProcessBuilder pb = new ProcessBuilder(sa);
         File pf = editor.file.getParentFile();
         if (pf != null) pb.directory(pf.getCanonicalFile());
@@ -110,20 +109,39 @@ class RunSpin {
         // Process Spin output line by line
         String s = "";
         boolean running = true;
+        boolean chosenFlag = false;
+        String  currentState = "";
         while (running) {
           s = input.readLine();
-          // if (Config.getBooleanProperty("RAW"))
-            // rawWriter.println(s);
+          System.out.println(s);
           if (s == null)
             running = false;
-          else if (s.startsWith("choose from="))
-            running = select(s, area, p, input, output);
-          // else if (s.startsWith("spin: type return")) {
-            // output.write("\n");
-            // output.flush();
-          // } 
           else if (filtering == jSpin.FilterTypes.SIMULATION)
             jSpin.append(area, filter.filterSimulation(s));
+          else if (filtering == jSpin.FilterTypes.INTERACTIVE) {
+            if (s.startsWith("initial state=") ||s.startsWith("next state=")) {
+              currentState = s;
+              numSelections = 0;
+            }
+            else if (s.startsWith("chosen transition="))
+              chosenFlag = true;
+            else if (!chosenFlag && s.startsWith("process="))
+              selections[numSelections++] =
+                Filter.extract(s,       "process=") + " " +
+                Filter.extract(s,       "line=")    + " " + 
+                Filter.extractBraces(s, "statement=");
+            else if (chosenFlag && s.startsWith("process=")) {
+              jSpin.append(area, filter.filterSimulation(currentState));
+              jSpin.append(area, filter.filterSimulation(s));
+              chosenFlag = false;
+            }
+            else if (s.startsWith("choose from=")) {
+              filter.storeVariables(currentState);
+              running = select(filter.getTitle() + "\n" + filter.variablesToString(false), area, p, input, output);
+            }
+            else
+              jSpin.append(area, filter.filterSimulation(s));
+          }
           else if (filtering == jSpin.FilterTypes.VERIFICATION)
             jSpin.append(area, filter.filterVerification(s));
           else
@@ -131,20 +149,6 @@ class RunSpin {
         }
         // Wait for Spin process to end
         p.waitFor();
-        // if (Config.getBooleanProperty("RAW"))
-          // rawWriter.close();
-        // If syntax error, set cursor to line in editor
-        if (area.getText().indexOf("Error: syntax error") != -1) {
-          s = area.getText();
-          try {
-            int line = Integer.parseInt(
-              s.substring(
-                s.indexOf("line")+4, s.indexOf('"')).trim());
-              editor.caretToLine(line);
-          } catch (NumberFormatException e1) {
-            editor.caretToLine(0);
-          }
-        }
       } catch (InterruptedException e) {
         jSpin.append(messageArea, "Interrupted exception");
       }
@@ -190,44 +194,19 @@ class RunSpin {
       if (p != null) p.destroy();
     }
 
-    // Open file for raw Spin output
-    // private void rawFile() {
-      // String s = editor.root + File.separator + editor.fileRoot + ".raw";
-      // try {
-        // rawWriter = new PrintWriter(new FileWriter(s));
-        // jSpin.append(messageArea, "\nOpened " + s + "\n");
-      // } catch (IOException e) {
-        // jSpin.append(messageArea, "\nCannot open " + s + "\n");
-      // }
-    // }
-
-  private int extractNum(String s, String pattern) {
-    int i = s.indexOf(pattern) + pattern.length();
-    String t = s.substring(i, s.indexOf(",", i+1));
-    try {
-      return Integer.parseInt(t);
-    }
-    catch(NumberFormatException e) {
-      return -1;
-    }
-  }
-
     // Select the next statement to run in interactive simulation
     private boolean select(
-        String s,
+        String state,
         JTextArea area, Process p, 
         BufferedReader input, OutputStreamWriter output) {
-      int numOptions = extractNum(s, "to=") + 1;
-      if (numOptions >= MAX_SELECTIONS) return false;
       try {
-        for (int i=0; i < numOptions; i++)
-          selections[i] = i + "";
         // Get selection from dialog
         int selectedValue = -1;
         selectDialog = 
           new SelectDialog(
-            numOptions,
-            numOptions <= Config.getIntProperty("SELECT_MENU"),
+            numSelections,
+            numSelections <= Config.getIntProperty("SELECT_MENU"),
+            state,
             selections);
         selectDialog.start();
         while (selectedValue == -1) {
@@ -238,24 +217,19 @@ class RunSpin {
           if (selectDialog == null) break;
           else selectedValue = selectDialog.getValue();
         }
-System.out.println("selected1=" + selectedValue);
         // For Macintosh (?) - Angelika's problem (?)
         if (selectDialog != null) { 
           selectDialog.interrupt();
           selectDialog = null;
         }
-        // if (selectDialog != null) selectDialog.interrupt();
         // If 0 (escape or close) selected, quit Spin interaction
         if (selectedValue == 0) {
             output.write("q\n");
             output.flush();
             return false;
         }
-        // selectedValue = Integer.valueOf(
-          // selections[selectedValue-1].substring(
-            // 0, selections[selectedValue-1].indexOf(':')));
-// System.out.println("selected2=" + selectedValue);
         // Send selection to Spin
+        selectedValue--;
         output.write(selectedValue + "\n");
         output.flush();
         return true;
@@ -275,12 +249,13 @@ System.out.println("selected1=" + selectedValue);
     private String[] selections;// The selections
 
     private JFrame    dialog;      // The frame
-    private JPanel    panel;
+    private JPanel    panel1;
     private JButton[] options;  // Array of process buttons
     private JComboBox pulldown = new JComboBox();
+    private int       width;
 
     // Constructor - set up frame with number of buttons required
-    SelectDialog (int numOptions, boolean buttons, String[] selections) {
+    SelectDialog (int numOptions, boolean buttons, String state, String[] selections) {
       this.numOptions = numOptions;
       this.selections = selections;
       dialog = new JFrame();
@@ -295,17 +270,26 @@ System.out.println("selected1=" + selectedValue);
               KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
               JComponent.WHEN_IN_FOCUSED_WINDOW);
       dialog.setTitle(Config.SELECT);
-      panel = new JPanel();
+      panel1 = new JPanel();
       if (buttons) constructButtonsDialog(); else constructMenuDialog();
-      dialog.getContentPane().setLayout(new java.awt.BorderLayout());
-      dialog.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
+      JTextArea stateField = new JTextArea(state, 2, 50);
+      stateField.setFont(messageArea.getFont());
+      JPanel panel2 = new JPanel();
+      panel2.add(stateField);
+      panel1.setLayout(new java.awt.GridLayout(1,1));
+      panel2.setLayout(new java.awt.GridLayout(1,1));
+      dialog.getContentPane().setLayout(new java.awt.GridLayout(2,1));
+      dialog.getContentPane().add(panel2);
+      dialog.getContentPane().add(panel1);
+      dialog.setSize(width, Config.getIntProperty("SELECT_HEIGHT") * 2);
       dialog.setLocationRelativeTo(messageArea);
       dialog.validate();
       dialog.setVisible(true);
+      options[0].requestFocusInWindow();
     }
     
     void constructButtonsDialog() {
-      panel.setLayout(new java.awt.GridLayout(1, numOptions));
+      panel1.setLayout(new java.awt.GridLayout(1, numOptions));
       options = new JButton[numOptions];
       JButton button = null;
       for (int i = 1; i <= numOptions; i++) {
@@ -313,15 +297,16 @@ System.out.println("selected1=" + selectedValue);
         button.setFont(messageArea.getFont());
         button.addActionListener(this);
         options[i-1] = button;
-        panel.add(button);
+        panel1.add(button);
       }
-      dialog.setSize(
-        Config.getIntProperty("SELECT_BUTTON") * numOptions,
-        Config.getIntProperty("SELECT_HEIGHT"));
+      width = Config.getIntProperty("SELECT_BUTTON") * numOptions;
+      // dialog.setSize(
+      //   Config.getIntProperty("SELECT_BUTTON") * numOptions,
+      //   Config.getIntProperty("SELECT_HEIGHT") * 2);
     }
 
     void constructMenuDialog() {
-      panel.setLayout(new java.awt.BorderLayout());
+      panel1.setLayout(new java.awt.BorderLayout());
       pulldown = new JComboBox();
       pulldown.setFont(messageArea.getFont());
       pulldown.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
@@ -330,10 +315,11 @@ System.out.println("selected1=" + selectedValue);
         pulldown.addItem(selections[i]);
       pulldown.setSelectedIndex(-1);
       pulldown.addActionListener(this);
-      panel.add(pulldown, java.awt.BorderLayout.CENTER);
-      dialog.setSize(
-        Config.getIntProperty("SELECT_BUTTON"), 
-        Config.getIntProperty("SELECT_HEIGHT"));
+      panel1.add(pulldown, java.awt.BorderLayout.CENTER);
+      width = Config.getIntProperty("SELECT_BUTTON"); 
+      // dialog.setSize(
+      //   Config.getIntProperty("SELECT_BUTTON"), 
+      //   Config.getIntProperty("SELECT_HEIGHT"));
     }
 
     // Display dialog
@@ -352,7 +338,11 @@ System.out.println("selected1=" + selectedValue);
       else if (e.getSource() instanceof JComboBox) {
         selectedValue = ((JComboBox)e.getSource()).getSelectedIndex()+1;
       } 
-      else selectedValue = 0;
+      else {
+        selectedValue = 0;
+        dialog.dispose();
+        return;
+      }
       dialog.dispose();
       java.awt.Dimension rv = ((JComponent)e.getSource()).getSize(null);
       Config.setIntProperty("SELECT_BUTTON", rv.width);

@@ -37,7 +37,7 @@ public class Config {
         // Erigone options
         properties.put("COMPILE_OPTIONS",     "-c -dprv");
         properties.put("RANDOM_OPTIONS",      "-r -dcmprv");
-        properties.put("INTERACTIVE_OPTIONS", "-i -dmprv");
+        properties.put("INTERACTIVE_OPTIONS", "-i -dcemprv");
         properties.put("TRAIL_OPTIONS",       "-g -dcmprv");
         properties.put("LTL2BA_OPTIONS",      "-b -dbv");
         properties.put("SAFETY_OPTIONS",      "-s -drv");
@@ -52,7 +52,7 @@ public class Config {
         properties.put("SEED",           "0");
         properties.put("FAIRNESS",       Boolean.toString(true));
         properties.put("VERIFY_MODE",    Safety);
-        properties.put("RAW",            Boolean.toString(false));
+        // properties.put("RAW",            Boolean.toString(false));
         properties.put("PROCESS_WIDTH",  Integer.toString(7));
         properties.put("STATEMENT_WIDTH",Integer.toString(18));
         properties.put("VARIABLE_WIDTH", Integer.toString(10));
@@ -64,7 +64,7 @@ public class Config {
 
 		    // Select dialog
         properties.put("SELECT_BUTTON", Integer.toString(220)); 
-        properties.put("SELECT_HEIGHT", Integer.toString(70));
+        properties.put("SELECT_HEIGHT", Integer.toString(60));
         properties.put("SELECT_MENU",   Integer.toString(5));
         properties.put("UNEXECUTABLE",  Boolean.toString(false));
 
@@ -171,10 +171,6 @@ public class Config {
     static final int    OutputMN   	= KeyEvent.VK_D;
     static final String SaveSpin    = "Save output";
     static final int    SaveSpinMN  = KeyEvent.VK_V;
-    static final String Raw     	  = "Raw output";
-    static final int    RawMN  	      = KeyEvent.VK_R;
-    static final String DisplayRaw    = "Display raw";
-    static final int    DisplayRawMN  = KeyEvent.VK_D;
 
     static final String Spider		    = "SpinSpider";
     static final int    SpiderMN   	    = KeyEvent.VK_D;
@@ -256,13 +252,13 @@ public class Config {
     
     // Dummy accelerators
     static String 
-        AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC, DisplayRawAC,
+        AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC, // DisplayRawAC,
         ExcludedSAC, ExcludedVAC, FairAC, HelpAC, InterAC, 
         LTLClearAC, LTLLoadAC, LTLTranslateAC, LTL2BAAC,
         MaxAC, MaxStepsAC, NonProcessAC,
         OptionsCAC, OptionsInterAC, OptionsPanAC, OptionsRandomAC,
         OptionsSaveCurrentAC, OptionsSaveInstallAC, OptionsTrailAC, 
-        RandomAC, RawAC,
+        RandomAC, // RawAC,
         SafetyAC, SaveSpinAC, SpiderAC, SpiderDisplayAC,
         StWidthAC, StopAC, TrailAC, VarWidthAC, VerifyAC;
 
@@ -279,8 +275,8 @@ public class Config {
           installationDirectory = ".";
         else
           installationDirectory = installationDirectory.substring(0, lastSeparator);
-//        System.err.println(currentDirectory + java.io.File.separator + CONFIG_FILE_NAME);
-//        System.err.println(installationDirectory + java.io.File.separator + CONFIG_FILE_NAME);
+        // System.err.println(currentDirectory + java.io.File.separator + CONFIG_FILE_NAME);
+        // System.err.println(installationDirectory + java.io.File.separator + CONFIG_FILE_NAME);
         FileInputStream in = null;
         try {
             in = new FileInputStream(
@@ -295,11 +291,17 @@ public class Config {
             System.err.println(
 				      "Cannot open configuration file, creating new file");
             try {
-                saveFile(false);
-                in = new FileInputStream(installationDirectory + java.io.File.separator + CONFIG_FILE_NAME);
+                saveFile(true);
+                in = new FileInputStream(currentDirectory + java.io.File.separator + CONFIG_FILE_NAME);
             } catch (IOException e2) {
-                System.err.println("Cannot write configuration file");
-                return;
+                System.err.println("Cannot write configuration file in installation directory");
+              try {
+                  saveFile(false);
+                  in = new FileInputStream(installationDirectory + java.io.File.separator + CONFIG_FILE_NAME);
+              } catch (IOException e3) {
+                  System.err.println("Cannot write configuration file in current directory");
+                  return;
+              }
             }
           }
         }
@@ -322,9 +324,11 @@ public class Config {
               new FileOutputStream(
                 (current ? currentDirectory : installationDirectory)
                 + java.io.File.separator + CONFIG_FILE_NAME);
-            properties.store(out, "jSpin configuration file");
+            properties.store(out, "Configuration file");
             out.close();
-            System.err.println("Saved jSpin configuration file config.cfg");
+            System.err.println(
+              "Saved configuration file config.cfg in " +
+              (current ? "current" : "installation") + " directory");
         } catch (IOException e2) {
             System.err.println("Cannot write configuration file");
         }
