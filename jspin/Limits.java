@@ -1,4 +1,4 @@
-/* Copyright 2005 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
+/* Copyright 2009 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
 /*
  * Dialog for setting Common Options 
  */
@@ -15,33 +15,36 @@ class Limits extends JFrame implements ActionListener {
   private JPanel topPanel, buttonPanel, OKPanel;
 
 	Limits() {
-		buttonPanel = new JPanel();
-        buttonPanel.setLayout(new java.awt.GridLayout(4,2));
     stepsLabel = new JLabel(Config.TotalSteps);
     stepsField = new JTextField(Config.getStringProperty("TOTAL_STEPS"), 10);
-    buttonPanel.add(stepsLabel);
-    buttonPanel.add(stepsField);
     progressLabel = new JLabel(Config.ProgressSteps);
     progressField = new JTextField(Config.getStringProperty("PROGRESS_STEPS"), 10);
-    buttonPanel.add(progressLabel);
-    buttonPanel.add(progressField);
     stackLabel = new JLabel(Config.StateStack);
     stackField = new JTextField(Config.getStringProperty("STATE_STACK"), 10);
-    buttonPanel.add(stackLabel);
-    buttonPanel.add(stackField);
     locationLabel = new JLabel(Config.LocationStack);
     locationField = new JTextField(Config.getStringProperty("LOCATION_STACK"), 10);
+
+		buttonPanel = new JPanel();
+    buttonPanel.setLayout(new java.awt.GridLayout(4,2));
+    buttonPanel.add(stepsLabel);
+    buttonPanel.add(stepsField);
+    buttonPanel.add(progressLabel);
+    buttonPanel.add(progressField);
+    buttonPanel.add(stackLabel);
+    buttonPanel.add(stackField);
     buttonPanel.add(locationLabel);
     buttonPanel.add(locationField);
-		OKPanel = new JPanel();
-        OKPanel.setLayout(new java.awt.GridLayout(1,2));
+
 		okButton = new JButton(Config.OK);
-		cancelButton = new JButton(Config.Cancel);
     okButton.setMnemonic(Config.OKMN);
+		okButton.addActionListener(this);
+		cancelButton = new JButton(Config.Cancel);
+		cancelButton.addActionListener(this);
+		OKPanel = new JPanel();
+    OKPanel.setLayout(new java.awt.GridLayout(1,2));
     OKPanel.add(okButton);
     OKPanel.add(cancelButton);
-		okButton.addActionListener(this);
-		cancelButton.addActionListener(this);
+
     getRootPane().setDefaultButton(okButton);
     getRootPane().registerKeyboardAction(this,
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -53,6 +56,7 @@ class Limits extends JFrame implements ActionListener {
     topPanel.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLUE));
     buttonPanel.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLUE));
     OKPanel.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLUE));
+
     getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
     getContentPane().add(buttonPanel, java.awt.BorderLayout.CENTER);
     getContentPane().add(OKPanel, java.awt.BorderLayout.SOUTH);

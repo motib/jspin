@@ -27,20 +27,22 @@ class Trace extends JFrame implements ActionListener {
 
   private Editor editor;
   private Filter filter;
-  private String fileNameState, fileNameVar, read;
+  private String fileNameState, fileNameVar;  // Excluded file names
+  private String read;  // String read from excluded file
 
 	Trace(Editor e, Filter f, java.awt.Font font) {
     editor = e;
     filter = f;
+
+		okButton = new JButton(Config.OK);
+    okButton.setMnemonic(Config.OKMN);
+		okButton.addActionListener(this);
+		cancelButton = new JButton(Config.Cancel);
+		cancelButton.addActionListener(this);
 		OKPanel = new JPanel();
     OKPanel.setLayout(new java.awt.GridLayout(1,2));
-		okButton = new JButton(Config.OK);
-		cancelButton = new JButton(Config.Cancel);
-    okButton.setMnemonic(Config.OKMN);
     OKPanel.add(okButton);
     OKPanel.add(cancelButton);
-		okButton.addActionListener(this);
-		cancelButton.addActionListener(this);
     OKPanel.setBorder(border);
 
     errorLabel = new JLabel(" ", JLabel.CENTER);
@@ -136,7 +138,7 @@ class Trace extends JFrame implements ActionListener {
     setLocationRelativeTo(null);
 		validate();
     setVisible(true);
-    jSpin.append(stateTextArea, null);  // Set caret to end of display
+    EUI.append(stateTextArea, null);  // Set caret to end of display
   }
 
   private int checkProperty(JTextField f) {

@@ -6,11 +6,12 @@
 package jspin;
 import java.util.*;
 public class Filter {
+    // Number of columns for a line number
     private static final int COLS_LINE_NUMBER = 2;
     private static final String blanks = "                             ";
 
     // Properties and copies of the data from the properties
-    private Properties properties;
+    private        Properties properties;
     private static String processTitle;
     private static String statementTitle;
     private static int processWidth;
@@ -18,12 +19,12 @@ public class Filter {
     private static int statementWidth;
     private static int linesPerTitle;
 
-    private String title;  		// Title string
-    private String varTitle;  // Title string, just variables
-    private String process;   // Process string
-    private String statement; // Statement string
-    private int lines;		    // Line counter to redisplay title
-    private boolean program;  // Flag for end of program listing
+    private String  title;     // Title string
+    private String  varTitle;  // Title string, just variables
+    private String  process;   // Process string
+    private String  statement; // Statement string
+    private int     lines;		 // Line counter to redisplay title
+    private boolean program;   // Flag for end of program listing
 
     // Map from variable names to values
     private TreeMap<String, String> variables = new TreeMap<String, String>();
@@ -131,6 +132,8 @@ public class Filter {
 
   public String filterSimulation(String s) {
     int i;
+    // Flag for program message so don't have to check all options
+    //   during execution
     if (program) {
       if (s.startsWith("Erigone"))
           return s + "\n";
@@ -164,7 +167,7 @@ public class Filter {
         storeVariables(s);
         return "";
       }
-      else if (s.startsWith("process=") && (s.indexOf("initial=") == -1)) {
+      else if (s.startsWith("process=")) {
         String st = extractBraces(s, "statement=");
         if (checkExcluded(st, false)) return "";
         String ln = formatItem(extract(s, "line="), COLS_LINE_NUMBER, false);
