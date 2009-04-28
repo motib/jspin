@@ -278,6 +278,8 @@ class RunSpin {
       if (buttons) constructButtonsDialog(); else constructMenuDialog();
       JTextArea stateField = new JTextArea(state, 2, 50);
       stateField.setFont(messageArea.getFont());
+      stateField.setEditable(false);
+      stateField.setFocusable(false);
 
       JPanel panel2 = new JPanel();
       panel2.add(stateField);
