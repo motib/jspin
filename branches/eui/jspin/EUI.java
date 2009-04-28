@@ -51,7 +51,7 @@ public class EUI extends JFrame implements ActionListener {
     private JSplitPane  topSplitPane;
     private JSplitPane  mainSplitPane;
 
-    private JLabel LTLLabel = new JLabel(Config.LTLFormula);
+    private JLabel LTLLabel = new JLabel(Config.LTL_FORMULA);
 
     private JMenuBar  menuBar = new JMenuBar();
 

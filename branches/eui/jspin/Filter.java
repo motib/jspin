@@ -12,8 +12,7 @@ public class Filter {
 
     // Properties and copies of the data from the properties
     private        Properties properties;
-    private static String processTitle;
-    private static String statementTitle;
+
     private static int processWidth;
     private static int variableWidth;
     private static int statementWidth;
@@ -42,8 +41,6 @@ public class Filter {
 		lines = -1;
     program = true;
     this.properties = properties;
-    processTitle    = properties.getProperty("PROCESS_TITLE");
-    statementTitle  = properties.getProperty("STATEMENT_TITLE");
     processWidth    = Integer.valueOf(properties.getProperty("PROCESS_WIDTH"));
     variableWidth   = Integer.valueOf(properties.getProperty("VARIABLE_WIDTH"));
     statementWidth  = Integer.valueOf(properties.getProperty("STATEMENT_WIDTH"));
@@ -115,8 +112,8 @@ public class Filter {
 
   public static String extractBraces(String s, String pattern) {
     int i = s.indexOf(pattern) + pattern.length();
-    String t = s.substring(i, s.indexOf(",", i+1));
-    return t.substring(1, t.length()-1);
+    int j = s.indexOf('}');
+    return s.substring(i+1, j-1);
   }
 
   public static int extractNum(String s, String pattern) {
@@ -150,8 +147,8 @@ public class Filter {
       }
       else if (s.startsWith("symbol table end=")) {
         varTitle = collectionToString(variables.keySet());
-        title = formatItem(processTitle,   processWidth,   true) + " " +
-                formatItem(statementTitle, statementWidth, true) + " " + 
+        title = formatItem(Config.PROCESS_TITLE,   processWidth,   true) + " " +
+                formatItem(Config.STATEMENT_TITLE, statementWidth, true) + " " + 
                 varTitle + "\n";
         return "\n";
       }
@@ -184,9 +181,41 @@ public class Filter {
         return "\n" + s.substring(0, i+1) + "\n" +
                s.substring(i+1) + "\n\n";
       }
-      else
+      else if (s.startsWith("chosen transition="))
         return "";
+      else
+        return s + "\n";
     }
+  }
+
+  public String filterCompilation(String s) {
+    if (s.startsWith("Erigone"))
+        return s + "\n";
+    else if (s.startsWith("execution mode="))
+      return s.substring(0, s.indexOf(",")+1) + "\n\n";
+    else if (s.startsWith("message="))
+      return "Compilation error\n" + extract(s, "message=") + "\n";
+    else if (s.startsWith("variables="))
+      return Config.SYMBOL_TITLE + "\n";
+    else if (s.startsWith("type=")) {
+      String type = extract(s, "type=");
+      type = type.substring(0, type.indexOf("_"));
+      return
+        formatItem(type,                  Config.SYMBOL_WIDTH, true) + " " + 
+        formatItem(extract(s, "name="),   Config.SYMBOL_WIDTH, true) + " " +
+        formatItem(extract(s, "length="), Config.SYMBOL_WIDTH, true) + "\n";
+    }
+    else if (s.startsWith("processes="))
+      return "\n" + Config.PROCESSES_TITLE + "\n";
+    else if (s.startsWith("process=")) {
+      return
+        formatItem(extract(s, "process="),     Config.SYMBOL_WIDTH, true) + " " + 
+        formatItem(extract(s, "transitions="), Config.SYMBOL_WIDTH, true) + "\n";
+    }
+    else if (s.startsWith("times="))
+      return "\n" + s + "\n";
+    else
+      return "";
   }
 
 	/** 
@@ -234,6 +263,8 @@ public class Filter {
 		while (it.hasNext()) {
       t = it.next();
       num = extract(s, t + "=");
+      if (num.charAt(0) == '{')
+        num = extractBraces(s, t + "=");
       variables.put(t, num);
     }
 	}	

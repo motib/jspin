@@ -88,7 +88,7 @@ class RunSpin {
         selectDialog.interrupt();
         selectDialog = null;
     }
-    EUI.append(messageArea, "\nSpin process stopped\n");
+    EUI.append(messageArea, "\nErigone process stopped\n");
   }
 
   // Class RunThread enables Spin to run asynchronously
@@ -119,13 +119,15 @@ class RunSpin {
         String  currentState = "";
         while (running) {
           s = input.readLine();
-//          System.out.println(s);
+          // System.out.println(s);
           if (s == null)
             running = false;
-          else if (filtering == EUI.FilterTypes.VERIFICATION)
-            EUI.append(area, filter.filterVerification(s));
           else if (filtering == EUI.FilterTypes.SIMULATION)
             EUI.append(area, filter.filterSimulation(s));
+          else if (filtering == EUI.FilterTypes.VERIFICATION)
+            EUI.append(area, filter.filterVerification(s));
+          else if (filtering == EUI.FilterTypes.COMPILATION)
+            EUI.append(area, filter.filterCompilation(s));
           else if (filtering == EUI.FilterTypes.INTERACTIVE) {
             if (s.startsWith("initial state=") || s.startsWith("next state=")) {
               currentState = s;
