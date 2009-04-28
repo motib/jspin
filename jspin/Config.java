@@ -13,16 +13,23 @@ public class Config {
   public static String aboutFileName;
   public static final char sep = java.io.File.separatorChar;  // shortcut
 
-	// Strings
-    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.2";
+	// Static strings
+    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.3";
     static final String JAVA_VERSION     = "1.5";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE     = "SpinSpider";
     static final String SELECT  	       = "Select a statement";
     static final String OPEN_FILE 	     = "Open a Promela file\n";
-	  static final String processTitle     = "Process ";
-    static final String statementTitle   = "Statement ";
+    static final String LTL_FORMULA	     = " LTL formula  ";
+    static final String PROCESS_TITLE    = "Process";
+    static final String STATEMENT_TITLE  = "Statement";
+    static final String SYMBOL_TITLE     = "Variables\nType         Name         Length";
+    static final String PROCESSES_TITLE  = "Processes\nName         Transitions";
     static final String SEPARATOR        = "#";
+
+    // Static widths
+    static final int 	  LTL_COLUMNS      = 50;
+    static final int 	  SYMBOL_WIDTH     = 12;
 
     static void setDefaultProperties() {
         // Directories and file names
@@ -178,9 +185,6 @@ public class Config {
 
     static final String Max     = "Maximize";
     static final int    MaxMN   = KeyEvent.VK_M;
-
-    static final String LTLFormula 	= " LTL formula  ";
-    static final int 	  LTL_COLUMNS = 50;
 
   	static final String OK     = "OK";
     static final int    OKMN   = KeyEvent.VK_O;
