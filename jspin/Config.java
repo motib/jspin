@@ -28,7 +28,6 @@ public class Config {
         // Directories and file names
         properties.put("SOURCE_DIRECTORY", "examples");
         properties.put("ERIGONE",          "erigone");
-        properties.put("DOT",              "bin" + sep + "dot.exe");
         properties.put("HELP_FILE_NAME",   "txt" + sep + "help.txt");
         properties.put("ABOUT_FILE_NAME",  "txt" + sep + "copyright.txt");
         properties.put("SINGLE_QUOTE", Boolean.toString(false));
@@ -39,9 +38,9 @@ public class Config {
         properties.put("INTERACTIVE_OPTIONS", "-i -dcemprv");
         properties.put("TRAIL_OPTIONS",       "-g -dcmprv");
         properties.put("LTL2BA_OPTIONS",      "-b -dbv");
-        properties.put("SAFETY_OPTIONS",      "-s -drv");
-        properties.put("ACCEPT_OPTIONS",      "-a -t -drv");
-        properties.put("FAIRNESS_OPTIONS",    "-f -t -drv");
+        properties.put("SAFETY_OPTIONS",      "-s -dgrv");
+        properties.put("ACCEPT_OPTIONS",      "-a -t -dgrv");
+        properties.put("FAIRNESS_OPTIONS",    "-f -t -dgrv");
 
         // Options
         properties.put("TOTAL_STEPS",    "10");
@@ -49,10 +48,14 @@ public class Config {
         properties.put("STATE_STACK",    "2");
         properties.put("LOCATION_STACK", "3");
         properties.put("SEED",           "0");
+
+        // Trace display options
         properties.put("PROCESS_WIDTH",  Integer.toString(7));
         properties.put("STATEMENT_WIDTH",Integer.toString(18));
         properties.put("VARIABLE_WIDTH", Integer.toString(10));
         properties.put("LINES_PER_TITLE",Integer.toString(20));
+        properties.put("PROCESS_TITLE",   "Process ");
+        properties.put("STATEMENT_TITLE", "Statement ");
 
 		    // Size of main frame
         properties.put("WIDTH",  Integer.toString(1000));
@@ -68,19 +71,13 @@ public class Config {
         properties.put("TB_DIVIDER", Integer.toString(500));
         properties.put("MIN_DIVIDER", Integer.toString(50));
 
-        // Font
+        // Text
+        properties.put("WRAP", Boolean.toString(true));
         properties.put("FONT_FAMILY", "Lucida Sans Typewriter");
         properties.put("FONT_STYLE", Integer.toString(java.awt.Font.PLAIN));
         properties.put("FONT_SIZE",  Integer.toString(14));
-		
-        // Tab size in editor
         properties.put("TAB_SIZE", Integer.toString(4));
-		
-        // Display of Spin output
-        properties.put("WRAP", Boolean.toString(true));
-        properties.put("PROCESS_TITLE",   "Process ");
-        properties.put("STATEMENT_TITLE", "Statement ");
-		
+
         // Delay while waiting for user input
         properties.put("POLLING_DELAY", Integer.toString(200));
     }
@@ -155,7 +152,7 @@ public class Config {
     static final int    SaveCurrentMN  = KeyEvent.VK_S;
     static final String Seed           = "Seed";
     static final int    SeedMN         = KeyEvent.VK_S;
-    static final String TraceOptions   = "Trace options";
+    static final String TraceOptions   = "Trace";
     static final int    TraceOptionsMN = KeyEvent.VK_T;
     static final String Excluded  	   = "Excluded";
     static final String Variables      = "Variables";
