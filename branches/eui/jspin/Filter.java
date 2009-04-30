@@ -24,6 +24,9 @@ public class Filter {
     private String  statement; // Statement string
     private int     lines;		 // Line counter to redisplay title
     private boolean program;   // Flag for end of program listing
+    private boolean buchi;     // Flag for Buchi automaton
+    private boolean optbuchi;  // Flag for optimized Buchi automaton
+    private boolean ltlonly;   // Flag for only ltl
 
     // Map from variable names to values
     private TreeMap<String, String> variables = new TreeMap<String, String>();
@@ -39,7 +42,9 @@ public class Filter {
 		variables.clear();
 		title = "";
 		lines = -1;
-    program = true;
+    program  = true;
+    buchi    = true;
+    optbuchi = false;
     this.properties = properties;
     processWidth    = Integer.valueOf(properties.getProperty("PROCESS_WIDTH"));
     variableWidth   = Integer.valueOf(properties.getProperty("VARIABLE_WIDTH"));
@@ -88,43 +93,51 @@ public class Filter {
   public String filterVerification(String s) {
     int i;
     if (s.startsWith("Erigone"))
-        return s + "\n";
-    else if (s.startsWith("execution mode")) {
+      return s + "\n";
+    else if (s.startsWith("execution mode=")) {
       i = s.indexOf(",");
+      ltlonly = extract(s, "execution mode=").equals("ltl_only");
       return s.substring(0, i+1) + "\n" +
              s.substring(i+1) + "\n";
     }
-    else if (s.startsWith("verification terminated=successfully,"))
+    else if (s.startsWith("optimized buchi automaton start=")) {
+      buchi = false;
+      optbuchi = true;
+      return "\n" + Config.BUCHI_TITLE + "\n";
+    }
+    else if (s.startsWith("optimized buchi automaton end=")) {
+      optbuchi = false;
+      return (ltlonly ? "\n" : "");
+    }
+    else if (s.startsWith("verification terminated=successfully,")) {
       return "\n" + s + "\n\n";
-    else if (s.startsWith("verification terminated")) {
+    }
+    else if (s.startsWith("verification terminated=")) {
+      buchi = false;
       i = s.indexOf(",");
       return "\n" + s.substring(0, i+1) + "\n" +
              s.substring(i+1) + "\n\n";
     }
+    else if (optbuchi)
+      return filterTranslation(s);
+    else if (buchi)
+      return "";
     else
       return s + "\n";
   }
 
-  public static String extract(String s, String pattern) {
-    int i = s.indexOf(pattern) + pattern.length();
-    return s.substring(i, s.indexOf(",", i+1));
-  }
-
-  public static String extractBraces(String s, String pattern) {
-    int i = s.indexOf(pattern) + pattern.length();
-    int j = s.indexOf('}');
-    return s.substring(i+1, j-1);
-  }
-
-  public static int extractNum(String s, String pattern) {
-    int i = s.indexOf(pattern) + pattern.length();
-    String t = s.substring(i, s.indexOf(",", i+1));
-    try {
-      return Integer.parseInt(t);
-    }
-    catch(NumberFormatException e) {
-      return -1;
-    }
+  public String filterTranslation(String s) {
+    int w = Config.SYMBOL_WIDTH;
+    return
+      formatItem(extract(s, "source=") +"->" + 
+                 extract(s, "target="), w, true) + " " +
+      formatItem(
+        (extract(s, "atomic=").equals("1") ? "A" : "-") +
+        (extract(s, "end=").equals("1") ? "e" : "-") +
+        (extract(s, "accept=").equals("1") ? "a" : "-"),
+        w, true) + " " +
+      formatItem(extractBraces(s, "statement="),
+        Config.getIntProperty("STATEMENT_WIDTH"), true) + "\n";
   }
 
   public String filterSimulation(String s) {
@@ -134,7 +147,7 @@ public class Filter {
     if (program) {
       if (s.startsWith("Erigone"))
           return s + "\n";
-      else if (s.startsWith("execution mode")) {
+      else if (s.startsWith("execution mode=")) {
         i = s.indexOf(",");
         return s.substring(0, i+1) + "\n" +
                s.substring(i+1) + "\n";
@@ -189,32 +202,56 @@ public class Filter {
   }
 
   public String filterCompilation(String s) {
+    int w = Config.SYMBOL_WIDTH;
     if (s.startsWith("Erigone"))
         return s + "\n";
-    else if (s.startsWith("execution mode"))
-      return s.substring(0, s.indexOf(",")) + "\n\n" +
-             Config.SYMBOL_TITLE + "\n";
+    else if (s.startsWith("execution mode="))
+      return s.substring(0, s.indexOf(",")+1) + "\n\n";
+    else if (s.startsWith("message="))
+      return "Compilation error\n" + extract(s, "message=") + "\n";
+    else if (s.startsWith("variables="))
+      return Config.SYMBOL_TITLE + "\n";
     else if (s.startsWith("type=")) {
       String type = extract(s, "type=");
       type = type.substring(0, type.indexOf("_"));
       return
-        formatItem(type,                  Config.SYMBOL_WIDTH, true) + " " + 
-        formatItem(extract(s, "name="),   Config.SYMBOL_WIDTH, true) + " " +
-        formatItem(extract(s, "length="), Config.SYMBOL_WIDTH, true) + "\n";
+        formatItem(type,                  w, true) + " " + 
+        formatItem(extract(s, "name="),   w, true) + " " +
+        formatItem(extract(s, "length="), w, true) + "\n";
     }
-    else if (s.startsWith("symbol table end=")) {
-      varTitle = collectionToString(variables.keySet());
-      title = formatItem(Config.PROCESS_TITLE,   processWidth,   true) + " " +
-              formatItem(Config.STATEMENT_TITLE, statementWidth, true) + " " + 
-              varTitle + "\n";
-      return "\n";
+    else if (s.startsWith("processes="))
+      return "\n" + Config.PROCESSES_TITLE + "\n";
+    else if (s.startsWith("process=")) {
+      return
+        formatItem(extract(s, "process="),     w, true) + " " + 
+        formatItem(extract(s, "transitions="), w, true) + "\n";
     }
-    else if (s.startsWith("transitions end=")) {
-      program = false;
-      return "";
-    }
+    else if (s.startsWith("times="))
+      return "\n" + s + "\n";
     else
       return "";
+  }
+
+  public static String extract(String s, String pattern) {
+    int i = s.indexOf(pattern) + pattern.length();
+    return s.substring(i, s.indexOf(",", i+1));
+  }
+
+  public static String extractBraces(String s, String pattern) {
+    int i = s.indexOf(pattern) + pattern.length();
+    int j = s.indexOf('}');
+    if (j == i+1) return ""; else return s.substring(i+1, j);
+  }
+
+  public static int extractNum(String s, String pattern) {
+    int i = s.indexOf(pattern) + pattern.length();
+    String t = s.substring(i, s.indexOf(",", i+1));
+    try {
+      return Integer.parseInt(t);
+    }
+    catch(NumberFormatException e) {
+      return -1;
+    }
   }
 
 	/** 

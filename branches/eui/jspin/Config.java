@@ -14,7 +14,7 @@ public class Config {
   public static final char sep = java.io.File.separatorChar;  // shortcut
 
 	// Static strings
-    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.3";
+    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.4";
     static final String JAVA_VERSION     = "1.5";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE     = "SpinSpider";
@@ -24,6 +24,8 @@ public class Config {
     static final String PROCESS_TITLE    = "Process";
     static final String STATEMENT_TITLE  = "Statement";
     static final String SYMBOL_TITLE     = "Variables\nType         Name         Length";
+    static final String PROCESSES_TITLE  = "Processes\nName         Transitions";
+    static final String BUCHI_TITLE      = "Buchi automaton\nTransition   Flags        Expression";
     static final String SEPARATOR        = "#";
 
     // Static widths
@@ -43,10 +45,10 @@ public class Config {
         properties.put("RANDOM_OPTIONS",      "-r -dcmprv");
         properties.put("INTERACTIVE_OPTIONS", "-i -dcemprv");
         properties.put("TRAIL_OPTIONS",       "-g -dcmprv");
-        properties.put("LTL2BA_OPTIONS",      "-b -dbv");
-        properties.put("SAFETY_OPTIONS",      "-s -dgrv");
-        properties.put("ACCEPT_OPTIONS",      "-a -t -dgrv");
-        properties.put("FAIRNESS_OPTIONS",    "-f -t -dgrv");
+        properties.put("LTL2BA_OPTIONS",      "-b -dbrv");
+        properties.put("SAFETY_OPTIONS",      "-s -dbgrv");
+        properties.put("ACCEPT_OPTIONS",      "-a -t -dbgrv");
+        properties.put("FAIRNESS_OPTIONS",    "-f -t -dbgrv");
 
         // Options
         properties.put("TOTAL_STEPS",    "10");
@@ -60,6 +62,8 @@ public class Config {
         properties.put("STATEMENT_WIDTH",Integer.toString(18));
         properties.put("VARIABLE_WIDTH", Integer.toString(10));
         properties.put("LINES_PER_TITLE",Integer.toString(20));
+        properties.put("PROCESS_TITLE",   "Process ");
+        properties.put("STATEMENT_TITLE", "Statement ");
 
 		    // Size of main frame
         properties.put("WIDTH",  Integer.toString(1000));

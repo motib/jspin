@@ -119,7 +119,7 @@ class RunSpin {
         String  currentState = "";
         while (running) {
           s = input.readLine();
-          System.out.println(s);
+          // System.out.println(s);
           if (s == null)
             running = false;
           else if (filtering == EUI.FilterTypes.SIMULATION)
@@ -128,6 +128,8 @@ class RunSpin {
             EUI.append(area, filter.filterVerification(s));
           else if (filtering == EUI.FilterTypes.COMPILATION)
             EUI.append(area, filter.filterCompilation(s));
+          else if (filtering == EUI.FilterTypes.TRANSLATION)
+            EUI.append(area, filter.filterVerification(s));
           else if (filtering == EUI.FilterTypes.INTERACTIVE) {
             if (s.startsWith("initial state=") || s.startsWith("next state=")) {
               currentState = s;
