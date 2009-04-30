@@ -25,8 +25,11 @@ public class Config {
     static final String STATEMENT_TITLE  = "Statement";
     static final String SYMBOL_TITLE     = "Variables\nType         Name         Length";
     static final String PROCESSES_TITLE  = "Processes\nName         Transitions";
-    static final String BUCHI_TITLE      = "Buchi automaton\nTransition   Flags        Expression";
+    static final String BUCHI_TITLE      = "Buchi automaton (never claim)\nTransition   Flags        Expression";
     static final String SEPARATOR        = "#";
+    static final String PML_FILES        = "Promela source files";
+    static final String PRP_FILES        = "LTL property files";
+    static final String OUT_FILES        = "Erigone display output files";
 
     // Static widths
     static final int 	  LTL_COLUMNS      = 50;
@@ -38,7 +41,7 @@ public class Config {
         properties.put("ERIGONE",          "erigone");
         properties.put("HELP_FILE_NAME",   "txt" + sep + "help.txt");
         properties.put("ABOUT_FILE_NAME",  "txt" + sep + "copyright.txt");
-        properties.put("SINGLE_QUOTE", Boolean.toString(false));
+        properties.put("SINGLE_QUOTE",     Boolean.toString(false));
 
         // Erigone options
         properties.put("COMPILE_OPTIONS",     "-c -dprv");
