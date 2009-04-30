@@ -24,7 +24,6 @@ public class Config {
     static final String PROCESS_TITLE    = "Process";
     static final String STATEMENT_TITLE  = "Statement";
     static final String SYMBOL_TITLE     = "Variables\nType         Name         Length";
-    static final String PROCESSES_TITLE  = "Processes\nName         Transitions";
     static final String SEPARATOR        = "#";
 
     // Static widths
@@ -61,8 +60,6 @@ public class Config {
         properties.put("STATEMENT_WIDTH",Integer.toString(18));
         properties.put("VARIABLE_WIDTH", Integer.toString(10));
         properties.put("LINES_PER_TITLE",Integer.toString(20));
-        properties.put("PROCESS_TITLE",   "Process ");
-        properties.put("STATEMENT_TITLE", "Statement ");
 
 		    // Size of main frame
         properties.put("WIDTH",  Integer.toString(1000));
