@@ -115,11 +115,13 @@ class RunSpin {
         // Process Spin output line by line
         String s = "";
         boolean running = true;
-        boolean chosenFlag = false;
+        // chosenFlag: 0 = in program, 1 = before choosing, 2 = after choosing
+        int chosenFlag  = 0;
+        // Store current state for interactive display
         String  currentState = "";
         while (running) {
           s = input.readLine();
-          // System.out.println(s);
+          // System.out.println(s);  // For debugging
           if (s == null)
             running = false;
           else if (filtering == EUI.FilterTypes.SIMULATION)
@@ -135,9 +137,14 @@ class RunSpin {
               currentState = s;
               numSelections = 0;
             }
+            else if (s.startsWith("executable transitions="))
+              // Program has been read; look for choices
+              chosenFlag = 1;
             else if (s.startsWith("chosen transition="))
-              chosenFlag = true;
-            else if (!chosenFlag && s.startsWith("process=")) {
+              // Next transition is the one chosen
+              chosenFlag = 2;
+            else if ((chosenFlag == 1) && s.startsWith("process=")) {
+              // Store executable transition for selection
               if (numSelections == MAX_SELECTIONS) {
                 EUI.append(messageArea, "Too many selections");
                 return;
@@ -147,12 +154,15 @@ class RunSpin {
                 Filter.extract(s,       "line=")    + " " + 
                 Filter.extractBraces(s, "statement=");
             }
-            else if (chosenFlag && s.startsWith("process=")) {
+            else if ((chosenFlag == 2) && s.startsWith("process=")) {
+              // Use current state and selected transition
+              //   to update scenario display
               EUI.append(area, filter.filterSimulation(currentState));
               EUI.append(area, filter.filterSimulation(s));
-              chosenFlag = false;
+              chosenFlag = 1;
             }
             else if (s.startsWith("choose from=")) {
+              // Display the popup menu to choose a transition
               filter.storeVariables(currentState);
               running = select(
                 filter.getTitle() + "\n" + filter.variablesToString(false),
@@ -218,6 +228,7 @@ class RunSpin {
       try {
         // Get selection from dialog
         selectedValue = -1;
+        // Display select dialog as buttons or combobox
         selectDialog = 
           new SelectDialog(
             numSelections <= Config.getIntProperty("SELECT_MENU"),
@@ -257,11 +268,12 @@ class RunSpin {
   // Class SelectDialog displays the statement select dialog in a thread
   private class SelectDialog extends Thread implements ActionListener {
     // Positive when a button is selected, zero upon escape or close
-    private JFrame    dialog;      // The frame
-    private JPanel    panel1;
-    private JButton[] options;  // Array of process buttons
-    private JComboBox pulldown = new JComboBox();
-    private int       width;
+    private JFrame    dialog;
+    private JPanel    panel1, panel2;
+    private JTextArea stateField;
+    private JButton[] options;
+    private JComboBox pulldown;
+    private int       width;    // Width of button
 
     // Constructor - set up frame with number of buttons required
     SelectDialog (boolean buttons, String state) {
@@ -278,17 +290,26 @@ class RunSpin {
               JComponent.WHEN_IN_FOCUSED_WINDOW);
       dialog.setTitle(Config.SELECT);
 
+      // Panel for buttons or combobox
       panel1 = new JPanel();
-      if (buttons) constructButtonsDialog(); else constructMenuDialog();
-      JTextArea stateField = new JTextArea(state, 2, 50);
+      panel1.setLayout(new java.awt.GridLayout(1,1));
+      if (buttons)
+        constructButtonsDialog();
+      else
+        constructMenuDialog();
+
+      // Display current state in a text area
+      stateField = new JTextArea(state, 2, 50);
       stateField.setFont(messageArea.getFont());
       stateField.setEditable(false);
       stateField.setFocusable(false);
 
-      JPanel panel2 = new JPanel();
-      panel2.add(stateField);
-      panel1.setLayout(new java.awt.GridLayout(1,1));
+      // Panel for state area
+      panel2 = new JPanel();
       panel2.setLayout(new java.awt.GridLayout(1,1));
+      panel2.add(stateField);
+
+      // Setup dialog frame
       dialog.getContentPane().setLayout(new java.awt.GridLayout(2,1));
       dialog.getContentPane().add(panel2);
       dialog.getContentPane().add(panel1);

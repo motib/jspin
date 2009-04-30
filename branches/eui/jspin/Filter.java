@@ -10,19 +10,19 @@ public class Filter {
     private static final int COLS_LINE_NUMBER = 2;
     private static final String blanks = "                             ";
 
-    // Properties and copies of the data from the properties
-    private        Properties properties;
+    private Properties properties;
 
-    private static int processWidth;
-    private static int variableWidth;
-    private static int statementWidth;
-    private static int linesPerTitle;
+    private int processWidth;  // Widths of fields
+    private int variableWidth;
+    private int statementWidth;
+    private int linesPerTitle; // Lines between each title
+    private int     lines;		 // Line counter to redisplay title
 
     private String  title;     // Title string
     private String  varTitle;  // Title string, just variables
     private String  process;   // Process string
     private String  statement; // Statement string
-    private int     lines;		 // Line counter to redisplay title
+
     private boolean program;   // Flag for end of program listing
     private boolean buchi;     // Flag for Buchi automaton
     private boolean optbuchi;  // Flag for optimized Buchi automaton
@@ -90,6 +90,51 @@ public class Filter {
      return false;
   }
 
+  /**
+    Filter strings from compilation
+      Show copyright, mode, error messages, table of variables and
+      transitions
+  */
+  public String filterCompilation(String s) {
+    int w = Config.SYMBOL_WIDTH;   // Rename for convenience
+    if (s.startsWith("Erigone"))
+        return s + "\n";
+    else if (s.startsWith("execution mode="))
+      return s.substring(0, s.indexOf(",")+1) + "\n\n";
+    else if (s.startsWith("message="))
+      return "Compilation error\n" + extract(s, "message=") + "\n";
+    else if (s.startsWith("variables="))
+      return Config.SYMBOL_TITLE + "\n";
+    else if (s.startsWith("type=")) {
+      // Display a variable: type, name, length
+      String type = extract(s, "type=");
+      type = type.substring(0, type.indexOf("_"));
+      return
+        formatItem(type,                  w, true) + " " + 
+        formatItem(extract(s, "name="),   w, true) + " " +
+        formatItem(extract(s, "length="), w, true) + "\n";
+    }
+    else if (s.startsWith("processes="))
+      return "\n" + Config.PROCESSES_TITLE + "\n";
+    else if (s.startsWith("process=")) {
+      // Display number of transitions per process
+      return
+        formatItem(extract(s, "process="),     w, true) + " " + 
+        formatItem(extract(s, "transitions="), w, true) + "\n";
+    }
+    else if (s.startsWith("times="))
+      return "\n" + s + "\n";
+    else
+      return "";
+  }
+
+  /**
+    Filter strings from verification
+      Show copyright, mode, (optimized) BA, termination message
+      The flag "buchi" is used to skip display of unoptimized BA
+      The flag "optbuchi" is used to display the optimized BA
+      The flag "ltlonly" is used to add a new line if LTL_ONLY
+  */
   public String filterVerification(String s) {
     int i;
     if (s.startsWith("Erigone"))
@@ -126,8 +171,14 @@ public class Filter {
       return s + "\n";
   }
 
+  /**
+    Filter strings from LTL2BA translation
+      Call from filterVerification
+      Display transition source->target, statement and
+        flags: A=atomic, e=end, a=accept
+  */
   public String filterTranslation(String s) {
-    int w = Config.SYMBOL_WIDTH;
+    int w = Config.SYMBOL_WIDTH;   // Rename for convenience
     return
       formatItem(extract(s, "source=") +"->" + 
                  extract(s, "target="), w, true) + " " +
@@ -140,10 +191,14 @@ public class Filter {
         Config.getIntProperty("STATEMENT_WIDTH"), true) + "\n";
   }
 
+  /**
+    Filter strings from simulation
+      Show copyright, mode, scenario table and simulation message
+      The flag "program" is used so that all options need not be
+        checked during execution
+  */
   public String filterSimulation(String s) {
     int i;
-    // Flag for program message so don't have to check all options
-    //   during execution
     if (program) {
       if (s.startsWith("Erigone"))
           return s + "\n";
@@ -152,12 +207,14 @@ public class Filter {
         return s.substring(0, i+1) + "\n" +
                s.substring(i+1) + "\n";
       }
+      // Store variables that are not excluded
       else if (s.startsWith("type=")) {
         String varName = extract(s, "name=");
         if (!checkExcluded(varName, true))
           variables.put(varName, "");
         return "";
       }
+      // Create title after all variables read
       else if (s.startsWith("symbol table end=")) {
         varTitle = collectionToString(variables.keySet());
         title = formatItem(Config.PROCESS_TITLE,   processWidth,   true) + " " +
@@ -173,16 +230,20 @@ public class Filter {
         return "";
     }
     else {
+      // Display data from execution
       if (s.startsWith("next state=") || s.startsWith("initial state=")) {
+        // Store state; it is display after the transition is chosen
         storeVariables(s);
         return "";
       }
       else if (s.startsWith("process=")) {
+        // Display scenario line with chosen process
         String st = extractBraces(s, "statement=");
         if (checkExcluded(st, false)) return "";
         String ln = formatItem(extract(s, "line="), COLS_LINE_NUMBER, false);
         process   = formatItem(extract(s, "process="), processWidth, true);
-        statement = formatItem(ln + " " + st, statementWidth, true); 
+        statement = formatItem(ln + " " + st, statementWidth, true);
+        // Display title is needed
         lines = (lines + 1) % linesPerTitle;
         if (lines == 0)
           return title + variablesToString(true);
@@ -201,50 +262,31 @@ public class Filter {
     }
   }
 
-  public String filterCompilation(String s) {
-    int w = Config.SYMBOL_WIDTH;
-    if (s.startsWith("Erigone"))
-        return s + "\n";
-    else if (s.startsWith("execution mode="))
-      return s.substring(0, s.indexOf(",")+1) + "\n\n";
-    else if (s.startsWith("message="))
-      return "Compilation error\n" + extract(s, "message=") + "\n";
-    else if (s.startsWith("variables="))
-      return Config.SYMBOL_TITLE + "\n";
-    else if (s.startsWith("type=")) {
-      String type = extract(s, "type=");
-      type = type.substring(0, type.indexOf("_"));
-      return
-        formatItem(type,                  w, true) + " " + 
-        formatItem(extract(s, "name="),   w, true) + " " +
-        formatItem(extract(s, "length="), w, true) + "\n";
-    }
-    else if (s.startsWith("processes="))
-      return "\n" + Config.PROCESSES_TITLE + "\n";
-    else if (s.startsWith("process=")) {
-      return
-        formatItem(extract(s, "process="),     w, true) + " " + 
-        formatItem(extract(s, "transitions="), w, true) + "\n";
-    }
-    else if (s.startsWith("times="))
-      return "\n" + s + "\n";
-    else
-      return "";
-  }
-
+  // Extract value from named association: "name=value,"
   public static String extract(String s, String pattern) {
-    int i = s.indexOf(pattern) + pattern.length();
+    int i = s.indexOf(pattern);
+    if (i == -1) return "";
+    i = i + pattern.length();
     return s.substring(i, s.indexOf(",", i+1));
   }
 
+  // Extract value from named association: "name={value},"
   public static String extractBraces(String s, String pattern) {
-    int i = s.indexOf(pattern) + pattern.length();
+    int i = s.indexOf(pattern);
     int j = s.indexOf('}');
-    if (j == i+1) return ""; else return s.substring(i+1, j);
+    if (i == -1) return "";
+    i = i + pattern.length() + 1;
+    if (j == i)
+      return "";
+    else
+      return s.substring(i, j);
   }
 
+  // Extract numeric value from named association: "name=value,"
   public static int extractNum(String s, String pattern) {
-    int i = s.indexOf(pattern) + pattern.length();
+    int i = s.indexOf(pattern);
+    if (i == -1) return -1;
+    i = i + pattern.length();
     String t = s.substring(i, s.indexOf(",", i+1));
     try {
       return Integer.parseInt(t);
@@ -292,6 +334,8 @@ public class Filter {
 		return s;
 	}	
 
+  // Store values of variables
+  // All the names are given in the variables table
 	public void storeVariables(String s) {
     Collection<String> c = variables.keySet();
 		String t, num;
@@ -305,10 +349,7 @@ public class Filter {
     }
 	}	
 
-  public String getTitle() {
-    return varTitle;
-  }
-
+  // Return a string with all the values of the variables
 	public String variablesToString(boolean processes) {
     Collection<String> c = variables.keySet();
 		String t = (processes ? process + " " + statement + " " : "");
@@ -317,4 +358,9 @@ public class Filter {
 			t = t + formatItem(variables.get(it.next()), variableWidth, false) + " ";
 		return t + "\n";
 	}
+
+  // Return variables title for use in interactive popup
+  public String getTitle() {
+    return varTitle;
+  }
 }

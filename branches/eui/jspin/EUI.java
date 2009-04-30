@@ -209,10 +209,9 @@ public class EUI extends JFrame implements ActionListener {
                 Config.getStringProperty("ERIGONE"),  
                 Config.getStringProperty("LTL2BA_OPTIONS") + " " +
                 editor.fileName);
-            isSpinRunning();
         }
         else if ((e.getSource() == menuItemSafety) || (e.getSource() == toolSafety)) {
-            runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
+            runSpin.run(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("SAFETY_OPTIONS") + " " +
                 (!LTLField.getText().equals("") ? ("-t ") : "") +
@@ -225,7 +224,7 @@ public class EUI extends JFrame implements ActionListener {
                      "Need LTL formula for acceptance verification\n");
               return;
             }
-            runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
+            runSpin.run(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("ACCEPT_OPTIONS") + " " +
                 editor.fileName);
@@ -237,7 +236,7 @@ public class EUI extends JFrame implements ActionListener {
                      "Need LTL formula for fairness verification\n");
               return;
             }
-            runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
+            runSpin.run(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("FAIRNESS_OPTIONS") + " " +
                 editor.fileName);
@@ -298,7 +297,7 @@ public class EUI extends JFrame implements ActionListener {
     // Display the contents of a file in the trail area
     private void displayFile(String fn) {
     	trailArea.setText(editor.readFile(new java.io.File(fn)));
-        trailArea.setCaretPosition(0);
+      trailArea.setCaretPosition(0);
     }
     
     // Append and move caret to end
@@ -533,9 +532,9 @@ public class EUI extends JFrame implements ActionListener {
         editor = new Editor(editorScrollPane, editorArea, messageArea, 
             LTLField, undoredo.myundoable, filter);
         runSpin = new RunSpin(editor, messageArea, filter);
-        PMLfileChooser = newChooser("Promela source files", ".PML", ".PROM", ".H");
-        PRPfileChooser = newChooser("LTL property files", ".PRP", null, null);
-        OUTfileChooser = newChooser("Spin display output files", ".OUT", null, null);
+        PMLfileChooser = newChooser(Config.PML_FILES, ".PML", ".PROM", ".H");
+        PRPfileChooser = newChooser(Config.PRP_FILES, ".PRP", null, null);
+        OUTfileChooser = newChooser(Config.OUT_FILES, ".OUT", null, null);
 
       // Window listener: kill Spin process if window closed
         addWindowListener(new WindowAdapter() {        
