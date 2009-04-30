@@ -119,7 +119,7 @@ class RunSpin {
         String  currentState = "";
         while (running) {
           s = input.readLine();
-          // System.out.println(s);
+          System.out.println(s);
           if (s == null)
             running = false;
           else if (filtering == EUI.FilterTypes.SIMULATION)

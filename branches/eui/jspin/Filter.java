@@ -191,12 +191,9 @@ public class Filter {
   public String filterCompilation(String s) {
     if (s.startsWith("Erigone"))
         return s + "\n";
-    else if (s.startsWith("execution mode="))
-      return s.substring(0, s.indexOf(",")+1) + "\n\n";
-    else if (s.startsWith("message="))
-      return "Compilation error\n" + extract(s, "message=") + "\n";
-    else if (s.startsWith("variables="))
-      return Config.SYMBOL_TITLE + "\n";
+    else if (s.startsWith("execution mode"))
+      return s.substring(0, s.indexOf(",")) + "\n\n" +
+             Config.SYMBOL_TITLE + "\n";
     else if (s.startsWith("type=")) {
       String type = extract(s, "type=");
       type = type.substring(0, type.indexOf("_"));
@@ -205,15 +202,17 @@ public class Filter {
         formatItem(extract(s, "name="),   Config.SYMBOL_WIDTH, true) + " " +
         formatItem(extract(s, "length="), Config.SYMBOL_WIDTH, true) + "\n";
     }
-    else if (s.startsWith("processes="))
-      return "\n" + Config.PROCESSES_TITLE + "\n";
-    else if (s.startsWith("process=")) {
-      return
-        formatItem(extract(s, "process="),     Config.SYMBOL_WIDTH, true) + " " + 
-        formatItem(extract(s, "transitions="), Config.SYMBOL_WIDTH, true) + "\n";
+    else if (s.startsWith("symbol table end=")) {
+      varTitle = collectionToString(variables.keySet());
+      title = formatItem(Config.PROCESS_TITLE,   processWidth,   true) + " " +
+              formatItem(Config.STATEMENT_TITLE, statementWidth, true) + " " + 
+              varTitle + "\n";
+      return "\n";
     }
-    else if (s.startsWith("times="))
-      return "\n" + s + "\n";
+    else if (s.startsWith("transitions end=")) {
+      program = false;
+      return "";
+    }
     else
       return "";
   }
