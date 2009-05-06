@@ -63,13 +63,10 @@ strings are automatically supplied and the \eri{} output is filtered and
 formatted. All aspects of \eui{} are configurable: some at compile time,
 some at initialization through a configuration file and some at runtime.
 
-\subsection{References}
+\subsection*{References}
 \begin{itemize}
 \item M. Ben-Ari. \textit{Principles of the Spin Model Checker}. Springer, 2008.
-\item Gerard J. Holzmann. \textit{The Spin Model Checker: Primer
-and Reference Manual}.\\Addison-Wesley, 2004.
-\item M. Ben-Ari. \textit{The \eri{} Model Checker}. 2009.
-\url{http://code.google.com/p/erigone/}.
+\item M. Ben-Ari. \textit{The \eri{} Model Checker}. \url{http://code.google.com/p/erigone/}.
 \end{itemize}
 
 \section{Installation and execution}
@@ -117,9 +114,9 @@ right text area is used to display the output from \eri{}: statements
 executed, values of variables and results of verifications. The text
 areas can be resized by dragging the dividers and an area can be hidden
 by clicking on the triangles in the dividers; the initial sizes can be
-set in the configuration file. The toolbar button \bu{Maximize} (with
-its mnemonic \bu{Alt-M}) toggles between a normal split pane and a
-maximized right text area that displays the \eri{} output.
+set in the configuration file. The toolbar button \bu{Maximize}
+(\bu{Alt-M}) toggles between a normal split pane and a maximized right
+text area that displays the \eri{} output.
 
 \begin{figure}[tb]
 \begin{center}
@@ -130,8 +127,7 @@ maximized right text area that displays the \eri{} output.
 \begin{description}
 \item[\bu{File}] This menu includes selections for \bu{New}, \bu{Open}, 
 \bu{Save}, \bu{Save As}, and \bu{Exit}. \bu{Switch file} closes the 
-current file and opens the last file that was edited, if any. This is 
-useful for working with both a source file and an included file.
+current file and opens the last file that was edited, if any.
 
 \item[\bu{Edit}] This menu includes selections for \bu{Undo}, \bu{Redo}, 
 \bu{Copy}, \bu{Cut}, \bu{Paste}, \bu{Find} and \bu{Find again}.
@@ -154,19 +150,11 @@ verification stacks.
 A nonzero value for \bu{Seed} will be used as the seed for generating
 random numbers, enabling a random simulation to be repeated.
 
-\bu{Default} restores the default 
-values and \bu{Save} saves the current set of option strings in the 
-configuration file. In addition, the following configuration items are
-automatically saved:
-\begin{itemize}
-\item \p{SOURCE\_DIRECTORY}: the last directory from which a source file was opened.
-\item The current values of the splitpane dividers \p{TB\_DIVIDER} and
-\p{LR\_DIVIDER}.
-\item The current value of the width \p{SELECT\_BUTTON} for interactive
-simulation.
-\end{itemize}
-The file can be saved
-to the \bu{current} or \bu{install} directory.
+\bu{Default} restores the default values and \bu{Save} saves the current
+options in the configuration file, together with the last directory from
+which a source file was opened, and the current values of the splitpane
+dividers. The file can be saved to the \bu{current} or \bu{install}
+directory.
 
 \item[\bu{Display}] This menu controls the display of the output in the
 right text area. \bu{Maximize} replicates the button on the toolbar.
@@ -175,11 +163,11 @@ extension \p{.out}. The \bu{Trace} submenu is discussed in
 Section~\ref{s.run}.
 
 \item[\bu{Help}] \bu{Help} displays a short help file and \bu{About} 
-displays copyright information about the software.
+displays copyright information.
 \end{description}
 
 \section{Running \eri{}}\label{s.run}
-In the \bu{Spin} menu (and on the toolbar) are eight selections for
+In the \bu{Run} menu and on the toolbar are eight selections for
 running \eri{}. They all use the \prm{} source file that has been opened,
 and save the file before execution.
 During simulation and verification,
@@ -190,16 +178,16 @@ you can select \bu{Stop} to terminate the \eri{} process that has been forked.
 \item[\bu{Interactive}] Runs an interactive simulation.
 \item[\bu{Trail}] Runs a guided simulation using the trail
 file created for a counterexample found in a verification.
-\item[\bu{LTL2BA}] Translates a LTL formula into a B\"{u}chi automaton.
+\item[\bu{LTL2BA}] Translates an LTL formula into a B\"{u}chi automaton.
 \item[\bu{Safety}] Runs a safety verification.
 \item[\bu{Accept}] Runs an acceptance verification.
 \item[\bu{Fairness}] Runs an acceptance verification with weak fairness.
 \end{description}
-\textbf{If you terminate \eui{} while \eri{} is running (for example by entering \bu{ctrl-C} from the
-command line), make sure to terminate the \eri{} process as well.}\\
-In Windows this is done by pressing \bu{ctrl-alt-del}, followed by
-selecting \bu{Task List} and \bu{Processes}. Select \bu{erigone.exe} and
-\bu{End Process}.
+
+\textbf{If you terminate \eui{} while \eri{} is running (for example by
+entering \bu{ctrl-C} at the command line), make sure to terminate the
+\eri{} process as well.} In Windows, press \bu{ctrl-alt-del}, \bu{Task
+List} and \bu{Processes}. Select \bu{erigone.exe} and \bu{End Process}.
 
 \subsection{Simulation}\label{s.sim}
 
@@ -207,14 +195,12 @@ selecting \bu{Task List} and \bu{Processes}. Select \bu{erigone.exe} and
 
 During an interactive simulation, if there is more than one executable
 statement or expression in a state, a dialog frame will pop up with the
-current values of the variables and a list of statements and expressions
-that can be executed. The list can be displayed either as a row of
-buttons, or---if there is not enough room---as a pulldown menu. The
-choice of the format is dynamically determined according to the value of
-the configuration option \p{SELECT\_MENU}. By setting this value to an
-extreme, you can force the list to a certain format. There are also
-configuration options for setting the width and height of the buttons or
-menu items.
+current values of the variables and a list of the statements and
+expressions that can be executed. The list can be displayed either as a
+row of buttons, or---if there is not enough room---as a pulldown menu.
+The choice of the format is determined by the value of the configuration
+option \p{SELECT\_MENU}. There are also configuration options for
+setting the width and height of the buttons or menu items.
 
 The dialog can be navigated using the mouse; closing the dialog frame
 will terminate interactive simulation. For keyboard navigation:
@@ -236,14 +222,14 @@ exclude all variables that have \p{want} as a substring. If the variable name is
 prefixed by \p{+}, it will be included anyway. For example, if you have an 
 array variable \p{test}, then the entries \p{test} and \p{+[1]} will 
 exclude display of the elements of \p{test} except for \p{test[1]}. The 
-list is saved on a file with extension \p{.exc}.
+list is saved in a file with extension \p{.exc}.
 
 Similarly, a file of excluded statements can be created. The file 
 extension is \p{.exs}. \bu{Exclude statements} should \emph{not} be used with 
 interactive simulation.
 
 \subsection{LTL formulas}
-A correctness claim specified by a \emph{Linear Temporal Logic (LTL)}
+A correctness claim is specified by a \emph{Linear Temporal Logic (LTL)}
 formula that is saved with extension \p{.prp}.
 By default, when you open a \prm{} file,
 \eui{} opens and loads a \p{.prp} file of the same name.
@@ -253,19 +239,9 @@ Since \eri{} has no preprocessor, a defined atomic proposition cannot
 be used; instead, an expression can be delimited by \verb+#+ as in
 \verb+![]#(critical<=1)#+.
 
-\eri{} requires a LTL formula for verification of acceptance (with or
-without fairness). A formula is optional for verifying safety; if a
-formula is not needed, be sure to erase any data in the LTL field.
-
-%\newpage
-
-\section{Troubleshooting}
-\begin{description}
-\item[Your computer works slowly] Forked processes for \eri{} are still executing.
-Terminate them from the operating system.
-\item[Options and the srouce directory aren't remembered]
-You must select \bu{Options/Save} before exiting \eri{}.
-\end{description}
+\eri{} requires a LTL formula for verification of \emph{acceptance}
+(with or without fairness). A formula is optional for verifying safety;
+if a formula is not needed, be sure to erase any data in the LTL field.
 
 \newpage
 
@@ -286,9 +262,9 @@ them in a \p{JFrame} with a scrollable \p{JTextArea}.
 
 \p{JSpinFileFilter} is used with a \p{JFileChooser}
 when opening and saving files: \prm{} source files,
-LTL property files and \eri{} display output files.
+LTL property files and \eri{} save output files.
 
-\p{Limts} is the dialog frame for \bu{Options/Limits} and \p{Trace} is
+\p{Limits} is the dialog frame for \bu{Options/Limits} and \p{Trace} is
 the dialog frame for editing the list of variable strings to be excluded
 from the display.
 
@@ -301,8 +277,8 @@ the default properties are written to a new file.
 \p{Editor} implements an editor using operations on a
 \p{JTextArea}. It implements the interface \p{Document\-Listener} to flag
 when the source has been modified. The class is also responsible
-for the LTL formula \p{JTextField}. \p{jSpin} calls method \p{writeFile}
-to write \p{ltl} and \p{out} files, and method \p{readFile} to read
+for the LTL formula \p{JTextField}. \p{EUI} calls method \p{writeFile}
+to write \p{out} files, and method \p{readFile} to read
 the text files to be displayed.
 
 \p{LineNumbers} extends a \p{JComponent} to create line numbers
@@ -311,29 +287,25 @@ for the \p{RowHeaderView} of the editor \p{JScrollPane}
 
 \p{UndoRedo} was extracted from an example on the Java web site.
 
-The event handler in \p{jSpin} calls \p{run} in class \p{RunSpin}
-to execute \eri{}, the C compiler and the analyzer \p{pan}.
-\p{run} creates a thread of class \p{RunThread},
-and uses \p{ProcessBuilder} to set up the
-command, directory, merge the output and error streams,
-and set up streams for I/O.
-The call \p{runAndWait} is used for short calls like \bu{Check}
-and the creation and compilation of a model;
-this call does not return until the completion of the subprocess.
-The call \p{run} will return immediately after it has created the thread.
-In this case, the event handler in \p{jSpin} calls \p{isSpinRunning}
-to create a thread to poll for termination of \eri{};
-by creating a separate thread, the event handler is freed to accept
-a selection of \bu{Stop}.
+The event handler in \p{EUI} calls \p{run} in class \p{RunSpin} to
+execute \eri{}. \p{run} creates a thread of class \p{RunThread}, and
+uses \p{ProcessBuilder} to set up the command, directory, merge the
+output and error streams, and set up streams for I/O. The call
+\p{runAndWait} is used for short calls like \bu{Compile}; this call does
+not return until the completion of the subprocess. The call \p{run} will
+return immediately after it has created the thread. In this case, the
+event handler in \p{EUI} calls \p{isSpinRunning} to create a thread to
+poll for termination of \eri{}; by creating a separate thread, the event
+handler is freed to accept a selection of \bu{Stop}.
 
 When more than one executable transition occurs during an interactive
-simulation, method \p{select} is called. This method displays the
-choices in the bottom text area and pops up a dialog to enable the user
-to make a selection. A \p{JFrame} is created in a new thread of the
-inner class \p{SelectDialog} to wait for the selection. \p{select} polls
-\p{selectedValue} which is set with the selected button value or zero if
-the frame is closed or \bu{Esc} pressed. In that case, \p{q} is sent to
-\eri{} to terminate the simulation.
+simulation, the method \p{select} is called. This method pops up a
+dialog to enable the user to make a selection. A \p{JFrame} is created
+in a new thread of the inner class \p{SelectDialog} to wait for the
+selection. \p{select} polls \p{selectedValue} which is set with the
+selected button value or zero if the frame is closed or \bu{Esc}
+pressed. In that case, \p{q} is sent to \eri{} to terminate the
+simulation.
 
 \newpage
 
