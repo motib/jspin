@@ -105,7 +105,7 @@ public class Filter {
       return "Compilation error\n" + extract(s, "message=") + "\n";
     else if (s.startsWith("variables="))
       return Config.SYMBOL_TITLE + "\n";
-    else if (s.startsWith("type=")) {
+    else if (s.startsWith("name=")) {
       // Display a variable: type, name, length
       String type = extract(s, "type=");
       type = type.substring(0, type.indexOf("_"));
@@ -208,7 +208,7 @@ public class Filter {
                s.substring(i+1) + "\n";
       }
       // Store variables that are not excluded
-      else if (s.startsWith("type=")) {
+      else if (s.startsWith("name=")) {
         String varName = extract(s, "name=");
         if (!checkExcluded(varName, true))
           variables.put(varName, "");
