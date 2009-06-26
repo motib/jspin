@@ -1,6 +1,5 @@
 /*
- EUI - Development environment for Spin
- EUI   - Version for Erigone
+ EUI - Development environment for Erigone
  Copyright 2003-9 by Mordechai (Moti) Ben-Ari.
  
 This program is free software; you can redistribute it and/or
@@ -214,6 +213,7 @@ public class EUI extends JFrame implements ActionListener {
             runSpin.run(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("SAFETY_OPTIONS") + " " +
+                " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
                 (!LTLField.getText().equals("") ? ("-t ") : "") +
                 editor.fileName);
             isSpinRunning();
@@ -227,6 +227,7 @@ public class EUI extends JFrame implements ActionListener {
             runSpin.run(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("ACCEPT_OPTIONS") + " " +
+                " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
                 editor.fileName);
             isSpinRunning();
         }
@@ -239,6 +240,7 @@ public class EUI extends JFrame implements ActionListener {
             runSpin.run(trailArea, FilterTypes.VERIFICATION,
                 Config.getStringProperty("ERIGONE"),
                 Config.getStringProperty("FAIRNESS_OPTIONS") + " " +
+                " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
                 editor.fileName);
             isSpinRunning();
         }

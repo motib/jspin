@@ -14,7 +14,8 @@ public class Config {
   public static final char sep = java.io.File.separatorChar;  // shortcut
 
 	// Static strings
-    static final String SOFTWARE_NAME    = "EUI - Erigone User Interface, Version 0.4";
+    static final String SOFTWARE_NAME    = 
+      "EUI - Erigone User Interface, Version 0.5";
     static final String JAVA_VERSION     = "1.5";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE     = "SpinSpider";
