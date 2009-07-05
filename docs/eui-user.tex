@@ -8,7 +8,6 @@
 \newcommand{\eri}{\textsc{Erigone}}
 \newcommand{\prm}{\textsc{Promela}}
 \newcommand{\eui}{\textsc{EUI}}
-\newcommand{\js}{\textsc{jSpin}}
 \newcommand{\spd}{\textsc{SpinSpider}}
 \newcommand{\fil}{\textsc{FilterSpin}}
 \newcommand{\dt}{\textsc{dot}}
@@ -27,7 +26,7 @@
 \setlength{\parskip}{0.20\baselineskip plus 1pt minus 1pt}
 \parindent=0pt
 
-\title{\eui{} - Graphical User Interface for \eri{}\\User's Guide\\\mbox{}\\\large{Version 0.2}}
+\title{\eui{} - Graphical User Interface for \eri{}\\User's Guide\\\mbox{}\\\large{Version 1.0}}
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -55,8 +54,8 @@ California, 94105, USA.
 \section{Introduction}
 
 \eui{} is a graphical user interface for the \eri{} Model Checker that is
-used for verifying concurrent and distributed programs. It is an adaptation
-of the \js{} interface for \spn{}.
+used for simulating and verifying concurrent programs. It is an adaptation
+of the \textsc{jSpin} interface for \spn{}.
 The user interface of \eui{} is simple, consisting of a single window
 with menus, a toolbar and three adjustable text areas. \eri{} option
 strings are automatically supplied and the \eri{} output is filtered and
@@ -78,16 +77,15 @@ can copy them to the \p{lib/fonts} directory as explained in
 you can change the configuration file to use a monospaced font such as
 \p{Courier} that is installed by default.} \eui{} needs Java 1.5 at least.
 
-Download the \eui{} installation file called \p{jspin-N.exe},
+(For Windows) Download the \eui{} installation file called \p{eui-N.exe},
 where \p{N} is the version number, and execute the installation file.
 
 The installation will create the following subdirectories: \p{docs} for the
-documentation, \p{jspin} for the source files, 
+documentation, \p{eui} for the source files, 
 \p{txts} for the text files
 (help, about and copyright), and \p{examples}.
 
-To rebuild \eui{}, execute \p{build.bat}, which will compile all the source
-files and create the file \p{EUI.jar} with the manifest file.
+Copy the \eri{} executable file to the installation directory.
 
 To run \eui{}, execute the command \p{javaw -jar EUI.jar}.
 An optional argument names the \prm{} file to be opened initially.
@@ -101,6 +99,9 @@ a new version, so that new configuration options will be recognized.}
 directory; if it is not found, \eui{} searches for it in the directory
 where the jar file is installed; if it is not found there, a new file
 with default values is written.
+
+To rebuild \eui{}, execute \p{build.bat}, which will compile all the source
+files and create the file \p{EUI.jar} with the manifest file.
 
 \section{\eui{} user interface}
 The user interface includes a menu, a toolbar and three text areas.
@@ -178,7 +179,7 @@ you can select \bu{Stop} to terminate the \eri{} process that has been forked.
 \item[\bu{Interactive}] Runs an interactive simulation.
 \item[\bu{Trail}] Runs a guided simulation using the trail
 file created for a counterexample found in a verification.
-\item[\bu{LTL2BA}] Translates an LTL formula into a B\"{u}chi automaton.
+\item[\bu{LTL2BA}] Translates an LTL formula to a B\"{u}chi automaton.
 \item[\bu{Safety}] Runs a safety verification.
 \item[\bu{Accept}] Runs an acceptance verification.
 \item[\bu{Fairness}] Runs an acceptance verification with weak fairness.
@@ -247,9 +248,6 @@ if a formula is not needed, be sure to erase any data in the LTL field.
 
 \section{Software structure}
 
-The package name \p{jspin} is retained as many classes are the same or
-similar as for \js{}.
-
 \p{EUI} is the main class and contains declarations
 of the GUI components and instances
 of the classes \p{Editor} and \p{RunSpin}.
@@ -258,9 +256,9 @@ Method \p{action\-Per\-formed} is the event handler for all the menu items
 and buttons; it calls the appropriate methods for handling each event.
 The \bu{About} and \bu{Help} options are implemented by reading files
 \p{copyright.txt} and \p{help.txt}, respectively, and displaying
-them in a \p{JFrame} with a scrollable \p{JTextArea}.
+them in the righthand pane.
 
-\p{JSpinFileFilter} is used with a \p{JFileChooser}
+\p{EUIFileFilter} is used with a \p{JFileChooser}
 when opening and saving files: \prm{} source files,
 LTL property files and \eri{} save output files.
 
@@ -334,9 +332,9 @@ default values.
 \hline
 \multicolumn{2}{|c|}{Options for executing \eri{}}\\ \hline
 \textsc{\ttfamily COMPILE\_OPTIONS} &\verb+"-c -dprv"+\\
-\textsc{\ttfamily RANDOM\_OPTIONS} &\verb+"-r -dcmprv"+\\
-\textsc{\ttfamily INTERACTIVE\_OPTIONS} &\verb+"-i -dcemprv"+\\
-\textsc{\ttfamily TRAIL\_OPTIONS} &\verb+"-g -dcmprv"+\\
+\textsc{\ttfamily RANDOM\_OPTIONS} &\verb+"-r -dcmpruv"+\\
+\textsc{\ttfamily INTERACTIVE\_OPTIONS} &\verb+"-i -dcempruv"+\\
+\textsc{\ttfamily TRAIL\_OPTIONS} &\verb+"-g -dcmpruv"+\\
 \textsc{\ttfamily LTL2BA\_OPTIONS} &\verb+"-b -dbv"+\\
 \textsc{\ttfamily SAFETY\_OPTIONS} &\verb+"-s -dgrv"+\\
 \textsc{\ttfamily ACCEPT\_OPTIONS} &\verb+"-a -t -dgrv"+\\

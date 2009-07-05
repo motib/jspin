@@ -3,7 +3,7 @@
           Copyright 2009 by Mordechai (Moti) Ben-Ari.
 
 EUI is a graphical user interface for the Erigone Model Checker
-that is used for verifying concurrent and distributed programs.
+that is used for simulating and verifying concurrent programs.
 
 File: 
 New, Open, Save, Save As, and Exit are standard.
@@ -12,7 +12,8 @@ Switch file closes the current file and opens the previous one.
 Editor: 
 Undo, Redo, Copy, Cut, Paste, Find and Find again are standard.
 
-Run: Runs Erigone in one of 8 modes:
+Run:
+Runs Erigone in one of 8 modes:
 Comple: Runs the Promela compiler.
 Random: Runs a random simulation.
 Interactive: Runs an interactive simulation.
@@ -32,12 +33,14 @@ Save: Saves the options, settings and the current directory for
 File/Open; the configuration files can be stored in the installation
 directory or in the current directory.
 
-Display: This menu controls the display of the output in the
-right text area.
+Display:
+Controls the display of the output in the right text area.
 Maximize: Makes the text area larger.
 Save output: Saves the contents of the text area in a file with
 extension .out.
-Trace: Brings up a menu to select formatting for the text area.
+Trace: Brings up a menu to select formatting for the text area:
+the widths of the fields for statements and variables, and
+the list of excluded variables and statements.
 
 Help:
 Help and About are standard.
