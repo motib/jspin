@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=EUI - Graphical Interface for EUI
-AppVerName=EUI - Version 1.0
+AppVerName=EUI - Version 1.1
 AppPublisher=Moti Ben-Ari, Weizmann Institute of Science
 AppPublisherURL=http://stwww.weizmann.ac.il/g-cs/benari/eui/index.html
 AppSupportURL=http://stwww.weizmann.ac.il/g-cs/benari/eui/index.html
