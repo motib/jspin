@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 
 public class Config {
-  static final String VERSION = "1.0";
+  static final String VERSION = "1.1";
 
   // Properties
   static Properties properties = new Properties();
@@ -71,6 +71,7 @@ public class Config {
     properties.put("FAIRNESS_OPTIONS",    "-f -t -dbgrv");
 
     // Options
+    properties.put("HASH_SLOTS",     "22");
     properties.put("TOTAL_STEPS",    "10");
     properties.put("PROGRESS_STEPS", "1");
     properties.put("STATE_STACK",    "2");
@@ -166,10 +167,11 @@ public class Config {
   static final int    OptionsMN      = KeyEvent.VK_O;
   static final String Limits    	   = "Limits";
   static final int    LimitsMN       = KeyEvent.VK_L;
+  static final String HashSlots      = "Hash table slots";
   static final String TotalSteps     = "Total steps";
   static final String ProgressSteps  = "Progress steps";
-  static final String StateStack     = "State stack";
-  static final String LocationStack  = "Location stack";
+  static final String StateStack     = "State stack frames";
+  static final String LocationStack  = "Location stack frames";
   static final String Default   	   = "Default";
   static final int    DefaultMN 	   = KeyEvent.VK_D;
   static final String SaveInstall    = "Save install";

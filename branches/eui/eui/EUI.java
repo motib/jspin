@@ -193,8 +193,7 @@ public class EUI extends JFrame implements ActionListener {
         Config.getStringProperty("RANDOM_OPTIONS") + " " +
         (Config.getIntProperty("SEED") != 0 ? 
           ("-n" + Config.getIntProperty("SEED") + " ") : "") +
-          " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
-          editor.fileName);
+          Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemInter) ||
@@ -210,8 +209,7 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.run(trailArea, FilterTypes.SIMULATION,
         Config.getStringProperty("ERIGONE"),  
         Config.getStringProperty("TRAIL_OPTIONS") + " " +
-        " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
-        editor.fileName);
+        Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemLTL2BA) ||
@@ -226,7 +224,7 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.run(trailArea, FilterTypes.VERIFICATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("SAFETY_OPTIONS") + " " +
-        " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
+        Limits.getLimits() +
         (!LTLField.getText().equals("") ? ("-t ") : "") +
         editor.fileName);
       isSpinRunning();
@@ -246,16 +244,16 @@ public class EUI extends JFrame implements ActionListener {
           ((e.getSource() == menuItemFairness) ||
            (e.getSource() == toolFairness) ?  
            "FAIRNESS_OPTIONS" : "ACCEPT_OPTIONS")) + " " +
-        " -e" + Config.getStringProperty("TOTAL_STEPS") + " " + 
-        editor.fileName);
+          Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemStop) || (e.getSource() == toolStop))
       runSpin.killSpin();
 
     // Options menu actions
-    else if (e.getSource() == menuItemLimits)
+    else if (e.getSource() == menuItemLimits) {
         new Limits();
+    }
     else if (e.getSource() == menuItemSeed)
         changeOption("SEED");
     else if (e.getSource() == menuItemDefault)

@@ -8,13 +8,21 @@ import javax.swing.*;
 import java.awt.event.*;
 
 class Limits extends JFrame implements ActionListener {
-  private JTextField stepsField, progressField, stackField, locationField;
-  private JLabel     stepsLabel, progressLabel, stackLabel, locationLabel;
+  private JTextField hashField, stepsField, progressField, stackField, locationField;
+  private JLabel     hashLabel, stepsLabel, progressLabel, stackLabel, locationLabel;
   private JButton    okButton, cancelButton;
   private JLabel     errorLabel;
   private JPanel     topPanel, buttonPanel, OKPanel;
 
+  private static String limitArguments;
+
 	Limits() {
+	  limitArguments = "";
+
+    hashLabel     = new JLabel(Config.HashSlots);
+    hashField     = new JTextField(
+                          Config.getStringProperty("HASH_SLOTS"), 10);
+
     stepsLabel    = new JLabel(Config.TotalSteps);
     stepsField    = new JTextField(
                           Config.getStringProperty("TOTAL_STEPS"), 10);
@@ -29,11 +37,13 @@ class Limits extends JFrame implements ActionListener {
                           Config.getStringProperty("LOCATION_STACK"), 10);
 
 		buttonPanel = new JPanel();
-    buttonPanel.setLayout(new java.awt.GridLayout(4,2));
+    buttonPanel.setLayout(new java.awt.GridLayout(5,2));
     buttonPanel.add(stepsLabel);
     buttonPanel.add(stepsField);
     buttonPanel.add(progressLabel);
     buttonPanel.add(progressField);
+    buttonPanel.add(hashLabel);
+    buttonPanel.add(hashField);
     buttonPanel.add(stackLabel);
     buttonPanel.add(stackField);
     buttonPanel.add(locationLabel);
@@ -70,7 +80,7 @@ class Limits extends JFrame implements ActionListener {
     getContentPane().add(OKPanel,     java.awt.BorderLayout.SOUTH);
     setTitle(Config.Limits);
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-    setSize(Config.getIntProperty("WIDTH")/4, 
+    setSize(Config.getIntProperty("WIDTH")/3, 
             Config.getIntProperty("HEIGHT")/3);
     setLocationRelativeTo(null);
 		validate();
@@ -90,24 +100,36 @@ class Limits extends JFrame implements ActionListener {
     }
   }
 
+  public static String getLimits() {
+    return limitArguments;
+  }
+
   private void setProperty(int i, String c) {
     Config.setIntProperty(c, i);
   }
 
   public void actionPerformed(ActionEvent e) {
-    int i1, i2, i3, i4;
+    int i1, i2, i3, i4, i5;
 		if (e.getSource() == okButton) {
       i1 = checkProperty(stepsField);    if (i1 == -1) return; 
       i2 = checkProperty(progressField); if (i2 == -1) return; 
       i3 = checkProperty(stackField);    if (i3 == -1) return; 
       i4 = checkProperty(locationField); if (i4 == -1) return; 
+      i5 = checkProperty(hashField);     if (i5 == -1) return; 
       setProperty(i1, "TOTAL_STEPS");
       setProperty(i2, "PROGRESS_STEPS");
       setProperty(i3, "STATE_STACK");
       setProperty(i4, "LOCATION_STACK");
+      setProperty(i5, "HASH_SLOTS");
+      limitArguments =
+        " -lh" + Config.getStringProperty("HASH_SLOTS")     +
+        " -ll" + Config.getStringProperty("LOCATION_STACK") +
+        " -lp" + Config.getStringProperty("PROGRESS_STEPS") +
+        " -ls" + Config.getStringProperty("STATE_STACK")    +
+        " -lt" + Config.getStringProperty("TOTAL_STEPS")    + " ";
       dispose();
 		}
     else
-       dispose();
+      dispose();
 	}
 }
