@@ -14,10 +14,10 @@ class Limits extends JFrame implements ActionListener {
   private JLabel     errorLabel;
   private JPanel     topPanel, buttonPanel, OKPanel;
 
-  private static String limitArguments = "";
+  private static String limitArguments = " ";
 
 	Limits() {
-	  limitArguments = "";
+	  limitArguments = " ";
 
     hashLabel     = new JLabel(Config.HashSlots);
     hashField     = new JTextField(

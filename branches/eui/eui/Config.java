@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 
 public class Config {
-  static final String VERSION = "1.1";
+  static final String VERSION = "1.2";
 
   // Properties
   static Properties properties = new Properties();
@@ -54,6 +54,9 @@ public class Config {
     // Directories and file names
     properties.put("SOURCE_DIRECTORY", "examples");
     properties.put("ERIGONE",          "erigone");
+    properties.put("DOT",              "bin" +
+                   java.io.File.separatorChar + "dot.exe");
+    properties.put("DOT_FORMAT",       "png");
     properties.put("HELP_FILE_NAME",   "txt" + 
                    java.io.File.separatorChar + "help.txt");
     properties.put("ABOUT_FILE_NAME",  "txt" +
@@ -69,6 +72,7 @@ public class Config {
     properties.put("SAFETY_OPTIONS",      "-s -dbgrv");
     properties.put("ACCEPT_OPTIONS",      "-a -t -dbgrv");
     properties.put("FAIRNESS_OPTIONS",    "-f -t -dbgrv");
+    properties.put("SPACE_OPTIONS",       "-e");
 
     // Options
     properties.put("HASH_SLOTS",     "22");
@@ -191,6 +195,8 @@ public class Config {
   static final int    DisplayMN  	= KeyEvent.VK_D;
   static final String SaveSpin    = "Save output";
   static final int    SaveSpinMN  = KeyEvent.VK_V;
+  static final String Space       = "State space";
+  static final int    SpaceMN     = KeyEvent.VK_S;
 
   static final String Spider		      = "SpinSpider";
   static final int    SpiderMN   	    = KeyEvent.VK_D;
@@ -245,7 +251,7 @@ public class Config {
   static final String SwitchAC        = "control B";
   static final String CopyAC          = "control C";
   static final String SeedAC          = "control D";
-  // static final String              = "control E";
+  static final String SpaceAC         = "control E";
   static final String FindAC     	    = "control F";
   static final String FindAgainAC     = "control G";
   // Backspace by default             = "control H"

@@ -102,6 +102,10 @@ class RunSpin {
     private Process p;
 
     public void run() {
+      if (filtering == EUI.FilterTypes.SPACE) {
+        runDot();
+        return;
+      }
       try {
         // Use ProcessBuilder to run Spin, redirecting ErrorStream
         String[] sa = stringToArray(command, parameters);
@@ -138,6 +142,9 @@ class RunSpin {
             EUI.append(area, filter.filterCompilation(s));
           else if (filtering == EUI.FilterTypes.TRANSLATION)
             EUI.append(area, filter.filterVerification(s));
+          else if (filtering == EUI.FilterTypes.SPACE) {
+            System.out.println(s);
+          }
           else if (filtering == EUI.FilterTypes.INTERACTIVE) {
             if (s.startsWith("initial state=") || s.startsWith("next state=")) {
               currentState = s;
@@ -187,6 +194,30 @@ class RunSpin {
       } catch (java.io.IOException e) {
         EUI.append(messageArea, "IO exception\n" + e);
       }
+    }
+
+    // Run dot and redirect output to PNG file
+    public void runDot() {
+      try {
+        String[] sa = stringToArray(command, parameters);
+        ProcessBuilder pb = new ProcessBuilder(sa);
+        File pf = editor.file.getParentFile();
+        if (pf != null) pb.directory(pf.getCanonicalFile());
+        p = pb.start();
+
+        InputStream istream = p.getInputStream();
+        FileOutputStream ostream = new FileOutputStream(editor.PNGFileName);
+        int s;
+        while (true) {
+          s = istream.read();
+          if (s == -1) break;
+          ostream.write(s);
+        }
+        ostream.close();
+        p.waitFor();
+      }
+      catch (InterruptedException e) {}
+      catch (java.io.IOException e) {}
     }
 
     // String to array of tokens - for ProcessBuilder

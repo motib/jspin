@@ -23,6 +23,8 @@ class Editor implements ClipboardOwner, DocumentListener {
   String EXCFileName = ""; // File for excluded variable names
   String EXSFileName = ""; // File for excluded statements
   String PRPFileName = ""; // Property file name for this source file
+  String DOTFileName = ""; // File name for dot state space
+  String PNGFileName = ""; // File name for png (or other) state space
   String PRPName;		       // Property file name without path
 
   private JTextArea   area;  		   // The area for editing
@@ -133,6 +135,8 @@ class Editor implements ClipboardOwner, DocumentListener {
     EXCFileName = "";
     EXSFileName = "";
     PRPFileName = "";
+    DOTFileName = "";
+    PNGFileName = "";
     area.setText("");
     showArea(" ");
   }
@@ -154,6 +158,9 @@ class Editor implements ClipboardOwner, DocumentListener {
     EXCFileName = root + File.separator + fileRoot + ".exc";
     EXSFileName = root + File.separator + fileRoot + ".exs";
     PRPFileName = root + File.separator + fileRoot + ".prp";
+    DOTFileName = root + File.separator + fileRoot + ".dot";
+    PNGFileName = root + File.separator + fileRoot + "." +
+                  Config.getStringProperty("DOT_FORMAT");
     PRPName = "";
     showArea(fileName);
   }
