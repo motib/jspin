@@ -23,7 +23,7 @@ import javax.swing.border.*;
 
 public class EUI extends JFrame implements ActionListener {
   public enum FilterTypes {
-    COMPILATION, TRANSLATION, SIMULATION, INTERACTIVE, VERIFICATION};
+    COMPILATION, TRANSLATION, SIMULATION, INTERACTIVE, VERIFICATION, SPACE};
 
 	// Contained objects. Create only after initializing configuration.
   private Editor     editor;
@@ -89,6 +89,7 @@ public class EUI extends JFrame implements ActionListener {
   private JMenu     menuDisplay = new JMenu();
   private JMenuItem menuItemMax = new JMenuItem(Config.Max);
   private JMenuItem menuItemTraceOptions = new JMenuItem(Config.TraceOptions);
+  private JMenuItem menuSpace = new JMenuItem(Config.Space);
   private JMenuItem menuItemSaveSpin = new JMenuItem(Config.SaveSpin);
 
   private JMenu menuHelp = new JMenu();
@@ -290,6 +291,18 @@ public class EUI extends JFrame implements ActionListener {
     }
     else if (e.getSource() == menuItemTraceOptions)
       new Trace(editor, filter, font);
+    else if (e.getSource() == menuSpace) {
+      runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
+        Config.getStringProperty("ERIGONE"),
+        Config.getStringProperty("SPACE_OPTIONS") + " " +
+        Limits.getLimits() +
+        editor.fileName);
+      runSpin.runAndWait(trailArea, FilterTypes.SPACE,
+        Config.getStringProperty("DOT"),
+        " -T" + Config.getStringProperty("DOT_FORMAT") + " " +
+        editor.DOTFileName);
+        new DisplayImage(editor.PNGFileName);
+    }
     else if (e.getSource() == menuItemSaveSpin) {
       java.io.File outFile = new java.io.File(editor.OUTFileName);
       OUTfileChooser.setSelectedFile(outFile);
@@ -476,6 +489,9 @@ public class EUI extends JFrame implements ActionListener {
     menuDisplay.addSeparator();
     initMenuItem(
       menuDisplay, menuItemMax, Config.MaxMN, Config.MaxAC);
+    menuDisplay.addSeparator();
+    initMenuItem(
+      menuDisplay, menuSpace, Config.SpaceMN, Config.SpaceAC);
     menuDisplay.addSeparator();
     initMenuItem(
       menuDisplay, menuItemSaveSpin,

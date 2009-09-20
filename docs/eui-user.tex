@@ -4,15 +4,9 @@
 \usepackage{graphicx}
 \usepackage{verbatim}
 
-\newcommand{\spn}{\textsc{Spin}}
 \newcommand{\eri}{\textsc{Erigone}}
 \newcommand{\prm}{\textsc{Promela}}
 \newcommand{\eui}{\textsc{EUI}}
-\newcommand{\spd}{\textsc{SpinSpider}}
-\newcommand{\fil}{\textsc{FilterSpin}}
-\newcommand{\dt}{\textsc{dot}}
-\newcommand{\dtf}{\texttt{dot}}
-\newcommand{\fsm}{\texttt{fsm}}
 \newcommand{\p}[1]{\texttt{#1}}
 \newcommand{\bu}[1]{\textsf{#1}}
 
@@ -26,7 +20,8 @@
 \setlength{\parskip}{0.20\baselineskip plus 1pt minus 1pt}
 \parindent=0pt
 
-\title{\eui{} - Graphical User Interface for \eri{}\\User's Guide\\\mbox{}\\\large{Version 1.0}}
+\title{\eui{} - Graphical User Interface for \eri{}\\User's Guide\\
+\mbox{}\\\large{Version 1.2}}
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -55,7 +50,7 @@ California, 94105, USA.
 
 \eui{} is a graphical user interface for the \eri{} Model Checker that is
 used for simulating and verifying concurrent programs. It is an adaptation
-of the \textsc{jSpin} interface for \spn{}.
+of the \textsc{jSpin} interface for \textsc{Spin}.
 The user interface of \eui{} is simple, consisting of a single window
 with menus, a toolbar and three adjustable text areas. \eri{} option
 strings are automatically supplied and the \eri{} output is filtered and
@@ -80,12 +75,14 @@ you can change the configuration file to use a monospaced font such as
 (For Windows) Download the \eui{} installation file called \p{eui-N.exe},
 where \p{N} is the version number, and execute the installation file.
 
-The installation will create the following subdirectories: \p{docs} for the
-documentation, \p{eui} for the source files, 
-\p{txts} for the text files
-(help, about and copyright), and \p{examples}.
+The installation will create the following subdirectories: \p{docs} for
+the documentation, \p{eui} for the source files, \p{bin} for the
+binaries of the \textsc{dot} tool, \p{txts} for the text files (help, about and
+copyright), and \p{examples}.
 
-Copy the \eri{} executable file to the installation directory.
+\eui{} is also distributed as a \p{zip} file for use on non-Windows
+systems. You will have to download \eri{} and \textsc{dot} yourself and
+set the paths in the configuration file.
 
 To run \eui{}, execute the command \p{javaw -jar EUI.jar}.
 An optional argument names the \prm{} file to be opened initially.
@@ -158,10 +155,22 @@ dividers. The file can be saved to the \bu{current} or \bu{install}
 directory.
 
 \item[\bu{Display}] This menu controls the display of the output in the
-right text area. \bu{Maximize} replicates the button on the toolbar.
-\bu{Save output} saves the contents of the text area in a file with
-extension \p{.out}. The \bu{Trace} submenu is discussed in
+right text area.
+\begin{itemize}
+\item \bu{Maximize} replicates the button on the toolbar.
+\item \bu{Save output} saves the contents of the text area in a file with
+extension \p{.out}.
+
+\item \bu{State space} runs \eri{} with the \p{-e} argument to generate
+a diagram of the entire state space. The diagram is written in the
+language of the \textsc{dot} tool of \textsc{GraphViz} and \textsc{dot}
+is called to render the graph. If you first run a verification that
+results in an error, the path of the counterexample will be emphasized
+in the diagram.
+
+\item The \bu{Trace} submenu is discussed in
 Section~\ref{s.run}.
+\end{itemize}
 
 \item[\bu{Help}] \bu{Help} displays a short help file and \bu{About} 
 displays copyright information.
@@ -305,6 +314,11 @@ selected button value or zero if the frame is closed or \bu{Esc}
 pressed. In that case, \p{q} is sent to \eri{} to terminate the
 simulation.
 
+When generating the state space, after running \eri{} with the \p{-e}
+argument, \textsc{dot} is called and its output directed to a
+\p{FileOutputStream}. Class \p{DisplayImage} pops up a new Frame in
+which the image is displayed.
+
 \newpage
 
 \appendix
@@ -319,10 +333,10 @@ default values.
 \begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
 \hline
 \multicolumn{2}{|c|}{Directories and files}\\ \hline
-\textsc{\ttfamily SOURCE\_DIRECTORY} & \verb+"examples"+ \\
-\textsc{\ttfamily ERIGONE} &\verb+"erigone.exe"+ \\
-\textsc{\ttfamily HELP\_FILE\_NAME} &\verb+"txt\help.txt"+\\
-\textsc{\ttfamily ABOUT\_FILE\_NAME} &\verb+"txt\copyright.txt"+\\
+\textsc{\ttfamily SOURCE\_DIRECTORY} & \verb+examples+ \\
+\textsc{\ttfamily ERIGONE} &\verb+erigone.exe+ \\
+\textsc{\ttfamily HELP\_FILE\_NAME} &\verb+txt\help.txt+\\
+\textsc{\ttfamily ABOUT\_FILE\_NAME} &\verb+txt\copyright.txt+\\
 \hline
 \end{tabular}
 
@@ -331,15 +345,15 @@ default values.
 \begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
 \hline
 \multicolumn{2}{|c|}{Options for executing \eri{}}\\ \hline
-\textsc{\ttfamily COMPILE\_OPTIONS} &\verb+"-c -dprv"+\\
-\textsc{\ttfamily RANDOM\_OPTIONS} &\verb+"-r -dcmpruv"+\\
-\textsc{\ttfamily INTERACTIVE\_OPTIONS} &\verb+"-i -dcempruv"+\\
-\textsc{\ttfamily TRAIL\_OPTIONS} &\verb+"-g -dcmpruv"+\\
-\textsc{\ttfamily LTL2BA\_OPTIONS} &\verb+"-b -dbv"+\\
-\textsc{\ttfamily SAFETY\_OPTIONS} &\verb+"-s -dgrv"+\\
-\textsc{\ttfamily ACCEPT\_OPTIONS} &\verb+"-a -t -dgrv"+\\
-\textsc{\ttfamily FAIRNESS\_OPTIONS} &\verb+"-f -t -dgrv"+\\
-
+\textsc{\ttfamily COMPILE\_OPTIONS} &\verb+-c -dprv+\\
+\textsc{\ttfamily RANDOM\_OPTIONS} &\verb+-r -dcmpruv+\\
+\textsc{\ttfamily INTERACTIVE\_OPTIONS} &\verb+-i -dcempruv+\\
+\textsc{\ttfamily TRAIL\_OPTIONS} &\verb+-g -dcmpruv+\\
+\textsc{\ttfamily LTL2BA\_OPTIONS} &\verb+-b -dbv+\\
+\textsc{\ttfamily SAFETY\_OPTIONS} &\verb+-s -dgrv+\\
+\textsc{\ttfamily ACCEPT\_OPTIONS} &\verb+-a -t -dgrv+\\
+\textsc{\ttfamily FAIRNESS\_OPTIONS} &\verb+-f -t -dgrv+\\
+\hline\hline
 \textsc{\ttfamily TOTAL\_STEPS} & \verb+10+\\
 \textsc{\ttfamily PROGRESS\_STEPS} & \verb+1+\\
 \textsc{\ttfamily STATE\_STACK} & \verb+2+\\
@@ -367,7 +381,7 @@ default values.
 \multicolumn{2}{|c|}{Text settings}\\ \hline
 \textsc{\ttfamily WRAP} &\verb+true+\\
 \textsc{\ttfamily TAB\_SIZE} &\verb+4+\\
-\textsc{\ttfamily FONT\_FAMILY} & \verb+"Lucida Sans Typewriter"+\\ 
+\textsc{\ttfamily FONT\_FAMILY} & \verb+Lucida Sans Typewriter+\\ 
 \textsc{\ttfamily FONT\_STYLE} & \verb+java.awt.Font.PLAIN+\\
 \textsc{\ttfamily FONT\_SIZE} & \verb+14+\\\hline
 \end{tabular}
@@ -407,6 +421,16 @@ default values.
 \hline
 \multicolumn{2}{|c|}{Delay while waiting for user input}\\ \hline
 \textsc{\ttfamily POLLING\_DELAY} &\verb+200+\\\hline
+\end{tabular}
+
+\bigskip
+
+\begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
+\hline
+\multicolumn{2}{|c|}{State space diagram options}\\ \hline
+\textsc{\ttfamily SPACE\_OPTIONS} &\verb+-e+\\
+\textsc{\ttfamily DOT} &\verb+bin\dot.exe+ \\
+\textsc{\ttfamily DOT\_FORMAT} &\verb+png+\\\hline
 \end{tabular}
 
 \end{center}

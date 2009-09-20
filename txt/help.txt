@@ -35,12 +35,13 @@ directory or in the current directory.
 
 Display:
 Controls the display of the output in the right text area.
-Maximize: Makes the text area larger.
-Save output: Saves the contents of the text area in a file with
-extension .out.
 Trace: Brings up a menu to select formatting for the text area:
 the widths of the fields for statements and variables, and
 the list of excluded variables and statements.
+Maximize: Makes the text area larger.
+State space: Generates and displays a diagram of the state space.
+Save output: Saves the contents of the text area in a file with
+extension .out.
 
 Help:
 Help and About are standard.
