@@ -204,21 +204,9 @@ class RunSpin {
         File pf = editor.file.getParentFile();
         if (pf != null) pb.directory(pf.getCanonicalFile());
         p = pb.start();
-
-        InputStream istream = p.getInputStream();
-        FileOutputStream ostream = new FileOutputStream(editor.PNGFileName);
-        int s;
-        while (true) {
-          s = istream.read();
-          if (s == -1) break;
-          ostream.write(s);
-        }
-        ostream.close();
-        p.waitFor();
       }
-      catch (InterruptedException e) {}
       catch (java.io.IOException e) {}
-    }
+      }
 
     // String to array of tokens - for ProcessBuilder
     //   Previous versions of EUI used StringTokenizer
