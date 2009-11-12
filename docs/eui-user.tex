@@ -21,7 +21,7 @@
 \parindent=0pt
 
 \title{\eui{} - Graphical User Interface for \eri{}\\User's Guide\\
-\mbox{}\\\large{Version 1.2}}
+\mbox{}\\\large{Version 1.2.1}}
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -315,8 +315,8 @@ pressed. In that case, \p{q} is sent to \eri{} to terminate the
 simulation.
 
 When generating the state space, after running \eri{} with the \p{-e}
-argument, \textsc{dot} is called and its output directed to a
-\p{FileOutputStream}. Class \p{DisplayImage} pops up a new Frame in
+argument, \textsc{dot} is called and its output directed to a file using
+its \p{-o} argument. Class \p{DisplayImage} pops up a new Frame in
 which the image is displayed.
 
 \newpage
@@ -346,9 +346,9 @@ default values.
 \hline
 \multicolumn{2}{|c|}{Options for executing \eri{}}\\ \hline
 \textsc{\ttfamily COMPILE\_OPTIONS} &\verb+-c -dprv+\\
-\textsc{\ttfamily RANDOM\_OPTIONS} &\verb+-r -dcmpruv+\\
-\textsc{\ttfamily INTERACTIVE\_OPTIONS} &\verb+-i -dcempruv+\\
-\textsc{\ttfamily TRAIL\_OPTIONS} &\verb+-g -dcmpruv+\\
+\textsc{\ttfamily RANDOM\_OPTIONS} &\verb+-r -dcmoprv+\\
+\textsc{\ttfamily INTERACTIVE\_OPTIONS} &\verb+-i -dcemoprv+\\
+\textsc{\ttfamily TRAIL\_OPTIONS} &\verb+-g -dcmoprv+\\
 \textsc{\ttfamily LTL2BA\_OPTIONS} &\verb+-b -dbv+\\
 \textsc{\ttfamily SAFETY\_OPTIONS} &\verb+-s -dgrv+\\
 \textsc{\ttfamily ACCEPT\_OPTIONS} &\verb+-a -t -dgrv+\\
