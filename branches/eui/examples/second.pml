@@ -24,4 +24,3 @@ active proctype q() {
        wantq = false;
     od
 }
-

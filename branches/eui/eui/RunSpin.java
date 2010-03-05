@@ -1,4 +1,4 @@
-/* Copyright 2003-9 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
+/* Copyright 2003-10 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
 /*
 * Fork process for running Spin
 * Manage dialog for interactive simulation
@@ -134,6 +134,10 @@ class RunSpin {
           // System.out.println(s);  // For debugging
           if (s == null)
             running = false;
+          else if (s.startsWith("*** Invalid argument")) {
+            EUI.append(area, Config.ARGUMENT_ERROR);
+            running = false;
+          }
           else if (filtering == EUI.FilterTypes.SIMULATION)
             EUI.append(area, filter.filterSimulation(s));
           else if (filtering == EUI.FilterTypes.VERIFICATION)
@@ -204,9 +208,11 @@ class RunSpin {
         File pf = editor.file.getParentFile();
         if (pf != null) pb.directory(pf.getCanonicalFile());
         p = pb.start();
+        p.waitFor();
       }
+      catch (InterruptedException e) {}
       catch (java.io.IOException e) {}
-      }
+    }
 
     // String to array of tokens - for ProcessBuilder
     //   Previous versions of EUI used StringTokenizer

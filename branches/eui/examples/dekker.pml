@@ -1,6 +1,6 @@
 bool    wantp = false, wantq = false;
 byte    turn = 1;
-bool csp = false;
+bool csp = false, csq = false;
 
 active proctype p() {
     do
@@ -17,6 +17,7 @@ active proctype p() {
             fi
         od;
         csp = true;
+        assert (!(csp && csq));
         csp = false;
         wantp = false;
         turn = 2
@@ -37,6 +38,9 @@ active proctype q() {
                 wantq = true
             fi
         od;
+        csq = true;
+        assert (!(csp && csq));
+        csq = false;
         wantq = false;
         turn = 1
     od

@@ -1,6 +1,6 @@
             EUI - Graphical User Interface for Erigone
               (See title bar for version number)
-          Copyright 2009 by Mordechai (Moti) Ben-Ari.
+          Copyright 2009-10 by Mordechai (Moti) Ben-Ari.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

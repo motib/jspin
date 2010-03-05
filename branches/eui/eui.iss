@@ -3,14 +3,14 @@
 
 [Setup]
 AppName=EUI - Graphical Interface for EUI
-AppVerName=EUI - Version 1.2.1
+AppVerName=EUI - Version 1.3
 AppPublisher=Moti Ben-Ari, Weizmann Institute of Science
 AppPublisherURL=http://stwww.weizmann.ac.il/g-cs/benari/eui/index.html
 AppSupportURL=http://stwww.weizmann.ac.il/g-cs/benari/eui/index.html
 AppUpdatesURL=http://stwww.weizmann.ac.il/g-cs/benari/eui/index.html
 DefaultGroupName=EUI
 OutputDir=c:\eui
-DefaultDirName=c:\eui
+DefaultDirName=c:\Program Files\eui
 AllowNoIcons=yes
 LicenseFile=C:\eui\txt\gpl.txt
 SetupIconFile=C:\eui\eui.ico
@@ -28,6 +28,8 @@ Source: "C:\eui\eui\*.mf"; DestDir: "{app}\eui"; Flags: ignoreversion
 Source: "C:\eui\docs\*.png"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "C:\eui\docs\*.tex"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "C:\eui\docs\*.pdf"; DestDir: "{app}\docs"; Flags: ignoreversion
+Source: "C:\erigone\docs\erigone-ug.pdf"; DestDir: "{app}\docs"; Flags: ignoreversion
+Source: "C:\erigone\docs\erigone-quick.pdf"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "C:\eui\eui.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\eui\eui.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\eui\build.bat"; DestDir: "{app}"; Flags: ignoreversion
@@ -40,6 +42,7 @@ Source: "C:\eui\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion
 [Icons]
 Name: "{group}\EUI";  Filename: "{app}\run.bat"; IconFilename: "{app}\eui.ico"; WorkingDir: "{app}"
 Name: "{group}\EUI User's Guide"; Filename: "{app}\docs\eui-user.pdf"
-Name: "{group}\Website"; Filename: "http://stwww.weizmann.ac.il/g-cs/benari/eui/index.html"
+Name: "{group}\EUI Quick Start Guide"; Filename: "{app}\docs\eui-quick.pdf"
+Name: "{group}\Erigone website"; Filename: "http://stwww.weizmann.ac.il/g-cs/benari/erigone/index.html"
 Name: "{group}\Uninstall eui"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\EUI"; Filename: "{app}\run.bat"; IconFilename: "{app}\eui.ico"; WorkingDir: "{app}"
