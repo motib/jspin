@@ -25,7 +25,7 @@
 \setlength{\parskip}{0.20\baselineskip plus 1pt minus 1pt}
 \parindent=0pt
 
-\title{\js{} - Java GUI for \spn{}\\User's Guide\\\mbox{}\\\large{Version 4.6}}
+\title{\js{} - Java GUI for \spn{}\\User's Guide\\\mbox{}\\\large{Version 4.7}}
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -315,7 +315,7 @@ you can select \bu{Stop} to terminate the \spn{} process that has been forked.
 \item[\bu{Check}] Runs a \emph{syntax check}.
 \item[\bu{Random}] Runs a \emph{random simulation}.
 \item[\bu{Interactive}] Runs an \emph{interactive simulation}.
-\item[\bu{Trail}] Runs a \emph{guided simulation} using the trail
+\item[\bu{Guilded}] Runs a \emph{guided simulation} using the trail
 file created by the execution of the analyzer.
 \item[\bu{Verify}] Runs an \emph{verification}.
 \end{description}
@@ -401,16 +401,23 @@ Checking \bu{Weak fairness} in the menu \bu{Settings}
 or on the toolbar performs the verification only for executions that are
 weakly fair.
 
-\subsection{LTL formulas}
+\subsection{LTL formulas}\label{s.ltl}
 A correctness claim specified by a \emph{Linear Temporal Logic (LTL)} formula
 must be converted to an automaton written as a \prm{} \p{never} claim.
 Enter a formula (such as \p{[]p} or \p{<>p}) in the text field on the menu
 bar and select \bu{Translate} from the toolbar or the \bu{Convert} menu;
-the formula will be negated and translated into a \p{never}
+the formula translated into a \p{never}
 claim which will be added to the next \spn{} verification.
 The \p{never} claim is stored in a file with extension \p{.ltl}.
 The formula is not automatically translated, so whatever \p{never}
 claim exists, if any, will continue to be used until \bu{Translate} is invoked again.
+
+\textbf{Before the formula is translated it is negated}. This is done so
+that the LTL formula as displayed represents the correctness property
+being checked and not the negated formula which if satisfied represents
+a counterexample. Should you wish to enter negations yourself as in
+\spn{}, you can change the configuration file option \p{NEGATE\_LTL} to
+false; this can also be done by toggling \bu{Settings/Negate LTL}.
 
 LTL formulas are saved in \emph{property files} with extension \p{.prp}.
 By default, when you open a \prm{} file,
@@ -870,6 +877,7 @@ default values.
 \textsc{\ttfamily FAIRNESS} &      \verb+true+\\
 \textsc{\ttfamily RAW} & \verb+false+\\
 \textsc{\ttfamily SINGLE\_QUOTE} &      \verb+false+\\
+\textsc{\ttfamily NEGATE\_LTL} &      \verb+true+\\
 \textsc{\ttfamily VERIFY\_MODE} &   \verb+"Safety"+\\\hline
 \end{tabular}
 
@@ -939,33 +947,4 @@ default values.
 
 \end{center}
 
-\section{Release notes}
-
-\begin{description}
-\item[4.6] The divider locations and the width of the interactive select
-buttons can be saved in the configuration file after changing them
-interactively. \p{STATEMENT\_WIDTH} can be changed interactively.
-The installation directory may have spaces.
-\item[4.5.1] Fix a bug when an LTL formula contains spaces.
-\item[4.5] Improvements to interactive simulation.
-\item[4.4] Configuration file can be in current or installation
-directory.
-\item[4.3.1] Fixes a serious bug introduced in 4.3.
-\item[4.3] Standalone filter program. Integration of user manuals.
-\item[4.2.2] Self-installing archive and relative path names.
-\item[4.2.1] For random simulation the seed can be set.
-\item[4.2] New version of \spd{} for graphically displaying the \prm{} source as automata.
-Help, About and raw files now displayed in the right text area.
-\item[4.1.3] Minor fixes: The full error line from a verification is displayed.
-The fonts on option panes are fixed.
-\item[4.1.2] The default configuration values are changed to point to the
-\p{bin} subdirectory for installing minimal binaries for \spn{}
-and \textsc{dot}.
-For non-Windows systems such as Mac OS X: the compilation target is specified as
-\textsc{Java} 1.5. The \p{SINGLE\_QUOTE} option enables the use of single quotes
-when translating an LTL formula.
-\item[4.1.1] Not released.
-\item[4.1] Lines numbers appear in the filtered simulation output.
-\item[4.0] Includes the new \spd{} and an improved interface for running it.
-\end{description}
 \end{document}

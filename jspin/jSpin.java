@@ -94,6 +94,7 @@ public class jSpin extends JFrame implements ActionListener {
     private JMenuItem menuItemMaxSteps = new JMenuItem(Config.MaxSteps);
     private JMenuItem menuItemMaxDepth = new JMenuItem(Config.MaxDepth);
     private JMenuItem menuItemSeed = new JMenuItem(Config.Seed);
+    private JCheckBoxMenuItem menuItemNegate = new JCheckBoxMenuItem(Config.Negate);
     private JCheckBoxMenuItem menuItemFair = new JCheckBoxMenuItem(Config.Fair);
     private JRadioButtonMenuItem menuItemSafety = new JRadioButtonMenuItem(Config.Safety, false);
     private JRadioButtonMenuItem menuItemAcceptance = new JRadioButtonMenuItem(Config.Acceptance, false);
@@ -308,6 +309,11 @@ public class jSpin extends JFrame implements ActionListener {
             changeOption("MAX_DEPTH", true);
         else if (e.getSource() == menuItemSeed)
             changeOption("SEED", true);
+        else if (e.getSource() == menuItemNegate) {
+            boolean negate = !Config.getBooleanProperty("NEGATE_LTL");
+            Config.setBooleanProperty("NEGATE_LTL", negate);
+            menuItemNegate.setSelected(negate);
+        }
         else if ((e.getSource() == menuItemFair) || (e.getSource() == toolCheckFair)) {
             boolean fair = !Config.getBooleanProperty("FAIRNESS");
             Config.setBooleanProperty("FAIRNESS", fair);
@@ -407,11 +413,12 @@ public class jSpin extends JFrame implements ActionListener {
         else if ((e.getSource() == LTLTranslateButton) || (e.getSource() == menuItemTranslate)) {
             if (LTLField.getText().equals(""))
                 return;
-            String quote = Config.getBooleanProperty("SINGLE_QUOTE") ? "'" : "\"";
+            String quote  = Config.getBooleanProperty("SINGLE_QUOTE") ? "'" : "\"";
+            String negate = Config.getBooleanProperty("NEGATE_LTL") ? "!" : "";
             runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("SPIN"),
                 Config.getStringProperty("TRANSLATE_OPTIONS") + " " +
-                quote + "!(" + LTLField.getText() + ")" + quote );
+                quote + negate + "(" + LTLField.getText() + ")" + quote );
             editor.writeFile(new java.io.File(editor.LTLFileName), trailArea);
         } 
 		else if ((e.getSource() == LTLClearButton) || (e.getSource() == menuItemClear)) {
@@ -601,6 +608,9 @@ public class jSpin extends JFrame implements ActionListener {
         initMenuItem(menuSettings, menuItemMaxDepth, Config.MaxDepthMN, Config.MaxDepthAC);
         menuSettings.addSeparator();
         initMenuItem(menuSettings, menuItemSeed, Config.SeedMN, Config.SeedAC);
+        menuSettings.addSeparator();
+        initMenuItem(menuSettings, menuItemNegate, Config.NegateMN, Config.NegateAC);
+        menuItemNegate.setSelected(Config.getBooleanProperty("NEGATE_LTL"));
         menuSettings.addSeparator();
         initMenuItem(menuSettings, menuItemFair, Config.FairMN, Config.FairAC);
         menuItemFair.setSelected(Config.getBooleanProperty("FAIRNESS"));
