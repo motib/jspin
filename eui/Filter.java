@@ -26,6 +26,7 @@ public class Filter {
   private boolean buchi;     // Buchi automaton
   private boolean optbuchi;  // Optimized Buchi automaton
   private boolean ltlonly;   // Mode is LTL translation only
+  private boolean displaybuchi; // Display the Buchi automaton or not
   private boolean mtype;     // Parsing mtypes
 
   // Map from variable names to values
@@ -47,17 +48,14 @@ public class Filter {
     program  = true;
     buchi    = true;
     optbuchi = false;
+    displaybuchi = Config.getBooleanProperty("DISPLAY_BUCHI");
     acceptance = false;
     mtype = false;
     this.properties = properties;
-    processWidth    = Integer.valueOf(
-      properties.getProperty("PROCESS_WIDTH"));
-    variableWidth   = Integer.valueOf(
-      properties.getProperty("VARIABLE_WIDTH"));
-    statementWidth  = Integer.valueOf(
-      properties.getProperty("STATEMENT_WIDTH"));
-    linesPerTitle   = Integer.valueOf(
-      properties.getProperty("LINES_PER_TITLE"));
+    processWidth    = Config.getIntProperty("PROCESS_WIDTH");
+    variableWidth   = Config.getIntProperty("VARIABLE_WIDTH");
+    statementWidth  = Config.getIntProperty("STATEMENT_WIDTH");
+    linesPerTitle   = Config.getIntProperty("LINES_PER_TITLE");
     process   = formatItem("", processWidth,   true);
     statement = formatItem("", statementWidth, true);
 	}
@@ -198,10 +196,12 @@ public class Filter {
     else if (s.startsWith("optimized buchi automaton start=")) {
       buchi = false;
       optbuchi = true;
+      if (!displaybuchi && !ltlonly) return "";
       return (ltlonly ? "" : "\n") + Config.BUCHI_TITLE + "\n";
     }
     else if (s.startsWith("optimized buchi automaton end=")) {
       optbuchi = false;
+      if (!displaybuchi && !ltlonly) return "";
       return Config.FLAGS + (ltlonly ? "\n" : "");
     }
 
@@ -211,12 +211,19 @@ public class Filter {
     }
     else if (s.startsWith("verification terminated=")) {
       buchi = false;
+      boolean counter =
+        (s.indexOf("invalid end state")         != -1) ||
+        (s.indexOf("never claim terminated")    != -1) ||
+        (s.indexOf("acceptance cycle")          != -1) ||
+        (s.indexOf("assert statement is false") != -1);
       i = s.indexOf(",");
       return "\n" + s.substring(0, i+1) + "\n" +
-             s.substring(i+1) + "\n\n";
+             s.substring(i+1) + "\n" +
+             (counter ? Config.RUN_GUIDED : "") + "\n";
     }
 
-    else if (optbuchi)
+    else if (optbuchi) {
+      if (!displaybuchi && !ltlonly) return "";
       // Display transition source->target, statement and
       //   flags: A=atomic, e=end, a=accept
       return
@@ -230,6 +237,7 @@ public class Filter {
             6, true) + " " +
         formatItem(extractBraces(s, "statement="),
           Config.getIntProperty("STATEMENT_WIDTH"), true) + "\n";
+    }
     else if (buchi)
       return "";
     else

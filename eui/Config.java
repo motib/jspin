@@ -1,11 +1,11 @@
-/* Copyright 2003-9 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
+/* Copyright 2003-10 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
 package eui;
 import java.io.*;
 import java.awt.event.*;
 import java.util.*;
 
 public class Config {
-  static final String VERSION = "1.2.1";
+  static final String VERSION = "1.3";
 
   // Properties
   static Properties properties = new Properties();
@@ -21,7 +21,6 @@ public class Config {
     "EUI - Erigone User Interface, Version " + VERSION;
   static final String JAVA_VERSION     = "1.5";
   static final String CONFIG_FILE_NAME = "config.cfg";
-  static final String SPIDER_TITLE     = "SpinSpider";
   static final String SELECT  	       = "Select a statement";
   static final String OPEN_FILE 	     = "Open a Promela file\n";
   static final String LTL_FORMULA	     = " LTL formula  ";
@@ -42,6 +41,12 @@ public class Config {
   static final String PML_FILES        = "Promela source files";
   static final String PRP_FILES        = "LTL property files";
   static final String OUT_FILES        = "Erigone display output files";
+  static final String RUN_GUIDED       =
+    "\nRun a guided simulation to see the counterexample\n";
+  static final String ARGUMENT_ERROR   =
+    "Erigone argument error\n" +
+    "\nDelete config.cfg and"  +
+    "\nrun EUI again to recreate the default configuration\n";
 
   // Static widths
   static final int 	  LTL_COLUMNS      = 50;
@@ -62,12 +67,13 @@ public class Config {
     properties.put("ABOUT_FILE_NAME",  "txt" +
                    java.io.File.separatorChar + "copyright.txt");
     properties.put("SINGLE_QUOTE",     Boolean.toString(false));
+    properties.put("DISPLAY_BUCHI",    Boolean.toString(false));
 
     // Erigone options
     properties.put("COMPILE_OPTIONS",     "-c -dprv");
-    properties.put("RANDOM_OPTIONS",      "-r -dcmoprv");
-    properties.put("INTERACTIVE_OPTIONS", "-i -dcemoprv");
-    properties.put("TRAIL_OPTIONS",       "-g -dcmoprv");
+    properties.put("RANDOM_OPTIONS",      "-r -dcmpruv");
+    properties.put("INTERACTIVE_OPTIONS", "-i -dcempruv");
+    properties.put("TRAIL_OPTIONS",       "-g -dcmpruv");
     properties.put("LTL2BA_OPTIONS",      "-b -dbrv");
     properties.put("SAFETY_OPTIONS",      "-s -dbgrv");
     properties.put("ACCEPT_OPTIONS",      "-a -t -dbgrv");
@@ -162,8 +168,8 @@ public class Config {
   static final int    AcceptanceMN = KeyEvent.VK_A;
   static final String Fair    	   = "Fairness";
   static final int    FairMN  	   = KeyEvent.VK_N;
-  static final String Trail        = "Trail";
-  static final int    TrailMN  	   = KeyEvent.VK_T;
+  static final String Trail        = "Guided";
+  static final int    TrailMN  	   = KeyEvent.VK_G;
   static final String Stop       	 = "Stop";
   static final int    StopMN   	   = KeyEvent.VK_P;
 
@@ -198,13 +204,6 @@ public class Config {
   static final String Space       = "State space";
   static final int    SpaceMN     = KeyEvent.VK_S;
 
-  static final String Spider		      = "SpinSpider";
-  static final int    SpiderMN   	    = KeyEvent.VK_D;
-  static final String SpiderDisplay   = "Display debug";
-  static final int    SpiderDisplayMN = KeyEvent.VK_L;
-  static final String Run  		        = "Run";
-  static final int    RunMN   	      = KeyEvent.VK_R;
-
   static final String Help		= "Help";
   static final int    HelpMN  = KeyEvent.VK_H;
   static final String About   = "About";
@@ -216,35 +215,6 @@ public class Config {
   static final String OK     = "OK";
   static final int    OKMN   = KeyEvent.VK_O;
   static final String Cancel = "Cancel";
-
-  // SpinSpider options
-  static final String NoTrail      = "No trail";
-  static final int    NoTrailMN	   = KeyEvent.VK_T;
-  static final String EmphTrail    = "Emphasize trail";
-  static final int    EmphTrailMN	 = KeyEvent.VK_E;
-  static final String OnlyTrail    = "Only trail";
-  static final int    OnlyTrailMN	 = KeyEvent.VK_O;
-  static final String Automata     = "Automata";
-  static final int    AutomataMN	 = KeyEvent.VK_A;
-  static final String Debug        = "Debug";
-  static final int    DebugMN		   = KeyEvent.VK_D;
-  static final String DotSize      = "Dot size";
-  static final String DotSmall     = "Small";
-  static final int    DotSmallMN	 = KeyEvent.VK_M;
-  static final String DotLarge     = "Large";
-  static final int    DotLargeMN	 = KeyEvent.VK_L;
-  static final String TrailStyle   = "Trail style";
-  static final String TrailColor   = "Color";
-  static final int    TrailColorMN = KeyEvent.VK_C;
-  static final String TrailBold    = "Bold";
-  static final int    TrailBoldMN	 = KeyEvent.VK_B;
-  static final String Processes    = "Processes";
-  static final int    MAX_PROCESS  = 5;
-  static final String Format       = "Format";
-  static final String DOT          = "dot";
-  static final String PNG          = "png";
-  static final String PS           = "ps";
-  static final String FSM          = "fsm";
 
   // Accelerators: some defaults and some unused
   // Select All by default            = "control A"
@@ -277,8 +247,7 @@ public class Config {
     AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC,
     FairAC, HelpAC, InterAC, LTL2BAAC, MaxAC, 
     OptionsSaveCurrentAC, OptionsSaveInstallAC, 
-    RandomAC, SafetyAC, SaveSpinAC, SpiderAC, SpiderDisplayAC,
-    StopAC, TrailAC;
+    RandomAC, SafetyAC, SaveSpinAC, StopAC, TrailAC;
 
 	// Initialize configuration file
   static public void init() {
