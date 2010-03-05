@@ -14,7 +14,7 @@ public class Config {
   public static final char sep = java.io.File.separatorChar;  // shortcut
 
 	// Strings
-    static final String SOFTWARE_NAME    = "jSpin Version 4.6";
+    static final String SOFTWARE_NAME    = "jSpin Version 4.7";
     static final String JAVA_VERSION     = "1.5";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE     = "SpinSpider";
@@ -50,6 +50,7 @@ public class Config {
         properties.put("MAX_STEPS",      "250");
         properties.put("MAX_DEPTH",      "2000");
         properties.put("SEED",           "0");
+        properties.put("NEGATE_LTL",     Boolean.toString(true));
         properties.put("FAIRNESS",       Boolean.toString(true));
         properties.put("VERIFY_MODE",    Safety);
         properties.put("RAW",            Boolean.toString(false));
@@ -134,8 +135,8 @@ public class Config {
     static final int    InterMN		= KeyEvent.VK_I;
     static final String Verify     	= "Verify";
     static final int    VerifyMN    = KeyEvent.VK_V;
-    static final String Trail       = "Trail";
-    static final int    TrailMN  	= KeyEvent.VK_T;
+    static final String Trail       = "Guided";
+    static final int    TrailMN  	= KeyEvent.VK_G;
     static final String Stop       	= "Stop";
     static final int    StopMN   	= KeyEvent.VK_P;
 
@@ -162,15 +163,16 @@ public class Config {
     static final int    MaxDepthMN  = KeyEvent.VK_D;
     static final String Seed        = "Seed";
     static final int    SeedMN      = KeyEvent.VK_S;
-    static final String StWidth 	= "Statement width";
-    static final int    StWidthMN  = KeyEvent.VK_S;
-    static final String VarWidth 	= "Variable width";
+    static final String Negate      = "Negate LTL";
+    static final int    NegateMN    = KeyEvent.VK_L;
+    static final String StWidth 	  = "Statement width";
+    static final int    StWidthMN   = KeyEvent.VK_S;
+    static final String VarWidth 	  = "Variable width";
     static final int    VarWidthMN  = KeyEvent.VK_V;
     static final String ExcludedV 	= "Exclude variables";
     static final int    ExcludedVMN = KeyEvent.VK_E;
     static final String ExcludedS 	= "Exclude statements";
     static final int    ExcludedSMN = KeyEvent.VK_X;
-
     static final String Fair    	= "Weak fairness";
     static final int    FairMN  	= KeyEvent.VK_W;
     static final String Safety    	= "Safety";
@@ -292,11 +294,11 @@ public class Config {
     
     // Dummy accelerators
     static String 
-        AboutAC, CheckAC, DefaultAC, HelpAC, InterAC, LTLClearAC, LTLLoadAC,
-        LTLTranslateAC, MaxAC, MaxDepthAC, SeedAC, NewAC, OptionsCAC, OptionsInterAC, 
-        OptionsPanAC, OptionsRandomAC,  OptionsSaveCurrentAC, 
-        OptionsSaveInstallAC, OptionsTrailAC, 
-        RandomAC, SaveAsAC, SaveSpinAC, 
+        AboutAC, CheckAC, DefaultAC, HelpAC, InterAC, LTLClearAC,
+        LTLLoadAC, LTLTranslateAC, MaxAC, MaxDepthAC, SeedAC, NegateAC,
+        NewAC, OptionsCAC, OptionsInterAC, OptionsPanAC,
+        OptionsRandomAC,  OptionsSaveCurrentAC, OptionsSaveInstallAC,
+        OptionsTrailAC, RandomAC, SaveAsAC, SaveSpinAC, 
         SpiderDisplayAC, StopAC, StWidthAC, TrailAC, VerifyAC, RawAC;
 
 	// Initialize configuration file
