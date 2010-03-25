@@ -28,6 +28,7 @@ public class Filter {
   private boolean ltlonly;   // Mode is LTL translation only
   private boolean displaybuchi; // Display the Buchi automaton or not
   private boolean mtype;     // Parsing mtypes
+  private boolean newprocess;// Don't display new processes from "run"
 
   // Map from variable names to values
   //   to store complete states
@@ -51,6 +52,7 @@ public class Filter {
     displaybuchi = Config.getBooleanProperty("DISPLAY_BUCHI");
     acceptance = false;
     mtype = false;
+    newprocess = false;
     this.properties = properties;
     processWidth    = Config.getIntProperty("PROCESS_WIDTH");
     variableWidth   = Config.getIntProperty("VARIABLE_WIDTH");
@@ -65,13 +67,14 @@ public class Filter {
   public void setExcluded(String s, boolean exVar) {
     ArrayList<String> excluded = exVar ? excludedVar : excludedState;
     // Replace whitespace by separator
-    s = s.replaceAll("\\s+", Config.SEPARATOR) + Config.SEPARATOR;
+    s = s.replaceAll("[\t\n\\x0B\f\r]", Config.SEPARATOR) + Config.SEPARATOR;
     excluded.clear();
     do {
       int nl = s.indexOf(Config.SEPARATOR);
       if (nl == -1) break;
-      if (!s.substring(0,nl).equals(""))
+      if (!s.substring(0,nl).equals("")) {
         excluded.add(s.substring(0, nl));
+      }
       s = s.substring(nl+1);
     } while (true);
   }
@@ -244,9 +247,22 @@ public class Filter {
       return s + "\n";
   }
 
+  // Create title needs to be called also after "run"
+  private void createTitle() {
+    varTitle = collectionToString(variables.keySet());
+    title = "\n" +
+      formatItem(
+        Config.PROCESS_TITLE, processWidth, true) + " " +
+      formatItem(
+        Config.STATEMENT_TITLE, statementWidth, true) + " " + 
+      varTitle + "\n";
+  }  
+
   // Filter strings from simulation
   // The flag "program" is used so that all options need not be
   //   checked during execution
+  // The flag "newprocess" is used when displaying the result
+  //   of executing a "run" command
   public String filterSimulation(String s) {
     int i;
     // Display data from program
@@ -301,13 +317,7 @@ public class Filter {
 
       // Create title after all variables and channels read
       else if (s.startsWith("data size=")) {
-        varTitle = collectionToString(variables.keySet());
-        title = "\n" +
-          formatItem(
-            Config.PROCESS_TITLE, processWidth, true) + " " +
-          formatItem(
-            Config.STATEMENT_TITLE, statementWidth, true) + " " + 
-          varTitle + "\n";
+        createTitle();
         return "";
       }
       else if (s.startsWith("transitions end=")) {
@@ -326,7 +336,7 @@ public class Filter {
         return "";
       }
       // Display scenario line with chosen process
-      else if (s.startsWith("process=")) {
+      else if (s.startsWith("process=") && !newprocess) {
         String st = extractBraces(s, "statement=");
         if (checkExcluded(st, false)) return "";
         String ln = formatItem(
@@ -339,6 +349,7 @@ public class Filter {
         // Display title if needed
         lines = (lines + 1) % linesPerTitle;
         String prefix = (lines == 0 ? title : "");
+
         // Display start of acceptance cycle if needed
         String suffix = (acceptance ? "start of acceptance cycle\n" : "");
         acceptance = false;
@@ -347,6 +358,39 @@ public class Filter {
       else if (s.startsWith("start of acceptance cycle=")) {
         acceptance = true;
         return "";
+      }
+
+      // New symbols and processes from "run" command
+      else if (s.startsWith("new symbol=")) {
+        i = s.indexOf("type=");
+        String varName = extract(s, "name=");
+        // If name is Proc_NN.Var, exclude the formal name Proc.Var
+        String varNameFormal =
+                  varName.substring(0, varName.indexOf("_")) + 
+                  varName.substring(varName.indexOf("."));
+        if (variables.containsKey(varNameFormal))
+          variables.remove(varNameFormal);
+        if (!excludedVar.contains(varName))
+          variables.put(varName, "");
+        createTitle();
+        return s.substring(0, i) + "\n";
+      }
+      else if (s.startsWith("new copy of process=")) {
+        newprocess = true;
+        return s + "\n";
+      }
+      else if (newprocess) {
+        if (s.startsWith("process=")) {
+          i = s.indexOf("initial=");
+          lines = 0;
+          return s.substring(0, i) + title;
+        }
+        else if (s.startsWith("new copy end=")) {
+          newprocess = false;
+          return "";
+        }
+        else
+          return "";
       }
 
       // Termination message
