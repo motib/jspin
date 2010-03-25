@@ -1,6 +1,6 @@
 /*
  EUI - Development environment for Erigone
- Copyright 2003-9 by Mordechai (Moti) Ben-Ari.
+ Copyright 2003-10 by Mordechai (Moti) Ben-Ari.
  
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
