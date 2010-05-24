@@ -299,7 +299,7 @@ public class EUI extends JFrame implements ActionListener {
         editor.fileName);
       runSpin.runAndWait(trailArea, FilterTypes.SPACE,
         Config.getStringProperty("DOT"),
-        " -o" + editor.PNGFileName +
+        "-q -o" + editor.PNGFileName +
         " -T" + Config.getStringProperty("DOT_FORMAT") + " " +
         editor.DOTFileName);
         new DisplayImage(editor.PNGFileName);
