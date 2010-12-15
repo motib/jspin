@@ -1,6 +1,8 @@
 byte n = 0;
 bool flag = false;
 
+ltl { <>flag }
+
 active proctype p() {
 	do
 	::  flag -> break;
