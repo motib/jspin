@@ -34,6 +34,7 @@ Convert:
 Load loads a .prp file into the LTL formula field:
 Clear clears the field.
 Translate translates it into a never claim stored in a .ltl file.
+LTL Name selects an internal LTL formula to use for verification.
 
 Options - change the option strings used with Spin:
 Common is used to select which data to display for Random,

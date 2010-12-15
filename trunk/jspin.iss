@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=jSpin - Spin Development Environment
-AppVerName=jSpin - Version 4.7
+AppVerName=jSpin - Version 5.0
 AppPublisher=Moti Ben-Ari, Weizmann Institute of Science
 AppPublisherURL=http://stwww.weizmann.ac.il/g-cs/benari/jspin/index.html
 AppSupportURL=http://stwww.weizmann.ac.il/g-cs/benari/jspin/index.html

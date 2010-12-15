@@ -1,4 +1,4 @@
-// Copyright 2004-8 by Mordechai (Moti) Ben-Ari. See copyright.txt.
+// Copyright 2004-10 by Mordechai (Moti) Ben-Ari. See copyright.txt.
 /**
  Filter Spin output.
  Display a table: process, statement, variables.
@@ -7,17 +7,18 @@ package filterSpin;
 import java.util.*;
 public class Filter {
     // Properties and copies of the data from the properties
-    private Properties properties;
-    private static String processTitle;
-    private static String statementTitle;
-    private static int processWidth;
-    private static int variableWidth;
-    private static int statementWidth;
-    private static int linesPerTitle;
-    private static boolean msc;
+    private        Properties properties;
+    private static String     processTitle;
+    private static String     statementTitle;
+    private static int        processWidth;
+    private static int        variableWidth;
+    private static int        statementWidth;
+    private static int        linesPerTitle;
+    private static boolean    msc;
+    private static boolean    newversion;  // Spin version >= 6
     
     private String title;  		// Title string
-    private int lines;		    // Line counter to redisplay title
+    private int   lines;     // Line counter to redisplay title
 
     // Map from variable names to values
     private TreeMap<String, String> variables = new TreeMap<String, String>();
@@ -41,6 +42,7 @@ public class Filter {
     statementWidth  = Integer.valueOf(properties.getProperty("STATEMENT_WIDTH"));
     linesPerTitle   = Integer.valueOf(properties.getProperty("LINES_PER_TITLE"));
     msc             = Boolean.valueOf(properties.getProperty("MSC"));
+    newversion      = Integer.valueOf(properties.getProperty("VERSION")) >= 6;
 	}
 
   // Parse string to initialize excluded arrays
@@ -87,7 +89,7 @@ public class Filter {
         return filterVariable(s);
 
       // Filter statements
-      else if ((s.indexOf("proc") != -1) && (s.indexOf("line") != -1))
+      else if ((s.indexOf("proc") != -1) && (s.indexOf("[") != -1))
         return filterStatement(s);
 
       // Display some messages unmodified
@@ -153,19 +155,30 @@ public class Filter {
   // Filter statements
   private String filterStatement(String s) {
     String u = "";
+    int    procIndex = s.indexOf("proc")+4; // After "proc"
     // Get process name
     String proc = 
-      s.substring(s.indexOf("proc")+4, s.indexOf(")")+1).trim();
+      s.substring(procIndex, s.indexOf(")")+1).trim();
     proc = proc.substring(0, proc.indexOf("(")) +  
       strip(proc.substring(proc.indexOf("(")));
 
     // Get line number and statement name
-    String statement = "";
+    String statement = "", line = "";
     if (s.indexOf('[') != -1) {
-      statement = formatItem(
-        s.substring(s.indexOf("line")+4,s.indexOf("\"")).trim(), 3);
-      statement = statement + " " +
+      if (newversion) {
+        // Spin 6 has "filename:#"
+        //   Skip over initial ":" and start at file name
+        int colonIndex = s.indexOf(":", procIndex);
+        line = formatItem(
+          s.substring(colonIndex+1, s.indexOf(" ", colonIndex)).trim(), 3);
+      }
+      else
+        // Earlier versions had "line #"
+        line = formatItem(
+          s.substring(s.indexOf("line")+4, s.indexOf("\"")).trim(), 3);
+      statement =
         strip(s.substring(s.indexOf('[')+1, s.lastIndexOf(']')));
+      statement = line + " " + statement;
     }
 
     if (checkExcluded(statement, false)) return "";

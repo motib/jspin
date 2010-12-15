@@ -1,17 +1,21 @@
-/* Copyright 2006 by Mordechai (Moti) Ben-Ari. See copyright.txt */
+/* Copyright 2006-10 by Mordechai (Moti) Ben-Ari. See copyright.txt */
 /*
  * Read the data files
 */
 
 package spinSpider;
 import java.io.*;
+import java.util.Properties;
 
 class Read {
 	SpinSpider spd;
 	String fileName;
-	Read(SpinSpider s, String f) { 
+	Properties properties;
+
+	Read(SpinSpider s, String f, Properties p) { 
 		spd = s; 
 		fileName = f;
+		properties = p;
 	}
 
   // Read the state transitions output by -DCHECK and never claim
@@ -132,7 +136,7 @@ class Read {
         }
         
         // Start of never claim - terminate processing
-        else if (s.indexOf(":never:") != -1) {
+        else if (s.indexOf("claim never") != -1) {
     		spd.statementsPerProcess.add(
     			new Integer(countStatements)); 
         	break;
@@ -150,15 +154,23 @@ class Read {
         // Entry for each transition
         else if (s.indexOf("-> state") != -1) {
         	countStatements++;
+        	// For Spin 6 the format for the line number is different
+        	int arrow = s.indexOf("=>");
+        	int lineNumber;
+        	if (Integer.valueOf(properties.getProperty("VERSION")).intValue() >= 6)
+            lineNumber = s.lastIndexOf(':', arrow) + 1;
+          else
+            lineNumber = s.lastIndexOf("line ", arrow) + 5;
+          
         	spd.statements.add(new Statement(
-        		proc-1,                        // process number 
-                extract(s, "state", "-(tr"),   // source state
-                extract(s, "-> state", "[id"), // target state
-                extract(s, "[id", "tp"),       // id number for trail
-                s.indexOf("[A") != -1,         // atomic for automata
-                extract(s, "line", "=>"),      // source line number
-                                               // source statement
-                s.substring(s.indexOf("=>")+2).trim()));
+        		    proc-1,                           // process number 
+                extract(s, "state", "-(tr"),      // source state
+                extract(s, "-> state", "[id"),    // target state
+                extract(s, "[id", "tp"),          // id number for trail
+                s.indexOf("[A") != -1,            // atomic for automata
+                                                  // source line number
+                Integer.parseInt(s.substring(lineNumber, arrow-1)),
+                s.substring(arrow+2).trim()));    // source statement
         }
     }
     try { statementReader.close(); } 

@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 
 class RunSpin {
   private Editor editor;              // The editor object
-  private filterSpin.Filter filter;              // The filter object
+  private filterSpin.Filter filter;   // The filter object
   private RunThread runThread;        // Thread object for running Spin
   private SelectDialog selectDialog;  // Thread object for select dialog
 
