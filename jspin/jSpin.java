@@ -1,6 +1,6 @@
 /*
  jSpin - Development environment for Spin
- Copyright 2003-8 by Mordechai (Moti) Ben-Ari.
+ Copyright 2003-10 by Mordechai (Moti) Ben-Ari.
  
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -76,6 +76,8 @@ public class jSpin extends JFrame implements ActionListener {
     private JMenuItem menuItemTranslate = new JMenuItem(Config.LTLTranslate);
     private JMenuItem menuItemClear = new JMenuItem(Config.LTLClear);
     private JMenuItem menuItemLoad = new JMenuItem(Config.LTLLoad);
+    private JMenuItem menuItemName = new JMenuItem(Config.LTLName);
+    private boolean   ltlInternal;
 
     private JMenu menuOptions = new JMenu();
     private JMenuItem menuItemOptionsCheck = new JMenuItem(Config.Check);
@@ -142,6 +144,7 @@ public class jSpin extends JFrame implements ActionListener {
     private JButton LTLTranslateButton = new JButton(Config.LTLTranslate);
     private JButton LTLClearButton = new JButton(Config.LTLClear);
     private JButton LTLLoadButton = new JButton(Config.LTLLoad);
+    private JButton LTLNameButton = new JButton(Config.LTLName);
 
     public void actionPerformed(ActionEvent e) {
         // File menu actions
@@ -205,7 +208,7 @@ public class jSpin extends JFrame implements ActionListener {
         // Spin menu actions
         else if ((e.getSource() == menuItemCheck) || (e.getSource() == toolCheck)) {
             trailArea.setText("");
-			runSpin.runAndWait(trailArea, false,
+            runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("SPIN"),
                 Config.getStringProperty("CHECK_OPTIONS") + " " + 
 		        editor.fileName);
@@ -228,25 +231,25 @@ public class jSpin extends JFrame implements ActionListener {
                 Config.getStringProperty("SPIN"),
                 Config.getStringProperty("COMMON_OPTIONS") + " " +
                 Config.getStringProperty("INTERACTIVE_OPTIONS") + " " + 
-				editor.fileName);
+				        editor.fileName);
             isSpinRunning();
         }
         else if ((e.getSource() == menuItemVerify) || (e.getSource() == toolVerify)) {
             trailArea.setText("");
-            if (!LTLField.getText().equals("") && 
+            if (!ltlInternal && !LTLField.getText().equals("") &&
                 !(new java.io.File(editor.LTLFileName).exists()))
                 append(messageArea, "WARNING: Correctness property has not been translated\n");
             runSpin.runAndWait(trailArea, false,
                 Config.getStringProperty("SPIN"),
                 Config.getStringProperty("VERIFY_OPTIONS") + " " +
-                ((LTLField.getText().equals("")) ? "" : "-N " + " " +
+                ((ltlInternal || LTLField.getText().equals("")) ? "" : "-N " + " " +
                 editor.LTLFileName + " ") + editor.fileName);
             if (trailArea.getText().indexOf("Error: syntax error") != -1)
                 return;
             String mode = Config.getStringProperty("VERIFY_MODE");
             String CModeOptions = mode.equals(Config.Safety) ? " -DSAFETY " :
                 (mode.equals(Config.NonProgress) ? " -DNP " : "");
-			runSpin.runAndWait(messageArea, false,
+            runSpin.runAndWait(messageArea, false,
                 Config.getStringProperty("C_COMPILER"),
                 CModeOptions + " " +
                 Config.getStringProperty("C_COMPILER_OPTIONS") );
@@ -258,7 +261,9 @@ public class jSpin extends JFrame implements ActionListener {
                 editor.root + java.io.File.separator +
                 Config.getStringProperty("PAN"),
                 panModeOptions +
-                " -m" + Config.getStringProperty("MAX_DEPTH") + " " + 
+                " -m" + Config.getStringProperty("MAX_DEPTH") + " " +
+                ((!ltlInternal || LTLField.getText().equals("")) ?
+                "" : "-N " + LTLField.getText() + " ") +
                 Config.getStringProperty("PAN_OPTIONS") );
             isSpinRunning();
         }
@@ -411,8 +416,10 @@ public class jSpin extends JFrame implements ActionListener {
 
         // LTL actions
         else if ((e.getSource() == LTLTranslateButton) || (e.getSource() == menuItemTranslate)) {
+            editor.modifiedLTL();
             if (LTLField.getText().equals(""))
                 return;
+            ltlInternal = false;
             String quote  = Config.getBooleanProperty("SINGLE_QUOTE") ? "'" : "\"";
             String negate = Config.getBooleanProperty("NEGATE_LTL") ? "!" : "";
             runSpin.runAndWait(trailArea, false,
@@ -431,8 +438,11 @@ public class jSpin extends JFrame implements ActionListener {
             if(PRPfileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 editor.openFile(PRPfileChooser.getSelectedFile(), false);
             }
-        }
-        if (editor != null) editor.focus(false);
+    }
+		else if ((e.getSource() == LTLNameButton) || (e.getSource() == menuItemName)) {
+        ltlInternal = true;
+		}
+    if (editor != null) editor.focus(false);
     }
 
     // Display the contents of a file in the trail area
@@ -583,6 +593,10 @@ public class jSpin extends JFrame implements ActionListener {
         initMenuItem(menuLTLConvert, menuItemTranslate, Config.LTLTranslateMN, Config.LTLTranslateAC);
         initMenuItem(menuLTLConvert, menuItemClear, Config.LTLClearMN, Config.LTLClearAC);
         initMenuItem(menuLTLConvert, menuItemLoad, Config.LTLLoadMN, Config.LTLLoadAC);
+        if (Config.getIntProperty("VERSION") >= 6) {
+          menuLTLConvert.addSeparator();
+          initMenuItem(menuLTLConvert, menuItemName, Config.LTLName1MN, Config.LTLNameAC);
+        }
 
         menuBar.add(menuOptions);
         menuOptions.setText(Config.Options);
@@ -700,9 +714,16 @@ public class jSpin extends JFrame implements ActionListener {
         initToolButton(toolVerify, Config.VerifyMN);
         initToolButton(toolStop, Config.StopMN);
         toolBar.addSeparator();
-        initToolButton(LTLTranslateButton, Config.LTLTranslateMN);
-        initToolButton(LTLClearButton, Config.LTLClearMN);
-        initToolButton(LTLLoadButton, Config.LTLLoadMN);
+
+        if (Config.getIntProperty("VERSION") >= 6) {
+          initToolButton(LTLTranslateButton, Config.LTLTranslateMN);
+          initToolButton(LTLLoadButton, Config.LTLLoadMN);
+          initToolButton(LTLNameButton, Config.LTLNameMN);
+        } else {
+          initToolButton(LTLTranslateButton, Config.LTLTranslateMN);
+          initToolButton(LTLClearButton, Config.LTLClearMN);
+          initToolButton(LTLLoadButton, Config.LTLLoadMN);
+        }
 
         toolBar.addSeparator();
         initToolButton(toolSpider, -1);
@@ -719,29 +740,35 @@ public class jSpin extends JFrame implements ActionListener {
     // Initialization, optionally with initial source file
     private void init(String file) {
         Config.init();
-    	spiderProperties = new java.util.Properties();
+    	  spiderProperties = new java.util.Properties();
 		
-		// Set properties of text areas
+    	  // For Spin 6 default is internal LTL
+        if (Config.getIntProperty("VERSION") >= 6)
+          ltlInternal = true;
+        else
+          ltlInternal = false;
+
+        // Set properties of text areas
         font = new java.awt.Font(
             Config.getStringProperty("FONT_FAMILY"), 
             Config.getIntProperty("FONT_STYLE"), 
             Config.getIntProperty("FONT_SIZE"));
         javax.swing.UIManager.put("TextField.font", font);
         editorArea.setFont(font);
-		editorArea.setTabSize(Config.getIntProperty("TAB_SIZE"));
+        editorArea.setTabSize(Config.getIntProperty("TAB_SIZE"));
         trailArea.setFont(font);
         trailArea.setLineWrap(Config.getBooleanProperty("WRAP"));
         trailArea.setWrapStyleWord(true);
         messageArea.setFont(font);
         LTLField.setFont(font);
 		
-		// Create menus and toolbar
+		    // Create menus and toolbar
         initMenus();
         initToolBar();
         changeMode(Config.getStringProperty("VERIFY_MODE"));
         setJMenuBar(menuBar);
 
-		// Set up frame with panes
+		    // Set up frame with panes
         topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorScrollPane, trailScrollPane);
         mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topSplitPane, messageScrollPane);
         topSplitPane.setOneTouchExpandable(true);
@@ -755,7 +782,7 @@ public class jSpin extends JFrame implements ActionListener {
         contentPane.add(mainSplitPane, java.awt.BorderLayout.CENTER);
         setContentPane(contentPane);
 
-		// Create objects
+	      // Create objects
         filter = new filterSpin.Filter();
         editor = new Editor(editorScrollPane, editorArea, messageArea, 
             LTLField, undoredo.myundoable, filter);
@@ -764,7 +791,7 @@ public class jSpin extends JFrame implements ActionListener {
         PRPfileChooser = newChooser("LTL property files", ".PRP", null, null);
         OUTfileChooser = newChooser("Spin display output files", ".OUT", null, null);
 
-		// Window listener: kill Spin process if window closed
+        // Window listener: kill Spin process if window closed
         addWindowListener(new WindowAdapter() {        
             public void windowClosing(WindowEvent e) {
                 runSpin.killSpin();
@@ -772,14 +799,14 @@ public class jSpin extends JFrame implements ActionListener {
             }
         });
 		
-		// Configuration JFrame and make visible
+        // Configuration JFrame and make visible
         setFont(font);
         setTitle(Config.SOFTWARE_NAME);
         setSize(Config.getIntProperty("WIDTH"), Config.getIntProperty("HEIGHT"));
         setLocationRelativeTo(null); 
         setVisible(true);
 		
-		// Open file if given as command argument
+        // Open file if given as command argument
         if (file != "")
             editor.openFile(new java.io.File(file), true);
         else
@@ -787,7 +814,7 @@ public class jSpin extends JFrame implements ActionListener {
     }
 
     public static void main(java.lang.String[] args) {
-		// Check Java version before executing
+        // Check Java version before executing
         String version = System.getProperty("java.version");
         if (version.compareTo(Config.JAVA_VERSION) < 0) {
             JOptionPane.showMessageDialog(null, 

@@ -34,14 +34,14 @@ public class SpinSpider {
 			String  fileName;    // File name (without extension)
 			String  extension;   // Extension of Promela file name
 			String  format;      // Graph format (dot/fsm/png ...)
-			int 	trailCode;   // Use trail file to draw or emphasize a computation
+			int     trailCode;   // Use trail file to draw or emphasize a computation
 			int     dotSize;     // Size of dot graph
-			int		trailStyle;  // Style of trail in dot graph color/bold
-	private boolean debug;       // Write debug file
-								 // For writing never claim:
-	private int		numProcs;	 // Number of processes -
-								 //   write never claim if numProcs > 0
-	private String[] vars;       // Names of variables
+			int     trailStyle;  // Style of trail in dot graph color/bold
+      private boolean debug;       // Write debug file
+		  // For writing never claim:
+	    private int     numProcs;	   // Number of processes -
+			//   write never claim if numProcs > 0
+      private String[] vars;       // Names of variables
 	
     // Databases
 	ArrayList<State>      states      = 
@@ -135,7 +135,7 @@ public class SpinSpider {
         progress(Config.TITLE);
     	// Create objects for reading and writing files
         Write write = new Write(this, fileName);
-        Read read = new Read(this, fileName);
+        Read read = new Read(this, fileName, properties);
 
         // Write never claim if requested
     	String never = "";

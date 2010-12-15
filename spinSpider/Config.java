@@ -1,6 +1,6 @@
 /*
     Config - configuration constants and file
-      Copyright 2005-7 by Mordechai (Moti) Ben-Ari. See SpinSpider.java
+      Copyright 2005-10 by Mordechai (Moti) Ben-Ari. See SpinSpider.java
 */
 package spinSpider;
 
@@ -14,6 +14,9 @@ public class Config {
 
     static public void setDefaultProperties(
     		java.util.Properties properties) {
+      // Spin version: format changed with Spin 6
+      properties.put("VERSION", "6");
+
     	properties.put("C_COMPILER", "c:\\mingw\\bin\\gcc.exe");
     	properties.put("SPIN",       "bin\\spin.exe");
     	properties.put("PAN",        "pan.exe");

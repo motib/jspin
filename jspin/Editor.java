@@ -12,28 +12,28 @@ import java.awt.datatransfer.*;
 import java.io.*;
 
 class Editor implements ClipboardOwner, DocumentListener {
-    File   file;  		     // The file to be edited
+    File   file;  		       // The file to be edited
     File   lastFile;         // Previous file to be edited
-    String fileName; 	     // The name of the file
-    String fileRoot; 	     // The file name without its extension
+    String fileName; 	       // The name of the file
+    String fileRoot; 	       // The file name without its extension
     String extension = "";   // The extension of the source file
-    String root; 		     // The path to the file
+    String root; 		         // The path to the file
     String LTLFileName = ""; // LTL file name for this source file
     String OUTFileName = ""; // Spin display output file name
     String EXCFileName = ""; // File for excluded variable names
     String EXSFileName = ""; // File for excluded statements
     String PRPFileName = ""; // Property file name for this source file
-	String PRPName;		     // Property file name without path
+    String PRPName;		       // Property file name without path
 
-    private JTextArea area;  		// The area for editing
-    private JTextField LTLField; 	// The area for LTL formulas
-    private JTextArea messageArea; 	// The area for messages
-    private String findString;  	// The string to search for
-    private int findLoc;  			// The last location where it was found
-    private boolean modified;  		// Was area modified?
-    private boolean LTLmodified; 	// Was LTL field modified?
-    private Border border1;  		// Border - not modified
-    private Border border2;  		// Border - modified
+    private JTextArea area;  		   // The area for editing
+    private JTextField LTLField; 	 // The area for LTL formulas
+    private JTextArea messageArea; // The area for messages
+    private String findString;  	 // The string to search for
+    private int findLoc;  			   // The last location where it was found
+    private boolean modified;  		 // Was area modified?
+    private boolean LTLmodified; 	 // Was LTL field modified?
+    private Border border1;  		   // Border - not modified
+    private Border border2;  		   // Border - modified
     private static final Border border = 
 		BorderFactory.createMatteBorder(2,0,0,0,Color.gray);
     private Clipboard clipboard;
@@ -48,7 +48,7 @@ class Editor implements ClipboardOwner, DocumentListener {
         LTLField = l;
         LTLField.getDocument().addDocumentListener(this);
         messageArea = m;
-		PRPName = "";
+        PRPName = "";
         clipboard = area.getToolkit().getSystemClipboard();
         lineNumbers = new LineNumbers(area);
         jsp.setRowHeaderView(lineNumbers);
@@ -109,10 +109,10 @@ class Editor implements ClipboardOwner, DocumentListener {
         findLoc = 0;
         modified = false;
         border1 = BorderFactory.createTitledBorder(
-			border, " " + title + previousTitle,
+        border, " " + title + previousTitle,
             TitledBorder.LEFT, TitledBorder.TOP);
         border2 = BorderFactory.createTitledBorder(
-			border, " " + title + " * " + previousTitle, 
+        border, " " + title + " * " + previousTitle, 
             TitledBorder.LEFT, TitledBorder.TOP);
         area.setBorder(border1);
         focus(true);
@@ -172,30 +172,29 @@ class Editor implements ClipboardOwner, DocumentListener {
 	// Open file: Promela (and excluded) or property file
     void openFile(File fc, boolean pml) {
 		String prp = "";
-		if (pml) {
-            if (!fc.exists()) {
-                messageArea.append("File "+fc+" does not exist\n");
-                focus(true);
-                return;
-            }
-			file = fc;
-			area.setText(readFile(fc));
-			setPMLRootAndName();
-			prp = readFile(new java.io.File(PRPFileName));
-            filter.setExcluded(readFile(new java.io.File(EXCFileName)), true);
-            filter.setExcluded(readFile(new java.io.File(EXSFileName)), false);
-		}
-		else
-		{
-            if (fc.exists())
-                prp = readFile(fc);
-            else
-                messageArea.append("Creating new prp file\n");
-			setPRPRootAndName(fc);
-		}
-        LTLField.setText(prp.startsWith("Error") ? "" : prp);
-        LTLmodified = false;
-    }
+      if (pml) {
+        if (!fc.exists()) {
+          messageArea.append("File "+fc+" does not exist\n");
+          focus(true);
+          return;
+        }
+        file = fc;
+        area.setText(readFile(fc));
+        setPMLRootAndName();
+        prp = readFile(new java.io.File(PRPFileName));
+        filter.setExcluded(readFile(new java.io.File(EXCFileName)), true);
+        filter.setExcluded(readFile(new java.io.File(EXSFileName)), false);
+      }
+      else {
+        if (fc.exists())
+          prp = readFile(fc);
+        else
+          messageArea.append("Creating new prp file\n");
+        setPRPRootAndName(fc);
+      }
+      LTLField.setText(prp.startsWith("Error") ? "" : prp);
+      LTLmodified = false;
+  }
 
     String readFile(File fc) {
         BufferedReader textReader = null;
@@ -315,21 +314,21 @@ class Editor implements ClipboardOwner, DocumentListener {
     }
 
     private void setModified(DocumentEvent e) {
-        if (e.getDocument() == area.getDocument()) {
-            modified = true;
-            area.setBorder(border2);
-            final int lines = area.getLineCount();
-            if (lineNumbers != null) {
-                Runnable updateAComponent = new Runnable() {
-                	public void run() {
-						lineNumbers.setHeightByLines(lines);
-                    }
-                };
-                SwingUtilities.invokeLater(updateAComponent);
+      modified = true;
+      area.setBorder(border2);
+      final int lines = area.getLineCount();
+      if (lineNumbers != null) {
+          Runnable updateAComponent = new Runnable() {
+            public void run() {
+              lineNumbers.setHeightByLines(lines);
             }
-        } 
-		else
-            LTLmodified = true;
+          };
+          SwingUtilities.invokeLater(updateAComponent);
+      }
+    }
+    
+    public void modifiedLTL() {
+      LTLmodified = true;
     }
 	
     public void changedUpdate(DocumentEvent e) {

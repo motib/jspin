@@ -25,7 +25,7 @@
 \setlength{\parskip}{0.20\baselineskip plus 1pt minus 1pt}
 \parindent=0pt
 
-\title{\js{} - Java GUI for \spn{}\\User's Guide\\\mbox{}\\\large{Version 4.7}}
+\title{\js{} - Java GUI for \spn{}\\User's Guide\\\mbox{}\\\large{Version 5.0}}
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -39,7 +39,7 @@ Rehovot 76100 Israel\\
 \vfill
 
 \begin{center}
-Copyright (c) 2003-8 by Mordechai (Moti) Ben-Ari.
+Copyright (c) 2003-10 by Mordechai (Moti) Ben-Ari.
 \end{center}
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.2
@@ -138,23 +138,29 @@ I would like to thank Gerard J. Holzmann for his generous assistance throughout 
 development of this project.
 
 \section{Installation and execution}
-Install the Java SDK or JRE (\url{http://java.sun.com}).\footnote{The
-default font for \js{} is \p{Lucida Sans Typewriter}. This font may no longer be
-available in the JRE you use. If you have the fonts from a previous version you
-can copy them to the \p{lib/fonts} directory as explained in
-\url{http://java.sun.com/j2se/1.5.0/docs/guide/intl/font.html}. Alternatively,
-you can change the configuration file to use a monospaced font such as
-\p{Courier} that is installed by default.} \js{} needs Java 1.5 at least.
-The following subsection describes the installation for Windows.
-For custom installation and for other systems, see Appendix~\ref{a.install}.
 
-\subsection{Simplified installation for Windows}
+\subsection{Requirements}
+\begin{itemize}
+
+\item \js{} requires that the Java SDK or JRE (at least version 1.5) be
+installed.\footnote{The default font for \js{} is \p{Lucida Sans
+Typewriter}. This font may no longer be available in the JRE you use. If
+you have the fonts from a previous version you can copy them to the
+\p{lib/fonts} directory as explained in
+\url{http://java.sun.com/j2se/1.5.0/docs/guide/intl/font.html}.
+Alternatively, you can change the configuration file to use a monospaced
+font such as \p{Courier} that is installed by default.}
+
+\end{itemize}
+
+\subsection{Installation}
+This section describes installation on a Windows system;
+for custom installation and for other systems, see Appendix~\ref{a.install}.
+
 \begin{itemize}
 \item Download the \js{} installation file called \p{jspin-N.exe},
 where \p{N} is the version number.
 Execute the installation file.
-%\textbf{Do not install to or run from a directory with spaces like}
-%\verb=c:\Program Files=.
 \item Create a directory \verb=c:\mingw= and download the C 
 compiler archive \p{mingw.exe} into that directory. Execute this self-extracting file.
 \end{itemize}
@@ -402,22 +408,52 @@ or on the toolbar performs the verification only for executions that are
 weakly fair.
 
 \subsection{LTL formulas}\label{s.ltl}
-A correctness claim specified by a \emph{Linear Temporal Logic (LTL)} formula
-must be converted to an automaton written as a \prm{} \p{never} claim.
-Enter a formula (such as \p{[]p} or \p{<>p}) in the text field on the menu
-bar and select \bu{Translate} from the toolbar or the \bu{Convert} menu;
-the formula translated into a \p{never}
-claim which will be added to the next \spn{} verification.
-The \p{never} claim is stored in a file with extension \p{.ltl}.
-The formula is not automatically translated, so whatever \p{never}
-claim exists, if any, will continue to be used until \bu{Translate} is invoked again.
 
-\textbf{Before the formula is translated it is negated}. This is done so
-that the LTL formula as displayed represents the correctness property
-being checked and not the negated formula which if satisfied represents
-a counterexample. Should you wish to enter negations yourself as in
-\spn{}, you can change the configuration file option \p{NEGATE\_LTL} to
-false; this can also be done by toggling \bu{Settings/Negate LTL}.
+A correctness claim specified by a \emph{Linear Temporal Logic (LTL)}
+formula must be converted to an automaton written as a \prm{} \p{never}
+claim. LTL formulas can be contained within the \prm{} source code or
+they can be placed in external files.
+
+\subsection{Internal formulas}
+
+An LTL formula can be included in a \prm{} program:
+\begin{verbatim}
+ltl { []<>csp && []<>csq }
+\end{verbatim}
+The formula is translated internally by \spn{} into a \p{never} claim.
+
+A number of \emph{named} formulas can be included within a \prm{} program:
+\begin{verbatim}
+ltl p0 { [](gate <= 1) }
+ltl p1 { []((count == 0) -> (gate == 0)) }
+ltl p2 { [](((gate == 0) && notInTest) -> (count == 0)) }
+\end{verbatim}
+To select which claim will be used in a verification, enter the
+\emph{name} in the \bu{LTL formula} text field and select \bu{LTL name}.
+
+The above examples show that internal LTL formulas can have expressions
+and not just names as atomic propositions.
+
+\textbf{\spn{} automatically negates LTL formulas contained within a
+\prm{} program.}
+
+\subsubsection{External formulas}
+
+Enter a formula (such as \p{[]p} or \p{<>p}) in the text field labelled
+\bu{LTL formula} on the menu bar and select \bu{Translate} from the
+toolbar or the \bu{Convert} menu; the formula translated into a
+\p{never} claim which will be added to the next \spn{} verification. The
+\p{never} claim is stored in a file with extension \p{.ltl}. The formula
+is not automatically translated, so whatever \p{never} claim exists, if
+any, will continue to be used until \bu{Translate} is invoked again.
+
+\textbf{Before the formula is translated it is negated by \js}. This is
+done so that the LTL formula as displayed represents the correctness
+property being checked and not the negated formula which if satisfied
+represents a counterexample. Should you wish to enter negations yourself
+as in \spn{}, you can change the configuration file option
+\p{NEGATE\_LTL} to false; this can also be done by toggling
+\bu{Settings/Negate LTL}.
 
 LTL formulas are saved in \emph{property files} with extension \p{.prp}.
 By default, when you open a \prm{} file,
@@ -433,8 +469,10 @@ The property file is saved whenever the source file is
 and also before translation.
 
 \bu{Convert/Clear} not only to clears the text field, but ensures that
-no LTL formula will be used in the next verification.
-After selecting \bu{Clear} an empty file will not be saved.
+no LTL formula will be used in the next verification. After selecting
+\bu{Convert/Clear} an empty file will not be saved. Note: In earlier
+versions of \js{}, a button \bu{Clear} was available on the toolbar;
+this has now been removed and the menu selection must be used.
 
 \section{\spd{}}
 Open a \prm{} program. If you wish to emphasize or draw the computation
@@ -539,7 +577,7 @@ To debug preprocessing, execute \spn{} with the argument \p{-I};
 this will perform preprocessing only on the \prm{} file and display the result. 
 \end{description}
 
-%\newpage
+\newpage
 
 \section{Software structure*}
 The software is divided into three Java packages.
@@ -728,6 +766,15 @@ never {
 
 \section{Installation}\label{a.install}
 
+\subsection{\spn{} version}
+
+Version 6.0.0 of \spn{} changed its output format; starting with version
+5.0, \js{} expects this format. You can still run \js{} with earlier
+versions of \spn{} (for example, 4.30): set the configuration option
+\p{VERSION} to a number less than 6 before you run \js{} and ensure that
+the option \p{SPIN} names the earlier version of the \spn{} executable
+(or copy the file over the later version).
+
 \subsection{Custom installation of \js{}}
 \begin{itemize}
 \item Download the \js{} distribution file called \p{jspin-N.zip},
@@ -737,8 +784,6 @@ Extract the files into a clean directory.
 
 \item Install \spn{} and \textsc{dot} (\textsc{dot} is only needed for
 \textsc{SpinSpider}).
-To simplify the installation, a minimal set of files 
-for running these tools in Windows is included in the archive \p{jspin-bin.zip}.
 
 \item Install an ANSI C compiler.
 
@@ -846,6 +891,14 @@ These tables give the properties in the configuration file and their
 default values.
 
 \begin{center}
+
+\begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
+\hline
+\multicolumn{2}{|c|}{Version of \spn{}}\\ \hline
+\textsc{\ttfamily VERSION} &\verb+6+\\\hline
+\end{tabular}
+
+\bigskip
 
 \begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
 \hline
