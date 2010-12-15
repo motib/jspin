@@ -3,6 +3,8 @@ bool    wantp = false, wantq = false;
 byte    turn = 1;
 bool csp = false, csq = false;
 
+ltl { []<>csp && []<>csq }
+
 active proctype p() {
     do
     ::  wantp = true;

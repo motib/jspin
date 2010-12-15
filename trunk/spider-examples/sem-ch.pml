@@ -4,7 +4,6 @@
 
 mtype { request, release };
 chan S = [1] of { mtype };
-#define notmutex (p@csp && q@csq)
 
 active proctype p() {	
 	do ::	S?request;
@@ -24,3 +23,4 @@ active proctype sem() {
 	od
 }
 
+ltl { !<>(p@csp && q@csq) }

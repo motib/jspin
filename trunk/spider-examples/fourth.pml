@@ -1,6 +1,5 @@
 /* Fourth attempt */
 bit     wantp = 0, wantq = 0;
-#define live (p@csp)
 
 active proctype p() {
     do :: wantp = 1;
@@ -24,3 +23,4 @@ active proctype q() {
     od
 }
 
+ltl { []<>(p@csp) }

@@ -31,6 +31,8 @@
 mtype = { none, male, female }
 mtype stones[STONES];
 
+ltl { []!success }
+
 proctype mF(byte at) {
 end:do
 	:: 	atomic {

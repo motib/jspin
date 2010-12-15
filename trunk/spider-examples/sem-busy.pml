@@ -1,7 +1,6 @@
 /* Mutual exclusion with a busy-wait semaphore. */
 
 byte sem = 1;
-#define notmutex (p@cs && q@cs && r@cs)
 
 active proctype p() {	
 	do :: 	atomic { sem > 0; sem--; }
@@ -21,3 +20,4 @@ cs:			sem++;
 	od
 }
 
+ltl { !<>(p@cs && q@cs && r@cs) }

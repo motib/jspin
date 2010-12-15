@@ -1,9 +1,9 @@
 /* Second attempt */
 bool wantp = false, wantq = false;
-#define notmutex (p@csp && q@csq)
 
 active proctype p() {
-    do :: !wantq;
+    do ::
+ !wantq;
           wantp = true;
 csp:      wantp = false;
     od
@@ -16,3 +16,4 @@ csq:      wantq = false;
     od
 }
 
+ltl { !<>(p@csp && q@csq) }

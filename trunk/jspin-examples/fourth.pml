@@ -2,6 +2,8 @@
 bool wantp = false, wantq = false;
 bool csp = false, csq = false;
 
+ltl liveness { []<>csp && []<>csq }
+
 active proctype p() {
     do 
     :: wantp = true;
