@@ -1,0 +1,12 @@
+eui.jar
+*.pml
+*.prp
+*.cfg
+*.txt
+*.pdf
+*.java
+*.mf
+*.ico
+*.tex
+docs\*.png
+dist\release.html
