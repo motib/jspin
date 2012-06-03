@@ -1,6 +1,6 @@
             EUI - Graphical User Interface for Erigone
               (See title bar for version number)
-          Copyright 2009-10 by Mordechai (Moti) Ben-Ari.
+          Copyright 2009-12 by Mordechai (Moti) Ben-Ari.
 
 EUI is a graphical user interface for the Erigone Model Checker
 that is used for simulating and verifying concurrent programs.
@@ -19,7 +19,6 @@ Random: Runs a random simulation.
 Interactive: Runs an interactive simulation.
 Guided: Runs a guided simulation.
 file created for a counterexample found in a verification.
-LTL2BA: Translates a LTL formula into a Buchi automaton.
 Safety: Runs a safety verification.
 Accept: Runs an acceptance verification.
 Fairness: Runs an acceptance verification with weak fairness.

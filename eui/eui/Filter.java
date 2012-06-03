@@ -1,4 +1,4 @@
-// Copyright 2004-9 by Mordechai (Moti) Ben-Ari. See copyright.txt.
+// Copyright 2004-12 by Mordechai (Moti) Ben-Ari. See copyright.txt.
 /**
  Filter Erigone output.
 */
@@ -8,27 +8,24 @@ import java.util.*;
 public class Filter {
   private Properties properties;
 
-  private int processWidth;  // Widths of fields
+  private int processWidth;    // Widths of fields
   private int variableWidth;
   private int statementWidth;
-  private int linesPerTitle; // Lines between each title
-  private int lines;         // Line counter to redisplay title
+  private int linesPerTitle;   // Lines between each title
+  private int lines;           // Line counter to redisplay title
 
-  private String  title;     // Title string
-  private String  varTitle;  // Title string, just variables
-  private String  process;   // Process string
-  private String  statement; // Statement string
+  private String  title;       // Title string
+  private String  varTitle;    // Title string, just variables
+  private String  process;     // Process string
+  private String  statement;   // Statement string
 
   // Since filter is called separately for each line,
   //   boolean variables are needed to retain state
-  private boolean program;   // Program listing ended (for efficiency)
-  private boolean acceptance;// Start of acceptance cycle found
-  private boolean buchi;     // Buchi automaton
-  private boolean optbuchi;  // Optimized Buchi automaton
-  private boolean ltlonly;   // Mode is LTL translation only
-  private boolean displaybuchi; // Display the Buchi automaton or not
-  private boolean mtype;     // Parsing mtypes
-  private boolean newprocess;// Don't display new processes from "run"
+  private boolean program;     // Program listing ended (for efficiency)
+  private boolean acceptance;  // Start of acceptance cycle found
+  private boolean transitions; // End of transitions, skip accept list
+  private boolean mtype;       // Parsing mtypes
+  private boolean newprocess;  // Don't display new processes from "run"
 
   // Map from variable names to values
   //   to store complete states
@@ -44,15 +41,13 @@ public class Filter {
 	// Initialize variables and local copies of properties
 	public void init (Properties properties) {
 		variables.clear();
-		title    = "";
-		lines    = -1;
-    program  = true;
-    buchi    = true;
-    optbuchi = false;
-    displaybuchi = Config.getBooleanProperty("DISPLAY_BUCHI");
-    acceptance = false;
-    mtype = false;
-    newprocess = false;
+		title       = "";
+		lines       = -1;
+    program     = true;
+    transitions = false;
+    acceptance  = false;
+    mtype       = false;
+    newprocess  = false;
     this.properties = properties;
     processWidth    = Config.getIntProperty("PROCESS_WIDTH");
     variableWidth   = Config.getIntProperty("VARIABLE_WIDTH");
@@ -108,7 +103,7 @@ public class Filter {
       return s.substring(0, s.indexOf(",")+1) + "\n\n";
     // Compilation error
     else if (s.startsWith("message="))
-      return "Compilation error\n" + extract(s, "message=") + "\n";
+      return extract(s, "message=") + "\n";
 
     // Table of variables
     else if (s.startsWith("variables="))
@@ -148,8 +143,8 @@ public class Filter {
 
     // Table of processes
     else if (s.startsWith("processes="))
-      return "\n" + Config.PROCESSES_TITLE1 + "\n";
-    else if (s.startsWith("process=")) {
+      return "\n" + Config.PROCESSES_TITLE1 + "\n" + Config.FLAGS + "\n";
+    else if (s.startsWith("process=") && !transitions) {
       // Display number of transitions per process
       return "\n" + s + "\n" + Config.PROCESSES_TITLE2 + "\n";
     }
@@ -170,18 +165,18 @@ public class Filter {
         formatItem(extractBraces(s, "statement="),
           Config.getIntProperty("STATEMENT_WIDTH"), true) + "\n";
     }
-
+    else if (s.startsWith("transitions end=")) {
+      transitions = true;
+      return "";
+    }
     // Display compilation time
     else if (s.startsWith("times="))
-      return Config.FLAGS + "\n" + s + "\n";
+      return "\n" + s + "\n";
     else
       return "";
   }
 
   // Filter strings from verification
-  // The flag "buchi" is used to skip display of unoptimized BA
-  // The flag "optbuchi" is used to display the optimized BA
-  // The flag "ltlonly" is used because of different newline requirements
   public String filterVerification(String s) {
     int i;
     // Display version and copyright message
@@ -190,31 +185,17 @@ public class Filter {
     // Display execution mode
     else if (s.startsWith("execution mode=")) {
       i = s.indexOf(",");
-      ltlonly = extract(s, "execution mode=").equals("ltl_only");
       return s.substring(0, i+1) + "\n" +
              s.substring(i+1) + "\n";
     }
-
-    // Display optimized BA
-    else if (s.startsWith("optimized buchi automaton start=")) {
-      buchi = false;
-      optbuchi = true;
-      if (!displaybuchi && !ltlonly) return "";
-      return (ltlonly ? "" : "\n") + Config.BUCHI_TITLE + "\n";
-    }
-    else if (s.startsWith("optimized buchi automaton end=")) {
-      optbuchi = false;
-      if (!displaybuchi && !ltlonly) return "";
-      return Config.FLAGS + (ltlonly ? "\n" : "");
-    }
+    else if (s.startsWith("exception="))
+      return "";
 
     // Display termination message
     else if (s.startsWith("verification terminated=successfully,")) {
-      buchi = false;
       return "\n" + s + "\n\n";
     }
     else if (s.startsWith("verification terminated=")) {
-      buchi = false;
       boolean counter =
         (s.indexOf("invalid end state")         != -1) ||
         (s.indexOf("never claim terminated")    != -1) ||
@@ -226,24 +207,6 @@ public class Filter {
              (counter ? Config.RUN_GUIDED : "") + "\n";
     }
 
-    else if (optbuchi) {
-      if (!displaybuchi && !ltlonly) return "";
-      // Display transition source->target, statement and
-      //   flags: A=atomic, e=end, a=accept
-      return
-        formatItem(
-          extract(s, "source=") + "->" + 
-          extract(s, "target="), 10, true) + " " +
-        formatItem(
-          (extract(s, "atomic=").equals("1") ? "A" : "-") +
-          (extract(s, "end=").equals("1")    ? "e" : "-") +
-          (extract(s, "accept=").equals("1") ? "a" : "-"),
-            6, true) + " " +
-        formatItem(extractBraces(s, "statement="),
-          Config.getIntProperty("STATEMENT_WIDTH"), true) + "\n";
-    }
-    else if (buchi)
-      return "";
     else
       return s + "\n";
   }
@@ -332,7 +295,8 @@ public class Filter {
     // Display data from execution
     else {
       // Store state; it is displayed after the transition is chosen
-      if (s.startsWith("next state=") || s.startsWith("initial state=")) {
+      if (s.startsWith("next state=") ||
+          s.startsWith("initial state=")) {
         storeVariables(s);
         return "";
       }

@@ -37,7 +37,7 @@ Rehovot 76100 Israel\\
 \vfill
 
 \begin{center}
-Copyright \copyright{} 2010-11 by Mordechai (Moti) Ben-Ari.
+Copyright \copyright{} 2010-12 by Mordechai (Moti) Ben-Ari.
 \end{center}
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0
 License. To view a copy of this license, visit
@@ -94,6 +94,15 @@ By default, an icon to run \eui{} is installed on the Desktop.
 Double-click the icon to run \eui{}. Click on \bu{Open} to open a \prm{}
 source file in the edit window on the left.
 
+The user interface of \eui{} is shown on the following page.
+
+\begin{figure}[tb]
+\begin{center}
+\includegraphics[width=140mm]{eui}
+\end{center}
+\end{figure}
+
+
 \section{Simulating a \prm{} program}
 
 This section show how to simulate two \prm{} programs for the mutual
@@ -128,6 +137,8 @@ active proctype q() { /* Symmetrical */ }
 Open the file \p{second.pml} in the \p{examples} directory. The \prm{}
 source code will be displayed in the left-hand pane. Click on
 \bu{Random} to run a simulation. The result will be something like:
+
+\pagebreak[4]
 
 \begin{verbatim}
 Erigone v2.1.3, Copyright 2008-9 by Moti Ben-Ari, GNU GPL.
@@ -168,6 +179,9 @@ format used by \prg{}: comma-terminated named associations of the form
 
 The second program uses a semaphore to achieve mutual exclusion
 and is contained in the file \p{sem.pml} in the \p{examples} directory:
+
+\pagebreak[4]
+
 \begin{verbatim}
 byte sem = 1;
 byte critical = 0;
@@ -228,7 +242,7 @@ verification terminated=successfully,
 \emph{linear temporal logic (LTL)}.
 The program in the file \p{second-ltl.pml} is the same as that in
 \p{second.pml} except that the assert statements have been removed
-and a correctness property in LTL has been added:
+and an LTL formula has been added:
 \begin{verbatim}
 bool wantp = false, wantq = false;
 byte critical = 0;
@@ -250,9 +264,8 @@ active proctype q() { /* Symmetrical */ }
 Read the LTL formula as: the value of \p{critical} is \emph{always}
 (\p{[]}) less than or equal to 1.
 
-Make sure that the box labeled \bu{LTL inline} is checked and click
-\bu{Safety} to perform a verification in Safety mode. The output will
-be:
+Click \bu{Safety} to perform a verification in Safety mode. The output
+will be:
 
 \begin{verbatim}
 Erigone v2.1.0, Copyright 2008-9 by Moti Ben-Ari, GNU GPL.
@@ -275,7 +288,6 @@ phrase \emph{never claim terminated} is a technical term used by the
 model checker to report that an error has been found. Finally,
 information on the performance of the model checker is displayed. The
 counterexample can be displayed by running a guided simulation.
-
 Running a verification for the program with the semaphore gives the
 result that the verification was terminated successfully.
 
@@ -307,8 +319,7 @@ process \p{p} will then terminate, but in an unfair computation (where
 property \p{<>flag} meaning that \emph{eventually} \p{flag} becomes
 true. 
 
-Make sure that the box labeled \bu{LTL inline} is checked and click
-on \bu{Accept} to perform a verification in \emph{Acceptance
+Click on \bu{Accept} to perform a verification in \emph{Acceptance
 mode}. In this mode, the model checker searches for an \emph{acceptance
 cycle}, which is the technical term for an error in a verification of an
 LTL formula containing \emph{eventually} (\p{<>}). The result is:

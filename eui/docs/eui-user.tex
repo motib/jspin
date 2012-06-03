@@ -22,7 +22,7 @@
 
 \title{The \eui{} Development Environment for the\\
 \eri{} Model Checker\\User's Guide and Software Documentation\\
-\mbox{}\\\large{Version 1.6}}       % Change version number
+\mbox{}\\\large{Version 1.7}}       % Change version number
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -36,7 +36,7 @@ Rehovot 76100 Israel\\
 \vfill
 
 \begin{center}
-Copyright \copyright{} 2009-11 by Mordechai (Moti) Ben-Ari.
+Copyright \copyright{} 2009-12 by Mordechai (Moti) Ben-Ari.
 \end{center}
 
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0
@@ -191,7 +191,6 @@ you can select \bu{Stop} to terminate the \eri{} process that has been forked.
 \item[\bu{Interactive}] Runs an interactive simulation.
 \item[\bu{Guided}] Runs a guided simulation using the trail
 file created for a counterexample found in a verification.
-\item[\bu{LTL2BA}] Translates an LTL formula to a B\"{u}chi automaton.
 \item[\bu{Safety}] Runs a safety verification.
 \item[\bu{Accept}] Runs an acceptance verification.
 \item[\bu{Fairness}] Runs an acceptance verification with weak fairness.
@@ -250,28 +249,23 @@ the formal variable is removed from the display.
 
 \subsection{LTL formulas}
 A correctness claim is specified by a formula
-in \emph{Linear Temporal Logic (LTL)}. The formula can be written inline
-within the program:
+in \emph{Linear Temporal Logic (LTL)}. The formula is written inline
+within the program:\footnote{\eri{} supports specifying LTL formulas in
+an external file, but this is not supported in \eui{}.}
 \begin{verbatim}
 ltl { [](critical <= 1) }
 \end{verbatim}
-When loading a file, \eui{} will search for the string \verb+ltl {+, but
-always make sure that the box \bu{LTL inline} is checked if you are
-performing a verification with an inline formula.
-
-Alternatively, the LTL formula can be stored in a file with the same
-name as the source file and extension \p{.prp}. By default, when you
-open a \prm{} file, \eui{} opens and loads a \p{.prp} file of the same
-name if it exists. The file is saved whenever the source file is used.
+If there are named LTL formulas within the program:
+\begin{verbatim}
+ltl mutex { []!(csp && csq) }
+ltl nostarve { []<>csp && []<>csq }
+\end{verbatim}
+you can enter the name of the formula to be used in the field \bu{LTL
+name}.
 
 \eri{} requires a LTL formula for verification of \emph{acceptance}
 (with or without fairness). A formula is optional for verifying safety;
 if a formula is not needed, be sure to erase any data in the LTL field.
-
-When \bu{LTL2BA} is selected, the B\"{u}chi automaton resulting from the
-translation of the LTL formula is displayed. Optionally (configuration
-option \p{DISPLAY\_BUCHI}), it can be displayed every time a
-verification is run.
 
 \newpage
 
@@ -370,11 +364,10 @@ default values.
 \begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
 \hline
 \multicolumn{2}{|c|}{Options for executing \eri{}}\\ \hline
-\textsc{\ttfamily COMPILE\_OPTIONS} &\verb+-c -dprv+\\
+\textsc{\ttfamily COMPILE\_OPTIONS} &\verb+-c -dbprv+\\
 \textsc{\ttfamily RANDOM\_OPTIONS} &\verb+-r -dcmoprv+\\
 \textsc{\ttfamily INTERACTIVE\_OPTIONS} &\verb+-i -dcemoprv+\\
 \textsc{\ttfamily TRAIL\_OPTIONS} &\verb+-g -dcmoprv+\\
-\textsc{\ttfamily LTL2BA\_OPTIONS} &\verb+-b -dbv+\\
 \textsc{\ttfamily SAFETY\_OPTIONS} &\verb+-s -dgrv+\\
 \textsc{\ttfamily ACCEPT\_OPTIONS} &\verb+-a -t -dgrv+\\
 \textsc{\ttfamily FAIRNESS\_OPTIONS} &\verb+-f -t -dgrv+\\
@@ -384,8 +377,7 @@ default values.
 \textsc{\ttfamily STATE\_STACK} & \verb+2+\\
 \textsc{\ttfamily LOCATION\_STACK} & \verb+3+\\
 \textsc{\ttfamily SEED} & \verb+0+\\
-\textsc{\ttfamily SINGLE\_QUOTE} & \verb+false+\\
-\textsc{\ttfamily DISPLAY\_BUCHI} & \verb+false+\\\hline
+\textsc{\ttfamily SINGLE\_QUOTE} & \verb+false+\\\hline
 \end{tabular}
 
 \bigskip

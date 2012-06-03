@@ -1,11 +1,11 @@
-/* Copyright 2003-10 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
+/* Copyright 2003-12 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
 package eui;
 import java.io.*;
 import java.awt.event.*;
 import java.util.*;
 
 public class Config {
-  static final String VERSION = "1.6";
+  static final String VERSION = "1.7";
 
   // Properties
   static Properties properties = new Properties();
@@ -17,14 +17,13 @@ public class Config {
   public static String aboutFileName;
 
 	// Static strings
-  static final String SOFTWARE_NAME     = 
+  static final String SOFTWARE_NAME    = 
     "EUI - Erigone User Interface, Version " + VERSION;
   static final String JAVA_VERSION     = "1.5";
   static final String CONFIG_FILE_NAME = "config.cfg";
-  static final String SELECT  	        = "Select a statement";
-  static final String OPEN_FILE 	      = "Open a Promela file\n";
-  static final String LTL_FORMULA	      = "    LTL formula  ";
-  static final String LTL_CHECK        = "  LTL inline  ";
+  static final String SELECT  	       = "Select a statement";
+  static final String OPEN_FILE 	     = "Open a Promela file\n";
+  static final String LTL_NAME	       = "  LTL name  ";
   static final String PROCESS_TITLE    = "Process";
   static final String STATEMENT_TITLE  = "Statement";
   static final String SYMBOL_TITLE     =
@@ -33,10 +32,8 @@ public class Config {
   static final String PROCESSES_TITLE1 = "Processes";
   static final String PROCESSES_TITLE2 =
     "Transition Flags  Statement";
-  static final String BUCHI_TITLE      =
-    "Buchi automaton\nTransition Flags  Expression";
   static final String FLAGS            =
-    "           A=atomic,e=end,a=accept\n";
+  "Flags: A=atomic,e=end,a=accept";
   static final String SEPARATOR        = "#";
   static final String CHANNEL_PREFIX   = "channel";
   static final String PML_FILES        = "Promela source files";
@@ -50,7 +47,7 @@ public class Config {
     "\nrun EUI again to recreate the default configuration\n";
 
   // Static widths
-  static final int 	  LTL_COLUMNS      = 30;
+  static final int 	  LTL_COLUMNS      = 16;
   static final int 	  SYMBOL_WIDTH     = 12;
   static final int    COLS_LINE_NUMBER = 2;
   static final String BLANKS           =
@@ -65,17 +62,15 @@ public class Config {
     properties.put("ABOUT_FILE_NAME",  "txt" +
                    java.io.File.separatorChar + "copyright.txt");
     properties.put("SINGLE_QUOTE",     Boolean.toString(false));
-    properties.put("DISPLAY_BUCHI",    Boolean.toString(false));
 
     // Erigone options
-    properties.put("COMPILE_OPTIONS",     "-c -dprv");
+    properties.put("COMPILE_OPTIONS",     "-c -dbprv");
     properties.put("RANDOM_OPTIONS",      "-r -dcmoprv");
     properties.put("INTERACTIVE_OPTIONS", "-i -dcemoprv");
     properties.put("TRAIL_OPTIONS",       "-g -dcmoprv");
-    properties.put("LTL2BA_OPTIONS",      "-b -dbrv");
-    properties.put("SAFETY_OPTIONS",      "-s -dbgrv");
-    properties.put("ACCEPT_OPTIONS",      "-a -t -dbgrv");
-    properties.put("FAIRNESS_OPTIONS",    "-f -t -dbgrv");
+    properties.put("SAFETY_OPTIONS",      "-s -dgrv");
+    properties.put("ACCEPT_OPTIONS",      "-a -t -dgrv");
+    properties.put("FAIRNESS_OPTIONS",    "-f -t -dgrv");
 
     // Options
     properties.put("HASH_SLOTS",     "22");
@@ -157,8 +152,6 @@ public class Config {
   static final int    RandomMN   	 = KeyEvent.VK_R;
   static final String Inter		     = "Interactive";
   static final int    InterMN		   = KeyEvent.VK_I;
-  static final String LTL2BA    	 = "LTL2BA";
-  static final int    LTL2BAMN  	 = KeyEvent.VK_B;
   static final String Safety    	 = "Safety";
   static final int    SafetyMN  	 = KeyEvent.VK_S;
   static final String Acceptance   = "Accept";
@@ -211,8 +204,6 @@ public class Config {
   static final int    OKMN   = KeyEvent.VK_O;
   static final String Cancel = "Cancel";
 
-  static final int    LTLCheckMN  	 = KeyEvent.VK_L;
-
   // Accelerators: some defaults and some unused
   // Select All by default            = "control A"
   static final String SwitchAC        = "control B";
@@ -241,7 +232,7 @@ public class Config {
   // Dummy accelerators for menu items with no accelerators
   static String 
     AboutAC, AcceptanceAC, CheckAC, CommonAC, DefaultAC,
-    FairAC, HelpAC, InterAC, LTLCheckAC, LTL2BAAC, MaxAC, 
+    FairAC, HelpAC, InterAC, MaxAC, 
     OptionsSaveCurrentAC, OptionsSaveInstallAC, 
     RandomAC, SafetyAC, SaveSpinAC, StopAC, TrailAC;
 

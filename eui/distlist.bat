@@ -9,4 +9,4 @@ eui.jar
 *.ico
 *.tex
 docs\*.png
-dist\release.html
+dist\eui-release.html

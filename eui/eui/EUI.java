@@ -1,6 +1,6 @@
 /*
  EUI - Development environment for Erigone
- Copyright 2003-10 by Mordechai (Moti) Ben-Ari.
+ Copyright 2003-12 by Mordechai (Moti) Ben-Ari.
  
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -34,7 +34,6 @@ public class EUI extends JFrame implements ActionListener {
   // Data saved between actions
   private boolean    maxedDivider;
   private int        currentDivider;
-  private boolean    ltlChecked;
 
 	// User interface components
   private JTextArea  editorArea = new JTextArea();
@@ -43,7 +42,6 @@ public class EUI extends JFrame implements ActionListener {
   private JTextField LTLField = new JTextField();
 
   private JFileChooser  PMLfileChooser;
-  private JFileChooser  PRPfileChooser;
   private JFileChooser  OUTfileChooser;
   private java.awt.Font font;
 
@@ -52,8 +50,7 @@ public class EUI extends JFrame implements ActionListener {
   private JScrollPane messageScrollPane = new JScrollPane(messageArea);
   private JSplitPane  topSplitPane;
   private JSplitPane  mainSplitPane;
-  private JLabel      LTLLabel = new JLabel(Config.LTL_FORMULA);
-  private JCheckBox   LTLCheck = new JCheckBox(Config.LTL_CHECK);
+  private JLabel      LTLLabel = new JLabel(Config.LTL_NAME);
 
   private JMenuBar  menuBar = new JMenuBar();
 
@@ -77,8 +74,6 @@ public class EUI extends JFrame implements ActionListener {
   private JMenuItem menuItemRandom = new JMenuItem(Config.Random);
   private JMenuItem menuItemInter = new JMenuItem(Config.Inter);
   private JMenuItem menuItemTrail = new JMenuItem(Config.Trail);
-  private JCheckBoxMenuItem menuItemLTLCheck = new JCheckBoxMenuItem(Config.LTL_CHECK);
-  private JMenuItem menuItemLTL2BA = new JMenuItem(Config.LTL2BA);
   private JMenuItem menuItemSafety = new JMenuItem(Config.Safety);
   private JMenuItem menuItemAcceptance = new JMenuItem(Config.Acceptance);
   private JMenuItem menuItemFairness = new JMenuItem(Config.Fair);
@@ -108,7 +103,8 @@ public class EUI extends JFrame implements ActionListener {
   private JButton toolRandom = new JButton(Config.Random);
   private JButton toolInter  = new JButton(Config.Inter);
   private JButton toolTrail  = new JButton(Config.Trail);
-  private JButton toolLTL2BA = new JButton(Config.LTL2BA);
+  private JButton toolLimits = new JButton(Config.Limits);
+  private JButton toolTraceOptions  = new JButton(Config.TraceOptions);
   private JButton toolSafety = new JButton(Config.Safety);
   private JButton toolAcceptance = new JButton(Config.Acceptance);
   private JButton toolFairness   = new JButton(Config.Fair);
@@ -128,10 +124,7 @@ public class EUI extends JFrame implements ActionListener {
          JFileChooser.APPROVE_OPTION) {
         editor.lastFile = editor.file;
         clearAreas();
-        editor.openFile(PMLfileChooser.getSelectedFile(), true);
-        ltlChecked = editor.isLTL();
-        LTLCheck.setSelected(ltlChecked);
-        menuItemLTLCheck.setSelected(ltlChecked);
+        editor.openFile(PMLfileChooser.getSelectedFile());
       }
     }
     else if ((e.getSource() == menuItemSave) ||
@@ -164,7 +157,7 @@ public class EUI extends JFrame implements ActionListener {
           }
         }
         editor.lastFile = editor.file;
-        editor.openFile(temp, true);
+        editor.openFile(temp);
       }
     }
     else if (e.getSource() == menuItemExit) {
@@ -192,6 +185,7 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.runAndWait(trailArea, FilterTypes.COMPILATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("COMPILE_OPTIONS") + " " +
+        getLTLParameter() +
         editor.fileName);
     }
     else if ((e.getSource() == menuItemRandom) ||
@@ -220,20 +214,13 @@ public class EUI extends JFrame implements ActionListener {
         Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
-    else if ((e.getSource() == menuItemLTL2BA) ||
-             (e.getSource() == toolLTL2BA)) {
-      runSpin.runAndWait(trailArea, FilterTypes.TRANSLATION,
-        Config.getStringProperty("ERIGONE"),  
-        Config.getStringProperty("LTL2BA_OPTIONS") + " " +
-        editor.fileName);
-    }
     else if ((e.getSource() == menuItemSafety) ||
              (e.getSource() == toolSafety)) {
       runSpin.run(trailArea, FilterTypes.VERIFICATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("SAFETY_OPTIONS") + " " +
         Limits.getLimits() +
-        (ltlChecked || !LTLField.getText().equals("") ? ("-t ") : "") +
+        getLTLParameter() +
         editor.fileName);
       isSpinRunning();
     }
@@ -241,25 +228,22 @@ public class EUI extends JFrame implements ActionListener {
              (e.getSource() == toolAcceptance)     ||
              (e.getSource() == menuItemFairness)   ||
              (e.getSource() == toolFairness)) {
-      if (!ltlChecked && LTLField.getText().equals("")) {
-        append(messageArea,
-               "Need LTL formula for acceptance verification\n");
-        return;
-      }
       runSpin.run(trailArea, FilterTypes.VERIFICATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty(
           ((e.getSource() == menuItemFairness) ||
            (e.getSource() == toolFairness) ?  
            "FAIRNESS_OPTIONS" : "ACCEPT_OPTIONS")) + " " +
-          Limits.getLimits() + editor.fileName);
+         getLTLParameter() +
+         Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemStop) || (e.getSource() == toolStop))
       runSpin.killSpin();
 
     // Options menu actions
-    else if (e.getSource() == menuItemLimits) {
+    else if ((e.getSource() == menuItemLimits) ||
+             (e.getSource() == toolLimits)) {
         new Limits();
     }
     else if (e.getSource() == menuItemSeed)
@@ -296,7 +280,8 @@ public class EUI extends JFrame implements ActionListener {
       }
       maxedDivider = ! maxedDivider;
     }
-    else if (e.getSource() == menuItemTraceOptions)
+    else if ((e.getSource() == menuItemTraceOptions) ||
+      (e.getSource() == toolTraceOptions))
       new Trace(editor, filter, font);
     else if (e.getSource() == menuItemSaveSpin) {
       java.io.File outFile = new java.io.File(editor.OUTFileName);
@@ -311,20 +296,12 @@ public class EUI extends JFrame implements ActionListener {
     else if (e.getSource() == menuItemAbout)
       displayFile(Config.aboutFileName);
 
-    // LTL Check box
-    else if ((e.getSource() == menuItemLTLCheck) ||
-             (e.getSource() == LTLCheck)) {
-      ltlChecked = ! ltlChecked;
-      LTLCheck.setSelected(ltlChecked);
-      menuItemLTLCheck.setSelected(ltlChecked);
-    }
-
     if (editor != null) editor.focus(false);
   }
 
   // Display the contents of a file in the trail area
   private void displayFile(String fn) {
-System.out.println(fn);
+    System.out.println(fn);
     trailArea.setText(editor.readFile(new java.io.File(fn)));
     trailArea.setCaretPosition(0);
   }
@@ -383,6 +360,16 @@ System.out.println(fn);
       }
     };
     th.start();
+  }
+
+  // If internal LTL specification, add "t" parameter
+  private String getLTLParameter() {
+    if (!editor.isLTL()) return "";
+    String s = LTLField.getText().trim();
+    if (s.equals(""))
+      return "-t ";
+    else
+      return "-t-" + s + " ";
   }
 
   // Initialize one menu item; add mnemonic and accelerator (if any)
@@ -454,11 +441,6 @@ System.out.println(fn);
       menuSpin, menuItemTrail, Config.TrailMN, Config.TrailAC);
     menuSpin.addSeparator();
     initMenuItem(
-      menuSpin, menuItemLTLCheck, Config.LTLCheckMN, Config.LTLCheckAC);
-    initMenuItem(
-      menuSpin, menuItemLTL2BA, Config.LTL2BAMN, Config.LTL2BAAC);
-    menuSpin.addSeparator();
-    initMenuItem(
       menuSpin, menuItemSafety, Config.SafetyMN, Config.SafetyAC);
     initMenuItem(
       menuSpin, menuItemAcceptance,
@@ -509,17 +491,17 @@ System.out.println(fn);
     initMenuItem(
       menuHelp, menuItemAbout, Config.AboutMN, Config.AboutAC);
 
-    menuBar.add(new JLabel("                    "));
-    menuBar.add(new JSeparator(SwingConstants.VERTICAL));
-    menuBar.add(LTLCheck);
-    LTLCheck.setMnemonic(Config.LTLCheckMN);
-    LTLCheck.addActionListener(this);
+    menuBar.add(new JLabel(Config.BLANKS));
     menuBar.add(new JSeparator(SwingConstants.VERTICAL));
 
     menuBar.add(LTLLabel);
     LTLField.setColumns(Config.LTL_COLUMNS);
-    LTLField.setPreferredSize(new java.awt.Dimension(150,30));
     menuBar.add(LTLField);
+    menuBar.add(new JSeparator(SwingConstants.VERTICAL));
+
+    // Put something to the right the make the field smaller
+    menuBar.add(new JLabel(Config.BLANKS));
+    menuBar.add(new JLabel(Config.BLANKS));
   }
 
   // Initialize one tool button
@@ -545,10 +527,12 @@ System.out.println(fn);
     initToolButton(toolInter, Config.InterMN);
     initToolButton(toolTrail, Config.TrailMN);
     toolBar.addSeparator();
-    initToolButton(toolLTL2BA, Config.LTL2BAMN);
     initToolButton(toolSafety, Config.SafetyMN);
     initToolButton(toolAcceptance, Config.AcceptanceMN);
     initToolButton(toolFairness, Config.FairMN);
+    toolBar.addSeparator();
+    initToolButton(toolLimits, Config.LimitsMN);
+    initToolButton(toolTraceOptions, Config.TraceOptionsMN);
     toolBar.addSeparator();
     initToolButton(toolStop, Config.StopMN);
     initToolButton(toolMax, Config.MaxMN);
@@ -608,7 +592,6 @@ System.out.println(fn);
       LTLField, undoredo.myundoable, filter);
     runSpin = new RunSpin(editor, messageArea, filter);
     PMLfileChooser = newChooser(Config.PML_FILES, ".PML", ".PROM", ".H");
-    PRPfileChooser = newChooser(Config.PRP_FILES, ".PRP", null, null);
     OUTfileChooser = newChooser(Config.OUT_FILES, ".OUT", null, null);
 
     // Window listener: kill Spin process if window closed
@@ -628,16 +611,10 @@ System.out.println(fn);
     setVisible(true);
   
     // Open file if given as command argument
-    if (file != "") {
-      editor.openFile(new java.io.File(file), true);
-      ltlChecked = editor.isLTL();
-    }
-    else {
+    if (file != "")
+      editor.openFile(new java.io.File(file));
+    else
       editor.newFile();
-      ltlChecked   = false;
-    }
-    LTLCheck.setSelected(ltlChecked);
-    menuItemLTLCheck.setSelected(ltlChecked);
   }
 
   public static void main(java.lang.String[] args) {

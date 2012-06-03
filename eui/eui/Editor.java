@@ -1,4 +1,4 @@
-/* Copyright 2003-7 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
+/* Copyright 2003-12 by Mordechai (Moti) Ben-Ari. See copyright.txt. */
 /*
  * Editor for Promela programs
  */
@@ -18,14 +18,11 @@ class Editor implements ClipboardOwner, DocumentListener {
   String fileRoot; 	       // The file name without its extension
   String extension = "";   // The extension of the source file
   String root; 		         // The path to the file
-  String LTLFileName = ""; // LTL file name for this source file
   String OUTFileName = ""; // Spin display output file name
   String EXCFileName = ""; // File for excluded variable names
   String EXSFileName = ""; // File for excluded statements
-  String PRPFileName = ""; // Property file name for this source file
   String DOTFileName = ""; // File name for dot state space
   String PNGFileName = ""; // File name for png (or other) state space
-  String PRPName;		       // Property file name without path
 
   private JTextArea   area;  		   // The area for editing
   private JTextField  LTLField; 	 // The area for LTL formulas
@@ -33,7 +30,6 @@ class Editor implements ClipboardOwner, DocumentListener {
   private String      findString;  // The string to search for
   private int         findLoc;  	 // The last location where it was found
   private boolean     modified;  	 // Was area modified?
-  private boolean     LTLmodified; // Was LTL field modified?
   private Border      border1;  	 // Border - not modified
   private Border      border2;  	 // Border - modified
   private Clipboard   clipboard;
@@ -51,7 +47,6 @@ class Editor implements ClipboardOwner, DocumentListener {
     LTLField = l;
     LTLField.getDocument().addDocumentListener(this);
     messageArea = m;
-    PRPName = "";
     clipboard = area.getToolkit().getSystemClipboard();
     lineNumbers = new LineNumbers(area);
     jsp.setRowHeaderView(lineNumbers);
@@ -130,11 +125,9 @@ class Editor implements ClipboardOwner, DocumentListener {
     file = null;
     fileName = "";
     fileRoot = "";
-    LTLFileName = "";
     OUTFileName = "";
     EXCFileName = "";
     EXSFileName = "";
-    PRPFileName = "";
     DOTFileName = "";
     PNGFileName = "";
     area.setText("");
@@ -153,59 +146,27 @@ class Editor implements ClipboardOwner, DocumentListener {
       fileRoot = fileName.substring(0, fileName.lastIndexOf('.'));
       extension = fileName.substring(fileName.lastIndexOf('.'));
     }
-    LTLFileName = root + File.separator + fileRoot + ".ltl";
     OUTFileName = root + File.separator + fileRoot + ".out";
     EXCFileName = root + File.separator + fileRoot + ".exc";
     EXSFileName = root + File.separator + fileRoot + ".exs";
-    PRPFileName = root + File.separator + fileRoot + ".prp";
     DOTFileName = root + File.separator + fileRoot + ".dot";
     PNGFileName = root + File.separator + fileRoot + "." +
                   Config.getStringProperty("DOT_FORMAT");
-    PRPName = "";
     showArea(fileName);
   }
 
-  private void setPRPRootAndName(File fc) {
-    String fileName = fc.getName();
-		String fileRoot, root;
-    if (file.getParentFile() == null)
-      root = "";
-    else
-      root = fc.getParentFile().getAbsolutePath();
-    if (fileName.lastIndexOf('.') == -1)
-      fileRoot = fileName;
-    else
-      fileRoot = fileName.substring(0, fileName.lastIndexOf('.'));
-    LTLFileName = root + File.separator + fileRoot + ".ltl";
-    PRPFileName = root + File.separator + fileRoot + ".prp";
-    PRPName = fileRoot + ".prp";
-  }
-
 	// Open file: Promela (and excluded) or property file
-  void openFile(File fc, boolean pml) {
-    String prp = "";
-    if (pml) {
-      if (!fc.exists()) {
-        messageArea.append("File "+fc+" does not exist\n");
-        focus(true);
-        return;
-      }
-      file = fc;
-      area.setText(readFile(fc));
-      setPMLRootAndName();
-      prp = readFile(new java.io.File(PRPFileName));
-      filter.setExcluded(readFile(new java.io.File(EXCFileName)), true);
-      filter.setExcluded(readFile(new java.io.File(EXSFileName)), false);
+  void openFile(File fc) {
+    if (!fc.exists()) {
+      messageArea.append("File "+fc+" does not exist\n");
+      focus(true);
+      return;
     }
-    else {
-      if (fc.exists())
-        prp = readFile(fc);
-      else
-        messageArea.append("Creating new prp file\n");
-      setPRPRootAndName(fc);
-    }
-    LTLField.setText(prp.startsWith("Error") ? "" : prp);
-    LTLmodified = false;
+    file = fc;
+    area.setText(readFile(fc));
+    setPMLRootAndName();
+    filter.setExcluded(readFile(new java.io.File(EXCFileName)), true);
+    filter.setExcluded(readFile(new java.io.File(EXSFileName)), false);
   }
 
   String readFile(File fc) {
@@ -244,13 +205,7 @@ class Editor implements ClipboardOwner, DocumentListener {
     if (fc != null) {
       file = fc;
       setPMLRootAndName();
-      LTLmodified = true;  // To force saving
       modified = true;
-    }
-    if (LTLmodified) {
-      if (!LTLField.getText().equals(""))
-        writeFile(new java.io.File(PRPFileName), LTLField);
-      LTLmodified = false;
     }
     if (modified) {
       area.setBorder(border1);
@@ -325,38 +280,35 @@ class Editor implements ClipboardOwner, DocumentListener {
     focus(false);
   }
 
-  private void setModified(DocumentEvent e) {
-    if (e.getDocument() == area.getDocument()) {
-      modified = true;
-      area.setBorder(border2);
-      final int lines = area.getLineCount();
-      if (lineNumbers != null) {
-        Runnable updateAComponent = new Runnable() {
-          public void run() {
-            lineNumbers.setHeightByLines(lines);
-          }
-        };
-        SwingUtilities.invokeLater(updateAComponent);
-      }
-    } 
-		else
-      LTLmodified = true;
+  private void setModified() {
+    modified = true;
+    area.setBorder(border2);
+    final int lines = area.getLineCount();
+    if (lineNumbers != null) {
+      Runnable updateAComponent = new Runnable() {
+        public void run() {
+          lineNumbers.setHeightByLines(lines);
+        }
+      };
+      SwingUtilities.invokeLater(updateAComponent);
+    }
   }
 
   public boolean isLTL() {
-    return area.getText().indexOf("ltl {") != -1;
+    return (area.getText().indexOf("ltl") != -1) &&
+           (area.getText().indexOf("{")    != -1);
   }
 
   public void changedUpdate(DocumentEvent e) {
-    setModified(e);
+    setModified();
   }
 
   public void insertUpdate(DocumentEvent e)  {
-    setModified(e);
+    setModified();
   }
 
   public void removeUpdate(DocumentEvent e)  {
-    setModified(e);
+    setModified();
   }
 
   public void lostOwnership(Clipboard clipboard, Transferable content) {}
