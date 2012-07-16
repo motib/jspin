@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 
 public class Config {
-  static final String VERSION = "1.7";
+  static final String VERSION = "1.8";
 
   // Properties
   static Properties properties = new Properties();
@@ -24,6 +24,7 @@ public class Config {
   static final String SELECT  	       = "Select a statement";
   static final String OPEN_FILE 	     = "Open a Promela file\n";
   static final String LTL_NAME	       = "  LTL name  ";
+  static final String SEED_NAME        = "  Random seed  ";
   static final String PROCESS_TITLE    = "Process";
   static final String STATEMENT_TITLE  = "Statement";
   static final String SYMBOL_TITLE     =
@@ -48,6 +49,7 @@ public class Config {
 
   // Static widths
   static final int 	  LTL_COLUMNS      = 16;
+  static final int    SEED_COLUMNS     = 10;
   static final int 	  SYMBOL_WIDTH     = 12;
   static final int    COLS_LINE_NUMBER = 2;
   static final String BLANKS           =
@@ -74,7 +76,7 @@ public class Config {
 
     // Options
     properties.put("HASH_SLOTS",     "22");
-    properties.put("TOTAL_STEPS",    "10");
+    properties.put("TOTAL_STEPS",    "100");
     properties.put("PROGRESS_STEPS", "1");
     properties.put("STATE_STACK",    "2");
     properties.put("LOCATION_STACK", "3");
@@ -178,8 +180,6 @@ public class Config {
   static final int    SaveInstallMN  = KeyEvent.VK_I;
   static final String SaveCurrent    = "Save current";
   static final int    SaveCurrentMN  = KeyEvent.VK_S;
-  static final String Seed           = "Seed";
-  static final int    SeedMN         = KeyEvent.VK_S;
   static final String TraceOptions   = "Trace";
   static final int    TraceOptionsMN = KeyEvent.VK_T;
   static final String Excluded  	   = "Excluded";
@@ -208,7 +208,7 @@ public class Config {
   // Select All by default            = "control A"
   static final String SwitchAC        = "control B";
   static final String CopyAC          = "control C";
-  static final String SeedAC          = "control D";
+  // static final String              = "control D";
   static final String FindAC     	    = "control F";
   static final String FindAgainAC     = "control G";
   // Backspace by default             = "control H"

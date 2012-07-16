@@ -25,7 +25,6 @@ class Editor implements ClipboardOwner, DocumentListener {
   String PNGFileName = ""; // File name for png (or other) state space
 
   private JTextArea   area;  		   // The area for editing
-  private JTextField  LTLField; 	 // The area for LTL formulas
   private JTextArea   messageArea; // The area for messages
   private String      findString;  // The string to search for
   private int         findLoc;  	 // The last location where it was found
@@ -39,13 +38,11 @@ class Editor implements ClipboardOwner, DocumentListener {
   private static final Border border = 
     BorderFactory.createMatteBorder(2,0,0,0,Color.gray);
 
-  public Editor(JScrollPane jsp, JTextArea a, JTextArea m, JTextField l,
+  public Editor(JScrollPane jsp, JTextArea a, JTextArea m,
       javax.swing.event.UndoableEditListener ud, Filter f) {
     area = a;
     area.getDocument().addDocumentListener(this);
     area.getDocument().addUndoableEditListener(ud);
-    LTLField = l;
-    LTLField.getDocument().addDocumentListener(this);
     messageArea = m;
     clipboard = area.getToolkit().getSystemClipboard();
     lineNumbers = new LineNumbers(area);
@@ -294,9 +291,18 @@ class Editor implements ClipboardOwner, DocumentListener {
     }
   }
 
+  // Look for "ltl" and then "{" on a line in the file
   public boolean isLTL() {
-    return (area.getText().indexOf("ltl") != -1) &&
-           (area.getText().indexOf("{")    != -1);
+    int ltlLoc, ltlLine, eolLoc = 0, brace;
+    String s = area.getText();
+    ltlLoc = s.indexOf("ltl");
+    if (ltlLoc == -1) return false;
+    try {
+      ltlLine = area.getLineOfOffset(ltlLoc);
+      eolLoc = area.getLineEndOffset(ltlLine);
+    } catch (javax.swing.text.BadLocationException e) {}
+    brace = s.indexOf("{", ltlLoc);
+    return ((brace != -1) && (brace <= eolLoc));
   }
 
   public void changedUpdate(DocumentEvent e) {
