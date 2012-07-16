@@ -40,6 +40,7 @@ public class EUI extends JFrame implements ActionListener {
   private JTextArea  trailArea = new JTextArea();
   private JTextArea  messageArea = new JTextArea();
   private JTextField LTLField = new JTextField();
+  private JTextField seedField = new JTextField();
 
   private JFileChooser  PMLfileChooser;
   private JFileChooser  OUTfileChooser;
@@ -51,6 +52,7 @@ public class EUI extends JFrame implements ActionListener {
   private JSplitPane  topSplitPane;
   private JSplitPane  mainSplitPane;
   private JLabel      LTLLabel = new JLabel(Config.LTL_NAME);
+  private JLabel      seedLabel = new JLabel(Config.SEED_NAME);
 
   private JMenuBar  menuBar = new JMenuBar();
 
@@ -81,7 +83,6 @@ public class EUI extends JFrame implements ActionListener {
 
   private JMenu     menuOptions = new JMenu();
   private JMenuItem menuItemLimits = new JMenuItem(Config.Limits);
-  private JMenuItem menuItemSeed = new JMenuItem(Config.Seed);
   private JMenuItem menuItemDefault = new JMenuItem(Config.Default);
   private JMenuItem menuItemOptionsSaveInstall = new JMenuItem(Config.SaveInstall);
   private JMenuItem menuItemOptionsSaveCurrent = new JMenuItem(Config.SaveCurrent);
@@ -193,9 +194,8 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.run(trailArea, FilterTypes.SIMULATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("RANDOM_OPTIONS") + " " +
-        (Config.getIntProperty("SEED") != 0 ? 
-          ("-n" + Config.getIntProperty("SEED") + " ") : "") +
-          Limits.getLimits() + editor.fileName);
+        getSeedParameter() +
+        Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemInter) ||
@@ -219,6 +219,7 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.run(trailArea, FilterTypes.VERIFICATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("SAFETY_OPTIONS") + " " +
+        getSeedParameter() +
         Limits.getLimits() +
         getLTLParameter() +
         editor.fileName);
@@ -234,8 +235,9 @@ public class EUI extends JFrame implements ActionListener {
           ((e.getSource() == menuItemFairness) ||
            (e.getSource() == toolFairness) ?  
            "FAIRNESS_OPTIONS" : "ACCEPT_OPTIONS")) + " " +
-         getLTLParameter() +
-         Limits.getLimits() + editor.fileName);
+        getLTLParameter() +
+        getSeedParameter() +
+        Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemStop) || (e.getSource() == toolStop))
@@ -246,8 +248,6 @@ public class EUI extends JFrame implements ActionListener {
              (e.getSource() == toolLimits)) {
         new Limits();
     }
-    else if (e.getSource() == menuItemSeed)
-        changeOption("SEED");
     else if (e.getSource() == menuItemDefault)
         Config.setDefaultProperties();
     else if ((e.getSource() == menuItemOptionsSaveInstall) ||
@@ -325,25 +325,7 @@ public class EUI extends JFrame implements ActionListener {
     messageArea.setText("");
     trailArea.setText("");
     LTLField.setText("");
-  }
-
-  // Display an option pane to edit a numerical option
-  private void changeOption(String property) {
-    String s = Config.getStringProperty(property);
-    while (true) {
-      String answer = JOptionPane.showInputDialog(property, s);
-      if (answer == null) return;
-      try {
-        Integer.parseInt(answer);
-        Config.setStringProperty(property, answer);
-        return;
-      } 
-      catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(null,  
-          answer + " is not an integer", "Format error",
-          JOptionPane.ERROR_MESSAGE);
-      }
-    }
+    seedField.setText("");
   }
 
 	// Create a thread to check if Spin is running
@@ -370,6 +352,25 @@ public class EUI extends JFrame implements ActionListener {
       return "-t ";
     else
       return "-t-" + s + " ";
+  }
+
+  // If seed, add "n" parameter
+  private String getSeedParameter() {
+    String s = seedField.getText().trim();
+    int n = 0;
+    if (s.equals(""))
+      return "";
+    else
+      try {
+        n = Integer.parseInt(s);
+        Config.setIntProperty("SEED", n);
+      } 
+      catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(null,  
+          "Random seed " + s + " is not an integer", "Format error",
+          JOptionPane.ERROR_MESSAGE);
+      }
+      return (n != 0 ? ("-n" + n + " ") : "");
   }
 
   // Initialize one menu item; add mnemonic and accelerator (if any)
@@ -458,9 +459,6 @@ public class EUI extends JFrame implements ActionListener {
       Config.LimitsMN, Config.LimitsAC);
     menuOptions.addSeparator();
     initMenuItem(
-      menuOptions, menuItemSeed, Config.SeedMN, Config.SeedAC);
-    menuOptions.addSeparator();
-    initMenuItem(
       menuOptions, menuItemDefault, Config.DefaultMN, Config.DefaultAC);
     initMenuItem(
       menuOptions, menuItemOptionsSaveInstall,
@@ -498,9 +496,13 @@ public class EUI extends JFrame implements ActionListener {
     LTLField.setColumns(Config.LTL_COLUMNS);
     menuBar.add(LTLField);
     menuBar.add(new JSeparator(SwingConstants.VERTICAL));
+    menuBar.add(seedLabel);
+    seedField.setColumns(Config.SEED_COLUMNS);
+    menuBar.add(seedField);
+    menuBar.add(new JSeparator(SwingConstants.VERTICAL));
 
     // Put something to the right the make the field smaller
-    menuBar.add(new JLabel(Config.BLANKS));
+//    menuBar.add(new JLabel(Config.BLANKS));
     menuBar.add(new JLabel(Config.BLANKS));
   }
 
@@ -563,6 +565,7 @@ public class EUI extends JFrame implements ActionListener {
     trailArea.setWrapStyleWord(true);
     messageArea.setFont(font);
     LTLField.setFont(font);
+    seedField.setFont(font);
 
     // Create menus and toolbar
     initMenus();
@@ -588,8 +591,8 @@ public class EUI extends JFrame implements ActionListener {
     // Create objects
     filter = new Filter();
     editor = new Editor(
-      editorScrollPane, editorArea, messageArea, 
-      LTLField, undoredo.myundoable, filter);
+      editorScrollPane, editorArea, messageArea, undoredo.myundoable,
+      filter);
     runSpin = new RunSpin(editor, messageArea, filter);
     PMLfileChooser = newChooser(Config.PML_FILES, ".PML", ".PROM", ".H");
     OUTfileChooser = newChooser(Config.OUT_FILES, ".OUT", null, null);
