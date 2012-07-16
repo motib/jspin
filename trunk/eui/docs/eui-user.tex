@@ -22,7 +22,7 @@
 
 \title{The \eui{} Development Environment for the\\
 \eri{} Model Checker\\User's Guide and Software Documentation\\
-\mbox{}\\\large{Version 1.7}}       % Change version number
+\mbox{}\\\large{Version 1.8}}       % Change version number
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -133,6 +133,8 @@ text area that displays the \eri{} output.
 \end{center}
 \end{figure}
 
+\subsection{Menu items}
+
 \begin{description}
 \item[\bu{File}] This menu includes selections for \bu{New}, \bu{Open}, 
 \bu{Save}, \bu{Save As}, and \bu{Exit}. \bu{Switch file} closes the 
@@ -156,9 +158,6 @@ after this number of steps of a verification.
 verification stacks.
 \end{itemize}
 
-A nonzero value for \bu{Seed} will be used as the seed for generating
-random numbers, enabling a random simulation to be repeated.
-
 \bu{Default} restores the default values and \bu{Save} saves the current
 options in the configuration file, together with the last directory from
 which a source file was opened, and the current values of the splitpane
@@ -178,6 +177,18 @@ Section~\ref{s.run}.
 \item[\bu{Help}] \bu{Help} displays a short help file and \bu{About} 
 displays copyright information.
 \end{description}
+
+\subsection{Textfields in the menu bar}
+
+The field \bu{LTL name} is used to select a named LTL (inline)
+specification as described in Section~\ref{s.ltlname}.
+
+A numeric (non-blank) value in the field \bu{Random seed} will be used as the
+seed for generating random numbers, enabling a random simulation to be
+repeated. During verification it is used for search diversity. See the
+\eri{} User's Guide for details.
+
+\newpage
 
 \section{Running \eri{}}\label{s.run}
 In the \bu{Run} menu and on the toolbar are eight selections for
@@ -247,7 +258,7 @@ When a non-active \p{proctype} is used, the local variables such as
 variables names \p{P\_1.temp}, \p{P\_2.temp}, \ldots{} are created and
 the formal variable is removed from the display.
 
-\subsection{LTL formulas}
+\subsection{LTL formulas}\label{s.ltlname}
 A correctness claim is specified by a formula
 in \emph{Linear Temporal Logic (LTL)}. The formula is written inline
 within the program:\footnote{\eri{} supports specifying LTL formulas in
@@ -372,7 +383,7 @@ default values.
 \textsc{\ttfamily ACCEPT\_OPTIONS} &\verb+-a -t -dgrv+\\
 \textsc{\ttfamily FAIRNESS\_OPTIONS} &\verb+-f -t -dgrv+\\
 \hline\hline
-\textsc{\ttfamily TOTAL\_STEPS} & \verb+10+\\
+\textsc{\ttfamily TOTAL\_STEPS} & \verb+100+\\
 \textsc{\ttfamily PROGRESS\_STEPS} & \verb+1+\\
 \textsc{\ttfamily STATE\_STACK} & \verb+2+\\
 \textsc{\ttfamily LOCATION\_STACK} & \verb+3+\\
