@@ -361,8 +361,10 @@ public class Filter {
       // Termination message
       else if (s.startsWith("simulation terminated=")) {
         i = s.indexOf(",");
-        return "\n" + s.substring(0, i+1) + "\n" +
-               s.substring(i+1) + "\n\n";
+        return
+          variablesToString(false) +
+          "\n" + s.substring(0, i+1) + "\n" +
+          s.substring(i+1) + "\n\n";
       }
       else if (s.startsWith("chosen transition="))
         return "";
@@ -458,9 +460,19 @@ public class Filter {
 	}
 
   // Return a string with all the values of the variables
+  // If processes is true, write the process and statement
+  //   otherwise pad with blanks
 	public String variablesToString(boolean processes) {
     Collection<String> c = variables.keySet();
-		String t = (processes ? process + " " + statement + " " : "");
+    String t;
+
+    if (processes)
+      t = process + " " + statement + " ";
+    else {
+      char[] ch = new char[processWidth + statementWidth + 2];
+      Arrays.fill(ch, ' ');
+		  t = new String(ch);
+		}
 		Iterator<String> it = c.iterator();
 		while (it.hasNext())
 			t = t + formatItem(
