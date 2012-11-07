@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 
 public class Config {
-  static final String VERSION = "1.8";
+  static final String VERSION = "1.8.2";
 
   // Properties
   static Properties properties = new Properties();
