@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=EUI - Graphical Interface for EUI
-AppVerName=EUI - Version 1.8.2
+AppVerName=EUI - Version 1.8.3
 AppPublisher=Moti Ben-Ari, Weizmann Institute of Science
 AppPublisherURL=http://stwww.weizmann.ac.il/g-cs/
 AppUpdatesURL=http://code.google.com/p/jspin/
