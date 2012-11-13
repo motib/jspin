@@ -127,7 +127,7 @@ class RunSpin {
         String  currentState = "";
         while (running) {
           s = input.readLine();
-          System.out.println(s);  // For debugging
+          // System.out.println(s);  // For debugging
           if (s == null)
             running = false;
           else if (s.startsWith("*** Invalid argument")) {
