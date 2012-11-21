@@ -22,7 +22,7 @@
 
 \title{The \eui{} Development Environment for the\\
 \eri{} Model Checker\\User's Guide and Software Documentation\\
-\mbox{}\\\large{Version 1.8.3}}       % Change version number
+\mbox{}\\\large{Version 1.8.4}}       % Change version number
 \author{Mordechai (Moti) Ben-Ari\\
 Department of Science Teaching\\
 Weizmann Institute of Science\\
@@ -93,6 +93,11 @@ files (help, about and copyright), and \p{examples}.
 To run \eui{}, execute the command \p{javaw -jar EUI.jar}.
 An optional argument names the \prm{} file to be opened initially.
 
+By default, an icon to run \eui{} is installed on the Windows Desktop.
+If Java is associated with \p{jar} files, double-clicking on the icon
+will run \eui{}.
+
+
 \subsection{Configuration}
 
 Configuration data (Appendix~\ref{a.cfg}) is in the file \p{config.cfg}.
@@ -106,10 +111,12 @@ with default values is written.
 \subsection{Building}
 
 To build \eui{}, run:
+\vspace{-1em}
 \begin{verbatim}
-javac -target 1.5 eui\*.java
-jar cfm EUI.jar eui\MANIFEST.MF eui\*.class
+         javac -target 1.5 eui\*.java
+         jar cfm EUI.jar eui\MANIFEST.MF eui\*.class
 \end{verbatim}
+\vspace{-2em}
 
 \section{\eui{} user interface}
 The user interface includes a menu, a toolbar and three text areas.
@@ -450,6 +457,14 @@ default values.
 \hline
 \multicolumn{2}{|c|}{Delay while waiting for user input}\\ \hline
 \textsc{\ttfamily POLLING\_DELAY} &\verb+200+\\\hline
+\end{tabular}
+
+\bigskip
+
+\begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
+\hline
+\multicolumn{2}{|c|}{Display \eri{} output that is piped to \eui{}}\\ \hline
+\textsc{\ttfamily DEBUG} &\verb+false+\\\hline
 \end{tabular}
 
 \end{center}

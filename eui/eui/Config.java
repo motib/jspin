@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 
 public class Config {
-  static final String VERSION = "1.8.3";
+  static final String VERSION = "1.8.4";
 
   // Properties
   static Properties properties = new Properties();
@@ -22,7 +22,7 @@ public class Config {
   static final String JAVA_VERSION     = "1.5";
   static final String CONFIG_FILE_NAME = "config.cfg";
   static final String SELECT  	       = "Select a statement";
-  static final String OPEN_FILE 	     = "Open a Promela file\n";
+  static final String OPEN_FILE 	     = "Open a Promela file or save the Promela source code in the text area ... ";
   static final String LTL_NAME	       = "  LTL name  ";
   static final String SEED_NAME        = "  Random seed  ";
   static final String PROCESS_TITLE    = "Process";
@@ -56,6 +56,10 @@ public class Config {
     "                                                            ";
 
   static void setDefaultProperties() {
+    // EUI Deubg
+   
+    properties.put("DEBUG",            Boolean.toString(false));
+
     // Directories and file names
     properties.put("SOURCE_DIRECTORY", "examples");
     properties.put("ERIGONE",          "erigone");

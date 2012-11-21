@@ -127,7 +127,7 @@ class RunSpin {
         String  currentState = "";
         while (running) {
           s = input.readLine();
-          // System.out.println(s);  // For debugging
+          if (Config.getBooleanProperty("DEBUG")) System.out.println(s);
           if (s == null)
             running = false;
           else if (s.startsWith("*** Invalid argument")) {
@@ -177,6 +177,10 @@ class RunSpin {
               running = select(
                 filter.getTitle() + "\n" + filter.variablesToString(false),
                 area, p, input, output);
+            }
+            else if (s.startsWith("simulation terminated=")) {
+              EUI.append(area, filter.filterSimulation(currentState));
+              EUI.append(area, filter.filterSimulation(s));
             }
             else
               EUI.append(area, filter.filterSimulation(s));
@@ -280,7 +284,7 @@ class RunSpin {
     private JPanel    panel1, panel2;
     private JTextArea stateField;
     private JButton[] options;
-    private JComboBox pulldown;
+    private JComboBox<String> pulldown;
     private int       width;    // Width of button
 
     // Constructor - set up frame with number of buttons required
@@ -345,7 +349,7 @@ class RunSpin {
 
     void constructMenuDialog() {
       panel1.setLayout(new java.awt.BorderLayout());
-      pulldown = new JComboBox();
+      pulldown = new JComboBox<String>();
       pulldown.setFont(messageArea.getFont());
       pulldown.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
       pulldown.setEditable(false);

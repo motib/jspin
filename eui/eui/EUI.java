@@ -316,7 +316,12 @@ public class EUI extends JFrame implements ActionListener {
     }
     catch (javax.swing.text.BadLocationException e) {
       System.err.println(
-        "Error setting caret position when writing\n" + s + "\n");
+        "Error setting caret position when writing\n" + s);
+    }
+    // I don't know why this happens but it seems innocuous!
+    catch (NullPointerException e) {
+      System.err.println(
+        "Null pointer exception when scrolling and set caret");
     }
   }
 
@@ -551,6 +556,7 @@ public class EUI extends JFrame implements ActionListener {
   // Initialization, optionally with initial source file
   private void init(String file) {
     Config.init();
+    Limits.setLimitArguments();
 
     // Set properties of text areas
     font = new java.awt.Font(
@@ -621,6 +627,7 @@ public class EUI extends JFrame implements ActionListener {
   }
 
   public static void main(java.lang.String[] args) {
+/*    
     // Check Java version before executing
     String version = System.getProperty("java.version");
     if (version.compareTo(Config.JAVA_VERSION) < 0) {
@@ -630,6 +637,7 @@ public class EUI extends JFrame implements ActionListener {
         JOptionPane.ERROR_MESSAGE);
       System.exit(1);
     }
+*/
     final String a = (args.length>0) ? args[0] : "";
       javax.swing.SwingUtilities.invokeLater(
         new Runnable() {
