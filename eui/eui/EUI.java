@@ -203,7 +203,7 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.run(trailArea, FilterTypes.INTERACTIVE,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("INTERACTIVE_OPTIONS") + " " +
-        editor.fileName);
+        Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemTrail) ||
