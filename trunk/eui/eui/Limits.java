@@ -17,8 +17,6 @@ class Limits extends JFrame implements ActionListener {
   private static String limitArguments = " ";
 
 	Limits() {
-	  limitArguments = " ";
-
     hashLabel     = new JLabel(Config.HashSlots);
     hashField     = new JTextField(
                           Config.getStringProperty("HASH_SLOTS"), 10);
@@ -100,6 +98,16 @@ class Limits extends JFrame implements ActionListener {
     }
   }
 
+  public static void setLimitArguments() {
+    limitArguments =
+        " -lh" + Config.getStringProperty("HASH_SLOTS")     +
+        " -ll" + Config.getStringProperty("LOCATION_STACK") +
+        " -lp" + Config.getStringProperty("PROGRESS_STEPS") +
+        " -ls" + Config.getStringProperty("STATE_STACK")    +
+        " -lt" + Config.getStringProperty("TOTAL_STEPS")    + " ";
+  }
+
+  // Always set limit arguments in case they were changed in config
   public static String getLimits() {
     return limitArguments;
   }
@@ -121,12 +129,7 @@ class Limits extends JFrame implements ActionListener {
       setProperty(i3, "STATE_STACK");
       setProperty(i4, "LOCATION_STACK");
       setProperty(i5, "HASH_SLOTS");
-      limitArguments =
-        " -lh" + Config.getStringProperty("HASH_SLOTS")     +
-        " -ll" + Config.getStringProperty("LOCATION_STACK") +
-        " -lp" + Config.getStringProperty("PROGRESS_STEPS") +
-        " -ls" + Config.getStringProperty("STATE_STACK")    +
-        " -lt" + Config.getStringProperty("TOTAL_STEPS")    + " ";
+      setLimitArguments();
       dispose();
 		}
     else
