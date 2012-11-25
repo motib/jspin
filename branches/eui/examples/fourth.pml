@@ -1,6 +1,8 @@
 bool wantP = false, wantQ = false;
 bool csp = false;
 
+ltl { []<>csp }
+
 active proctype P() {
   do
   :: wantP = true;

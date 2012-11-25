@@ -1,6 +1,6 @@
 /*
  EUI - Development environment for Erigone
- Copyright 2003-10 by Mordechai (Moti) Ben-Ari.
+ Copyright 2003-12 by Mordechai (Moti) Ben-Ari.
  
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,13 +23,15 @@ import javax.swing.border.*;
 
 public class EUI extends JFrame implements ActionListener {
   public enum FilterTypes {
-    COMPILATION, TRANSLATION, SIMULATION, INTERACTIVE, VERIFICATION, SPACE};
+    COMPILATION, TRANSLATION, SIMULATION, INTERACTIVE, VERIFICATION};
 
 	// Contained objects. Create only after initializing configuration.
   private Editor     editor;
   private RunSpin    runSpin;
   private Filter     filter;
   private UndoRedo   undoredo;
+
+  // Data saved between actions
   private boolean    maxedDivider;
   private int        currentDivider;
 
@@ -38,9 +40,9 @@ public class EUI extends JFrame implements ActionListener {
   private JTextArea  trailArea = new JTextArea();
   private JTextArea  messageArea = new JTextArea();
   private JTextField LTLField = new JTextField();
+  private JTextField seedField = new JTextField();
 
   private JFileChooser  PMLfileChooser;
-  private JFileChooser  PRPfileChooser;
   private JFileChooser  OUTfileChooser;
   private java.awt.Font font;
 
@@ -49,7 +51,8 @@ public class EUI extends JFrame implements ActionListener {
   private JScrollPane messageScrollPane = new JScrollPane(messageArea);
   private JSplitPane  topSplitPane;
   private JSplitPane  mainSplitPane;
-  private JLabel LTLLabel = new JLabel(Config.LTL_FORMULA);
+  private JLabel      LTLLabel = new JLabel(Config.LTL_NAME);
+  private JLabel      seedLabel = new JLabel(Config.SEED_NAME);
 
   private JMenuBar  menuBar = new JMenuBar();
 
@@ -73,7 +76,6 @@ public class EUI extends JFrame implements ActionListener {
   private JMenuItem menuItemRandom = new JMenuItem(Config.Random);
   private JMenuItem menuItemInter = new JMenuItem(Config.Inter);
   private JMenuItem menuItemTrail = new JMenuItem(Config.Trail);
-  private JMenuItem menuItemLTL2BA = new JMenuItem(Config.LTL2BA);
   private JMenuItem menuItemSafety = new JMenuItem(Config.Safety);
   private JMenuItem menuItemAcceptance = new JMenuItem(Config.Acceptance);
   private JMenuItem menuItemFairness = new JMenuItem(Config.Fair);
@@ -81,7 +83,6 @@ public class EUI extends JFrame implements ActionListener {
 
   private JMenu     menuOptions = new JMenu();
   private JMenuItem menuItemLimits = new JMenuItem(Config.Limits);
-  private JMenuItem menuItemSeed = new JMenuItem(Config.Seed);
   private JMenuItem menuItemDefault = new JMenuItem(Config.Default);
   private JMenuItem menuItemOptionsSaveInstall = new JMenuItem(Config.SaveInstall);
   private JMenuItem menuItemOptionsSaveCurrent = new JMenuItem(Config.SaveCurrent);
@@ -89,7 +90,6 @@ public class EUI extends JFrame implements ActionListener {
   private JMenu     menuDisplay = new JMenu();
   private JMenuItem menuItemMax = new JMenuItem(Config.Max);
   private JMenuItem menuItemTraceOptions = new JMenuItem(Config.TraceOptions);
-  private JMenuItem menuSpace = new JMenuItem(Config.Space);
   private JMenuItem menuItemSaveSpin = new JMenuItem(Config.SaveSpin);
 
   private JMenu menuHelp = new JMenu();
@@ -104,12 +104,13 @@ public class EUI extends JFrame implements ActionListener {
   private JButton toolRandom = new JButton(Config.Random);
   private JButton toolInter  = new JButton(Config.Inter);
   private JButton toolTrail  = new JButton(Config.Trail);
-  private JButton toolLTL2BA = new JButton(Config.LTL2BA);
+  private JButton toolLimits = new JButton(Config.Limits);
+  private JButton toolTraceOptions  = new JButton(Config.TraceOptions);
   private JButton toolSafety = new JButton(Config.Safety);
   private JButton toolAcceptance = new JButton(Config.Acceptance);
   private JButton toolFairness   = new JButton(Config.Fair);
   private JButton toolStop   = new JButton(Config.Stop);
-  private JButton   toolMax = new JButton(Config.Max);
+  private JButton toolMax    = new JButton(Config.Max);
 
   public void actionPerformed(ActionEvent e) {
     // File menu actions
@@ -124,7 +125,7 @@ public class EUI extends JFrame implements ActionListener {
          JFileChooser.APPROVE_OPTION) {
         editor.lastFile = editor.file;
         clearAreas();
-        editor.openFile(PMLfileChooser.getSelectedFile(), true);
+        editor.openFile(PMLfileChooser.getSelectedFile());
       }
     }
     else if ((e.getSource() == menuItemSave) ||
@@ -157,7 +158,7 @@ public class EUI extends JFrame implements ActionListener {
           }
         }
         editor.lastFile = editor.file;
-        editor.openFile(temp, true);
+        editor.openFile(temp);
       }
     }
     else if (e.getSource() == menuItemExit) {
@@ -185,6 +186,7 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.runAndWait(trailArea, FilterTypes.COMPILATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("COMPILE_OPTIONS") + " " +
+        getLTLParameter() +
         editor.fileName);
     }
     else if ((e.getSource() == menuItemRandom) ||
@@ -192,9 +194,8 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.run(trailArea, FilterTypes.SIMULATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("RANDOM_OPTIONS") + " " +
-        (Config.getIntProperty("SEED") != 0 ? 
-          ("-n" + Config.getIntProperty("SEED") + " ") : "") +
-          Limits.getLimits() + editor.fileName);
+        getSeedParameter() +
+        Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemInter) ||
@@ -202,7 +203,7 @@ public class EUI extends JFrame implements ActionListener {
       runSpin.run(trailArea, FilterTypes.INTERACTIVE,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("INTERACTIVE_OPTIONS") + " " +
-        editor.fileName);
+        Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemTrail) ||
@@ -213,20 +214,14 @@ public class EUI extends JFrame implements ActionListener {
         Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
-    else if ((e.getSource() == menuItemLTL2BA) ||
-             (e.getSource() == toolLTL2BA)) {
-      runSpin.runAndWait(trailArea, FilterTypes.TRANSLATION,
-        Config.getStringProperty("ERIGONE"),  
-        Config.getStringProperty("LTL2BA_OPTIONS") + " " +
-        editor.fileName);
-    }
     else if ((e.getSource() == menuItemSafety) ||
              (e.getSource() == toolSafety)) {
       runSpin.run(trailArea, FilterTypes.VERIFICATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty("SAFETY_OPTIONS") + " " +
+        getSeedParameter() +
         Limits.getLimits() +
-        (!LTLField.getText().equals("") ? ("-t ") : "") +
+        getLTLParameter() +
         editor.fileName);
       isSpinRunning();
     }
@@ -234,29 +229,25 @@ public class EUI extends JFrame implements ActionListener {
              (e.getSource() == toolAcceptance)     ||
              (e.getSource() == menuItemFairness)   ||
              (e.getSource() == toolFairness)) {
-      if (LTLField.getText().equals("")) {
-        append(messageArea,
-               "Need LTL formula for acceptance verification\n");
-        return;
-      }
       runSpin.run(trailArea, FilterTypes.VERIFICATION,
         Config.getStringProperty("ERIGONE"),
         Config.getStringProperty(
           ((e.getSource() == menuItemFairness) ||
            (e.getSource() == toolFairness) ?  
            "FAIRNESS_OPTIONS" : "ACCEPT_OPTIONS")) + " " +
-          Limits.getLimits() + editor.fileName);
+        getLTLParameter() +
+        getSeedParameter() +
+        Limits.getLimits() + editor.fileName);
       isSpinRunning();
     }
     else if ((e.getSource() == menuItemStop) || (e.getSource() == toolStop))
       runSpin.killSpin();
 
     // Options menu actions
-    else if (e.getSource() == menuItemLimits) {
+    else if ((e.getSource() == menuItemLimits) ||
+             (e.getSource() == toolLimits)) {
         new Limits();
     }
-    else if (e.getSource() == menuItemSeed)
-        changeOption("SEED");
     else if (e.getSource() == menuItemDefault)
         Config.setDefaultProperties();
     else if ((e.getSource() == menuItemOptionsSaveInstall) ||
@@ -289,21 +280,9 @@ public class EUI extends JFrame implements ActionListener {
       }
       maxedDivider = ! maxedDivider;
     }
-    else if (e.getSource() == menuItemTraceOptions)
+    else if ((e.getSource() == menuItemTraceOptions) ||
+      (e.getSource() == toolTraceOptions))
       new Trace(editor, filter, font);
-    else if (e.getSource() == menuSpace) {
-      runSpin.runAndWait(trailArea, FilterTypes.VERIFICATION,
-        Config.getStringProperty("ERIGONE"),
-        Config.getStringProperty("SPACE_OPTIONS") + " " +
-        Limits.getLimits() +
-        editor.fileName);
-      runSpin.runAndWait(trailArea, FilterTypes.SPACE,
-        Config.getStringProperty("DOT"),
-        "-q -o" + editor.PNGFileName +
-        " -T" + Config.getStringProperty("DOT_FORMAT") + " " +
-        editor.DOTFileName);
-        new DisplayImage(editor.PNGFileName);
-    }
     else if (e.getSource() == menuItemSaveSpin) {
       java.io.File outFile = new java.io.File(editor.OUTFileName);
       OUTfileChooser.setSelectedFile(outFile);
@@ -316,11 +295,13 @@ public class EUI extends JFrame implements ActionListener {
       displayFile(Config.helpFileName);
     else if (e.getSource() == menuItemAbout)
       displayFile(Config.aboutFileName);
+
     if (editor != null) editor.focus(false);
   }
 
   // Display the contents of a file in the trail area
   private void displayFile(String fn) {
+    System.out.println(fn);
     trailArea.setText(editor.readFile(new java.io.File(fn)));
     trailArea.setCaretPosition(0);
   }
@@ -335,7 +316,12 @@ public class EUI extends JFrame implements ActionListener {
     }
     catch (javax.swing.text.BadLocationException e) {
       System.err.println(
-        "Error setting caret position when writing\n" + s + "\n");
+        "Error setting caret position when writing\n" + s);
+    }
+    // I don't know why this happens but it seems innocuous!
+    catch (NullPointerException e) {
+      System.err.println(
+        "Null pointer exception when scrolling and set caret");
     }
   }
 
@@ -344,25 +330,7 @@ public class EUI extends JFrame implements ActionListener {
     messageArea.setText("");
     trailArea.setText("");
     LTLField.setText("");
-  }
-
-  // Display an option pane to edit a numerical option
-  private void changeOption(String property) {
-    String s = Config.getStringProperty(property);
-    while (true) {
-      String answer = JOptionPane.showInputDialog(property, s);
-      if (answer == null) return;
-      try {
-        Integer.parseInt(answer);
-        Config.setStringProperty(property, answer);
-        return;
-      } 
-      catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(null,  
-          answer + " is not an integer", "Format error",
-          JOptionPane.ERROR_MESSAGE);
-      }
-    }
+    seedField.setText("");
   }
 
 	// Create a thread to check if Spin is running
@@ -379,6 +347,35 @@ public class EUI extends JFrame implements ActionListener {
       }
     };
     th.start();
+  }
+
+  // If internal LTL specification, add "t" parameter
+  private String getLTLParameter() {
+    if (!editor.isLTL()) return "";
+    String s = LTLField.getText().trim();
+    if (s.equals(""))
+      return "-t ";
+    else
+      return "-t-" + s + " ";
+  }
+
+  // If seed, add "n" parameter
+  private String getSeedParameter() {
+    String s = seedField.getText().trim();
+    int n = 0;
+    if (s.equals(""))
+      return "";
+    else
+      try {
+        n = Integer.parseInt(s);
+        Config.setIntProperty("SEED", n);
+      } 
+      catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(null,  
+          "Random seed " + s + " is not an integer", "Format error",
+          JOptionPane.ERROR_MESSAGE);
+      }
+      return (n != 0 ? ("-n" + n + " ") : "");
   }
 
   // Initialize one menu item; add mnemonic and accelerator (if any)
@@ -450,9 +447,6 @@ public class EUI extends JFrame implements ActionListener {
       menuSpin, menuItemTrail, Config.TrailMN, Config.TrailAC);
     menuSpin.addSeparator();
     initMenuItem(
-      menuSpin, menuItemLTL2BA, Config.LTL2BAMN, Config.LTL2BAAC);
-    menuSpin.addSeparator();
-    initMenuItem(
       menuSpin, menuItemSafety, Config.SafetyMN, Config.SafetyAC);
     initMenuItem(
       menuSpin, menuItemAcceptance,
@@ -468,9 +462,6 @@ public class EUI extends JFrame implements ActionListener {
     menuOptions.setMnemonic(Config.OptionsMN);
     initMenuItem(menuOptions, menuItemLimits,
       Config.LimitsMN, Config.LimitsAC);
-    menuOptions.addSeparator();
-    initMenuItem(
-      menuOptions, menuItemSeed, Config.SeedMN, Config.SeedAC);
     menuOptions.addSeparator();
     initMenuItem(
       menuOptions, menuItemDefault, Config.DefaultMN, Config.DefaultAC);
@@ -492,9 +483,6 @@ public class EUI extends JFrame implements ActionListener {
       menuDisplay, menuItemMax, Config.MaxMN, Config.MaxAC);
     menuDisplay.addSeparator();
     initMenuItem(
-      menuDisplay, menuSpace, Config.SpaceMN, Config.SpaceAC);
-    menuDisplay.addSeparator();
-    initMenuItem(
       menuDisplay, menuItemSaveSpin,
       Config.SaveSpinMN, Config.SaveSpinAC);
 
@@ -506,12 +494,21 @@ public class EUI extends JFrame implements ActionListener {
     initMenuItem(
       menuHelp, menuItemAbout, Config.AboutMN, Config.AboutAC);
 
-    menuBar.add(new JLabel("                    "));
+    menuBar.add(new JLabel(Config.BLANKS));
     menuBar.add(new JSeparator(SwingConstants.VERTICAL));
+
     menuBar.add(LTLLabel);
     LTLField.setColumns(Config.LTL_COLUMNS);
-    LTLField.setPreferredSize(new java.awt.Dimension(250,30));
     menuBar.add(LTLField);
+    menuBar.add(new JSeparator(SwingConstants.VERTICAL));
+    menuBar.add(seedLabel);
+    seedField.setColumns(Config.SEED_COLUMNS);
+    menuBar.add(seedField);
+    menuBar.add(new JSeparator(SwingConstants.VERTICAL));
+
+    // Put something to the right the make the field smaller
+//    menuBar.add(new JLabel(Config.BLANKS));
+    menuBar.add(new JLabel(Config.BLANKS));
   }
 
   // Initialize one tool button
@@ -537,10 +534,12 @@ public class EUI extends JFrame implements ActionListener {
     initToolButton(toolInter, Config.InterMN);
     initToolButton(toolTrail, Config.TrailMN);
     toolBar.addSeparator();
-    initToolButton(toolLTL2BA, Config.LTL2BAMN);
     initToolButton(toolSafety, Config.SafetyMN);
     initToolButton(toolAcceptance, Config.AcceptanceMN);
     initToolButton(toolFairness, Config.FairMN);
+    toolBar.addSeparator();
+    initToolButton(toolLimits, Config.LimitsMN);
+    initToolButton(toolTraceOptions, Config.TraceOptionsMN);
     toolBar.addSeparator();
     initToolButton(toolStop, Config.StopMN);
     initToolButton(toolMax, Config.MaxMN);
@@ -557,6 +556,7 @@ public class EUI extends JFrame implements ActionListener {
   // Initialization, optionally with initial source file
   private void init(String file) {
     Config.init();
+    Limits.setLimitArguments();
 
     // Set properties of text areas
     font = new java.awt.Font(
@@ -571,6 +571,7 @@ public class EUI extends JFrame implements ActionListener {
     trailArea.setWrapStyleWord(true);
     messageArea.setFont(font);
     LTLField.setFont(font);
+    seedField.setFont(font);
 
     // Create menus and toolbar
     initMenus();
@@ -596,11 +597,10 @@ public class EUI extends JFrame implements ActionListener {
     // Create objects
     filter = new Filter();
     editor = new Editor(
-      editorScrollPane, editorArea, messageArea, 
-      LTLField, undoredo.myundoable, filter);
+      editorScrollPane, editorArea, messageArea, undoredo.myundoable,
+      filter);
     runSpin = new RunSpin(editor, messageArea, filter);
     PMLfileChooser = newChooser(Config.PML_FILES, ".PML", ".PROM", ".H");
-    PRPfileChooser = newChooser(Config.PRP_FILES, ".PRP", null, null);
     OUTfileChooser = newChooser(Config.OUT_FILES, ".OUT", null, null);
 
     // Window listener: kill Spin process if window closed
@@ -621,12 +621,13 @@ public class EUI extends JFrame implements ActionListener {
   
     // Open file if given as command argument
     if (file != "")
-      editor.openFile(new java.io.File(file), true);
+      editor.openFile(new java.io.File(file));
     else
       editor.newFile();
   }
 
   public static void main(java.lang.String[] args) {
+/*    
     // Check Java version before executing
     String version = System.getProperty("java.version");
     if (version.compareTo(Config.JAVA_VERSION) < 0) {
@@ -636,6 +637,7 @@ public class EUI extends JFrame implements ActionListener {
         JOptionPane.ERROR_MESSAGE);
       System.exit(1);
     }
+*/
     final String a = (args.length>0) ? args[0] : "";
       javax.swing.SwingUtilities.invokeLater(
         new Runnable() {

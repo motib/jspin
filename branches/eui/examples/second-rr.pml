@@ -1,6 +1,8 @@
 /* Second attempt */
 bool wantp = false, wantq = false;
 
+ltl { []!(p@csp&&q@csq) }
+
 active proctype p() {
  do ::
     !wantq;

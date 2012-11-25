@@ -102,10 +102,6 @@ class RunSpin {
     private Process p;
 
     public void run() {
-      if (filtering == EUI.FilterTypes.SPACE) {
-        runDot();
-        return;
-      }
       try {
         // Use ProcessBuilder to run Spin, redirecting ErrorStream
         String[] sa = stringToArray(command, parameters);
@@ -131,7 +127,7 @@ class RunSpin {
         String  currentState = "";
         while (running) {
           s = input.readLine();
-          // System.out.println(s);  // For debugging
+          if (Config.getBooleanProperty("DEBUG")) System.out.println(s);
           if (s == null)
             running = false;
           else if (s.startsWith("*** Invalid argument")) {
@@ -146,9 +142,6 @@ class RunSpin {
             EUI.append(area, filter.filterCompilation(s));
           else if (filtering == EUI.FilterTypes.TRANSLATION)
             EUI.append(area, filter.filterVerification(s));
-          else if (filtering == EUI.FilterTypes.SPACE) {
-            System.out.println(s);
-          }
           else if (filtering == EUI.FilterTypes.INTERACTIVE) {
             if (s.startsWith("initial state=") || s.startsWith("next state=")) {
               currentState = s;
@@ -185,6 +178,10 @@ class RunSpin {
                 filter.getTitle() + "\n" + filter.variablesToString(false),
                 area, p, input, output);
             }
+            else if (s.startsWith("simulation terminated=")) {
+              EUI.append(area, filter.filterSimulation(currentState));
+              EUI.append(area, filter.filterSimulation(s));
+            }
             else
               EUI.append(area, filter.filterSimulation(s));
           }
@@ -198,20 +195,6 @@ class RunSpin {
       } catch (java.io.IOException e) {
         EUI.append(messageArea, "IO exception\n" + e);
       }
-    }
-
-    // Run dot and redirect output to PNG file
-    public void runDot() {
-      try {
-        String[] sa = stringToArray(command, parameters);
-        ProcessBuilder pb = new ProcessBuilder(sa);
-        File pf = editor.file.getParentFile();
-        if (pf != null) pb.directory(pf.getCanonicalFile());
-        p = pb.start();
-        p.waitFor();
-      }
-      catch (InterruptedException e) {}
-      catch (java.io.IOException e) {}
     }
 
     // String to array of tokens - for ProcessBuilder
@@ -301,7 +284,7 @@ class RunSpin {
     private JPanel    panel1, panel2;
     private JTextArea stateField;
     private JButton[] options;
-    private JComboBox pulldown;
+    private JComboBox<String> pulldown;
     private int       width;    // Width of button
 
     // Constructor - set up frame with number of buttons required
@@ -366,7 +349,7 @@ class RunSpin {
 
     void constructMenuDialog() {
       panel1.setLayout(new java.awt.BorderLayout());
-      pulldown = new JComboBox();
+      pulldown = new JComboBox<String>();
       pulldown.setFont(messageArea.getFont());
       pulldown.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
       pulldown.setEditable(false);

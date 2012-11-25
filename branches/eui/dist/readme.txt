@@ -1,6 +1,6 @@
              EUI - Erigone User Interface              
            A Development environment for the Erigone Model Checker
-      Copyright 2008-10 by Mordechai (Moti) Ben-Ari. GNU GPL.
+      Copyright 2008-11 by Mordechai (Moti) Ben-Ari. GNU GPL.
               See copyright.txt
 
 For Windows, download and run the installer eui-N.exe.

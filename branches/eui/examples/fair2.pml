@@ -1,5 +1,7 @@
 bool flag = false, finish = false;
 
+ltl { <>finish }
+
 active proctype p() {
 	do
 	::  flag -> break
