@@ -1,6 +1,8 @@
 bool wantp = false, wantq = false;
 byte critical = 0;
 
+ltl { [](critical<=1) }
+
 active proctype p() {
     do 
 	  :: !wantq;

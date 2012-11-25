@@ -6,15 +6,15 @@ Concurrent counting  count        -s -ll80 -ls40 -lt80
                                            assert false
 Finite automaton     fa           -s       assert false
 Satisfiability       sat          -s       success
-Second attempt       second       -s       assert false
-Third attempt        third        -s       invalid end state
-Dekker's algorithm   dekker       -s       success
 Weak semaphore       sem          -s       success
+Second attempt       second       -s       assert false
 Second attempt       second-ltl   -s -t    never claim terminated
 Second attempt with
   remote reference   second-rr    -s -t    never claim terminated
-Fourth attempt       fouth-live   -a -t    acceptance cycle
-Fourth attempt       fouth-live   -f -t    acceptance cycle
+Third attempt        third        -s       invalid end state
+Fourth attempt       fourth       -a -t    acceptance cycle
+Fourth attempt       fourth       -f -t    acceptance cycle
+Dekker's algorithm   dekker       -s       success
 Dekker's algorithm   dekker-live  -a -t    acceptance cycle
 Dekker's algorithm   dekker-live  -f -t    success
 Fairness             fair1        -a -t    acceptance cycle

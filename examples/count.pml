@@ -27,5 +27,6 @@ active proctype Q() {
 
 active proctype Finish() {
 	finished == 2; 
+    printf("The result is %d\n", n);
 	assert (n > 2);
 }

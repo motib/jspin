@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=EUI - Graphical Interface for EUI
-AppVerName=EUI - Version 1.5.1
+AppVerName=EUI - Version 1.8.4
 AppPublisher=Moti Ben-Ari, Weizmann Institute of Science
 AppPublisherURL=http://stwww.weizmann.ac.il/g-cs/
 AppUpdatesURL=http://code.google.com/p/jspin/
@@ -27,21 +27,18 @@ Source: "C:\eui\eui\*.mf"; DestDir: "{app}\eui"; Flags: ignoreversion
 Source: "C:\eui\docs\*.png"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "C:\eui\docs\*.tex"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "C:\eui\docs\*.pdf"; DestDir: "{app}\docs"; Flags: ignoreversion
-Source: "C:\erigone\docs\erigone-ug.pdf"; DestDir: "{app}\docs"; Flags: ignoreversion
-Source: "C:\erigone\docs\erigone-quick.pdf"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "C:\eui\eui.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\eui\eui.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\eui\build.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\eui\config.cfg"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\eui\run.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\eui\erigone.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\eui\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\EUI";  Filename: "{app}\run.bat"; IconFilename: "{app}\eui.ico"; WorkingDir: "{app}"
+Name: "{group}\EUI";  Filename: "{app}\eui.jar"; IconFilename: "{app}\eui.ico"; WorkingDir: "{app}"
 Name: "{group}\EUI User's Guide"; Filename: "{app}\docs\eui-user.pdf"
 Name: "{group}\EUI Quick Start Guide"; Filename: "{app}\docs\eui-quick.pdf"
-Name: "{group}\jSpin/EUI website"; Filename: "http://code.google.com/p/jspin/"
+Name: "{group}\EUI website"; Filename: "http://code.google.com/p/jspin/"
 Name: "{group}\Uninstall eui"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\EUI"; Filename: "{app}\run.bat"; IconFilename: "{app}\eui.ico"; WorkingDir: "{app}"
+Name: "{userdesktop}\EUI"; Filename: "{app}\eui.jar"; IconFilename: "{app}\eui.ico"; WorkingDir: "{app}"

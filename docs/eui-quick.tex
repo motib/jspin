@@ -37,7 +37,7 @@ Rehovot 76100 Israel\\
 \vfill
 
 \begin{center}
-Copyright \copyright{} 2010 by Mordechai (Moti) Ben-Ari.
+Copyright \copyright{} 2010-12 by Mordechai (Moti) Ben-Ari.
 \end{center}
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0
 License. To view a copy of this license, visit
@@ -51,7 +51,7 @@ California, 94105, USA.
 
 \prg{} is a \emph{model checker} that can simulate and verify concurrent
 and distributed programs. It is a partial reimplementation of the \spn{}
-model checker and supports a subset of \prm{}, the modeling language
+model checker and supports a large subset of \prm{}, the modeling language
 used by \spn{}. \eui{} is a development environment for \prg{} that
 includes a graphical user interface and algorithms to format and display
 the result of a simulation and verification. \eui{} is an adaptation of the
@@ -87,12 +87,22 @@ under the Windows operating system. For other systems, see the User's Guides.
 Download the \eui{} installation file \p{eui-N.exe} (where \p{N} is the
 latest version number) from the \jsp{} project at Google Code
 \url{http://code.google.com/p/jspin/} and execute the installation file.
-The installation contains the executable file and User's Guide for
-\prg{} so you don't need to install them separately.
+The installation contains the executable file for
+\prg{} so you don't need to install it separately.
 
-By default, an icon to run \eui{} is installed on the Desktop.
-Double-click the icon to run \eui{}. Click on \bu{Open} to open a \prm{}
-source file in the edit window on the left.
+By default, an icon to run \eui{} is installed on the Desktop. If Java
+is associated with \p{jar} files, double-clicking on the icon will run
+\eui{}. Click on \bu{Open} to open a \prm{} source file in the edit
+window on the left.
+
+The user interface of \eui{} is shown on the following page.
+
+\begin{figure}[tb]
+\begin{center}
+\includegraphics[width=120mm]{eui}
+\end{center}
+\end{figure}
+
 
 \section{Simulating a \prm{} program}
 
@@ -101,9 +111,9 @@ exclusion problem; the first has an error that causes mutual exclusion
 to be violated, whereas mutual exclusion always holds in the second
 program.
 
-\subsection*{The ``Second Attempt''}
+\subsection*{The Second Attempt}
 
-The first program is the ``Second Attempt'' to solve the mutual
+The first program is the Second Attempt to solve the mutual
 exclusion problem (Ben-Ari, 2006, Section~3.6) and is contained in
 the file \p{second.pml} in the \p{examples} directory:
 
@@ -129,6 +139,8 @@ Open the file \p{second.pml} in the \p{examples} directory. The \prm{}
 source code will be displayed in the left-hand pane. Click on
 \bu{Random} to run a simulation. The result will be something like:
 
+\pagebreak[4]
+
 \begin{verbatim}
 Erigone v2.1.3, Copyright 2008-9 by Moti Ben-Ari, GNU GPL.
 execution mode=simulation,
@@ -149,8 +161,6 @@ line=22,statement={assert (critical == 1)},
 steps=7,
 times=,compilation=0.01,simulation=0.01,
 \end{verbatim}
-because it is highly likely that a run will cause mutual exclusion to
-be violated.
 
 The states of the simulation are displayed in tabular form similar to
 that used in Ben-Ari (2006). The first column is the process from which
@@ -170,6 +180,9 @@ format used by \prg{}: comma-terminated named associations of the form
 
 The second program uses a semaphore to achieve mutual exclusion
 and is contained in the file \p{sem.pml} in the \p{examples} directory:
+
+\pagebreak[4]
+
 \begin{verbatim}
 byte sem = 1;
 byte critical = 0;
@@ -227,43 +240,38 @@ verification terminated=successfully,
 \section{Verifying a safety property using LTL}
 
 \prg{} can verify a correctness property written as a formula in
-\emph{linear temporal logic (LTL)}. The formula is stored in a file with
-the same name as the \prm{} program but with the extension \p{prp} (for
-\emph{property}). When you open a \prm{} file, the \p{prp} file (if any)
-will also be opened and the correctness property displayed in the text
-field in the menu bar. If you edit the formula, it is saved whenever the
-\prm{} source code is saved (before a simulation or verification, or
-explicitly using a command from the \bu{File} menu).
-
+\emph{linear temporal logic (LTL)}.
 The program in the file \p{second-ltl.pml} is the same as that in
-\p{second.pml} except that the assert statements have been removed. The
-LTL formula for the correctness property that we want to verify is:
-
+\p{second.pml} except that the assert statements have been removed
+and an LTL formula has been added:
 \begin{verbatim}
-[](critical<=1)
+bool wantp = false, wantq = false;
+byte critical = 0;
+
+ltl { [](critical<=1) }
+
+active proctype p() {
+    do 
+	  :: !wantq;
+       wantp = true;
+       critical++;
+       critical--;
+       wantp = false;
+    od
+}
+
+active proctype q() { /* Symmetrical */ }
 \end{verbatim}
-Read this as: the value of \p{critical} is \emph{always} (\p{[]}) less
-than or equal to 1.
+Read the LTL formula as: the value of \p{critical} is \emph{always}
+(\p{[]}) less than or equal to 1.
 
-To verify this property, we negate the formula (\p{!}) and ask \prg{} to
-search for a computation satisfying the negated formula. If one is
-found, the correctness property is false; if none is found, the
-correctness property is true. The negated formula is in the file
-\p{second-ltl.prp}:
-
-\begin{verbatim}
-![]#(critical<=1)#
-\end{verbatim}
-The \p{\#} symbols surround the expression as explained in
-Section~\ref{s.caveat} below.
-
-Click \bu{Safety} to perform a verification in Safety mode. The output will be:
+Click \bu{Safety} to perform a verification in Safety mode. The output
+will be:
 
 \begin{verbatim}
 Erigone v2.1.0, Copyright 2008-9 by Moti Ben-Ari, GNU GPL.
-execution mode=safety,
-error number=1,hash slots=22,state stack=2,location stack=3,
-  progress steps=1,total steps=10,
+execution mode=safety,error number=1,hash slots=22,state stack=2,
+  location stack=3,progress steps=1,total steps=10,
 
 verification terminated=never claim terminated,
 line=9,statement={critical--},
@@ -271,10 +279,7 @@ line=9,statement={critical--},
 Run a guided simulation to see the counterexample
 
 steps=47,
-state stack elements=9,element size=26,memory=234,
-transition stack elements=14,element size=5,memory=70,
-states stored=19,matched=9,total=28,collisions=0,
-element size=26,memory=494,overhead=16777292,
+  ...
 times=,compilation=0.04,verification=0.06,
 \end{verbatim}
 
@@ -284,17 +289,18 @@ phrase \emph{never claim terminated} is a technical term used by the
 model checker to report that an error has been found. Finally,
 information on the performance of the model checker is displayed. The
 counterexample can be displayed by running a guided simulation.
-
 Running a verification for the program with the semaphore gives the
 result that the verification was terminated successfully.
 
 \section{Verifying a liveness property using LTL}
 
-Consider the following program, which is a very simple example used to
-demonstrate the concept of fairness:
+Consider the following program (file \p{fair1.pml}) which is a very
+simple example used to demonstrate the concept of fairness:
 \begin{verbatim}
 byte n = 0;
 bool flag = false;
+
+ltl { <>flag }
 
 active proctype p() {
   do
@@ -312,12 +318,7 @@ If process \p{q} ever executes, it will set \p{flag} to \p{true} and
 process \p{p} will then terminate, but in an unfair computation (where
 \p{q} never executes) this may never happen. Let us now try to prove the
 property \p{<>flag} meaning that \emph{eventually} \p{flag} becomes
-true. To verify this, we negate the formula to \p{!<>flag} and perform a
-verification.
-
-The \prm{} program is in file \p{fair1.pml} and the negation of the
-correctness property is in file \p{fair1.prp}, which will be loaded
-automatically when \p{fair1.pml} is opened.
+true. 
 
 Click on \bu{Accept} to perform a verification in \emph{Acceptance
 mode}. In this mode, the model checker searches for an \emph{acceptance
@@ -345,52 +346,5 @@ must be taken. When the verification is run, the result is:
 \begin{verbatim}
 verification terminated=successfully,
 \end{verbatim}
-
-\section{Caveats!}\label{s.caveat}
-\prg{} is designed to be upwardly compatible with \spn{} and \eui{} is
-based on the \jsp{} development environment for \spn{}. If you know
-\spn{}/\jsp{} and want to use \prg{}/\eui{} (or conversely),
-please note the following differences: 
-\begin{itemize}
-
-\item If you are familiar with \spn{}, carefully read the section
-of the \prg{} User's
-Guide which describes the subset implemented by \prg{}.
-
-\item The only incompatibility between \spn{} and \prg{} concerns the
-use of expressions in LTL formulas which are not allowed in \spn{};
-instead, you define a symbol for the C preprocessor:
-
-\begin{verbatim}
-#define csOK (critical <= 1)
-\end{verbatim}
-and then use the symbol in the (negated) LTL formula:
-\begin{verbatim}
-![]csOK+
-\end{verbatim}
-\prg{} does not implement a preprocessor so a
-special notation is used if an expression is needed in an LTL formula
-as shown above:
-\begin{verbatim}
-![]#(critical <= 1)#
-\end{verbatim}
-\item \eui{} is based upon the \jsp{} development environment for
-\spn{}; however there are a few major differences:
-\begin{itemize}
-\item In \jsp{} there
-is a pulldown menu for choosing the verification mode and a single
-\bu{Verify} button; in \eui{} there are separate buttons for each mode.
-\item In \jsp{} weak fairness is selected by a check box, while in
-\eui{} the button \bu{Fairness} means verify in
-acceptance mode with weak fairness enabled.
-\item The \spn{} command-line arguments for various execution modes can
-be edited interactively in \jsp{}; in \eui{} the \prg{} arguments can
-only be modified in the configuration file.
-\item \textbf{By default, \jsp{} automatically negates LTL formulas that
-appear in the LTL text field, while \eui{} requires the user to
-explicitly negate them.} You can configure \jsp{}
-so that it does not negate formulas automatically.
-\end{itemize}
-\end{itemize}
 
 \end{document}
