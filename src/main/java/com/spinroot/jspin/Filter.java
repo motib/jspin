@@ -9,7 +9,7 @@ package com.spinroot.jspin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
 
 class Filter {
@@ -38,7 +38,7 @@ class Filter {
 
     // Parse string to initialize excluded array; ignore NL and CR
     void setExcluded(String s, boolean exVar) {
-        ArrayList<String> excluded = exVar ? excludedVar : excludedState;
+        List<String> excluded = exVar ? excludedVar : excludedState;
         s = s.replace('\r', '\n');
         excluded.clear();
         do {
@@ -55,7 +55,7 @@ class Filter {
     //   If variable name includes S, do not display,
     //   but if some +T in file is in name, display anyway.
     private boolean checkExcluded(String name, boolean exVar) {
-        ArrayList<String> excluded = exVar ? excludedVar : excludedState;
+        List<String> excluded = exVar ? excludedVar : excludedState;
         for (int i = 0; i < excluded.size(); i++)
             if ((excluded.get(i).charAt(0) != '+') &&
                     (name.indexOf(excluded.get(i)) != -1)) {
@@ -205,11 +205,10 @@ class Filter {
 
     // Transform a collection to a string, calling formatItem for each element
     private String collectionToString(Collection<String> c) {
-        String s = "";
-        Iterator<String> it = c.iterator();
-        while (it.hasNext())
-            s = s + formatItem(it.next(),
-                    Config.getIntProperty("VARIABLE_WIDTH")) + " ";
-        return s;
+        StringBuilder s = new StringBuilder();
+        for (String aC : c) {
+            s.append(formatItem(aC, Config.getIntProperty("VARIABLE_WIDTH"))).append(" ");
+        }
+        return s.toString();
     }
 }

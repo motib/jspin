@@ -18,12 +18,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 package com.spinroot.jspin;
 
+import com.spinroot.spinSpider.DrawAutomata;
+import com.spinroot.spinSpider.SpinSpider;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.Objects;
 
 public class jSpin extends JFrame implements ActionListener {
     // Contained objects. Create only after initializing configuration.
@@ -184,28 +189,26 @@ public class jSpin extends JFrame implements ActionListener {
         }
         final String a = (args.length > 0) ? args[0] : "";
         javax.swing.SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        jSpin jspin = new jSpin();
-                        jspin.init(a);
-                    }
+                () -> {
+                    jSpin jspin = new jSpin();
+                    jspin.init(a);
                 });
     }
 
     public void actionPerformed(ActionEvent e) {
         // File menu actions
         if (e.getSource() == menuItemNew) {
-            editor.lastFile = editor.file;
+            editor.setLastFile(editor.getFile());
             clearAreas();
             editor.newFile();
         } else if ((e.getSource() == menuItemOpen) || (e.getSource() == toolOpen)) {
             if (PMLfileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                editor.lastFile = editor.file;
+                editor.setLastFile(editor.getFile());
                 clearAreas();
                 editor.openFile(PMLfileChooser.getSelectedFile(), true);
             }
         } else if (e.getSource() == menuItemSave) {
-            if (editor.file != null)
+            if (editor.getFile() != null)
                 editor.saveFile(null);
             else {
                 if (PMLfileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -214,19 +217,19 @@ public class jSpin extends JFrame implements ActionListener {
             }
         } else if (e.getSource() == menuItemSaveAs) {
             if (PMLfileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-                editor.lastFile = editor.file;
+                editor.setLastFile(editor.getFile());
             editor.saveFile(PMLfileChooser.getSelectedFile());
         } else if (e.getSource() == menuItemSwitch) {
-            if (editor.lastFile != null) {
-                java.io.File temp = editor.lastFile;
-                if (editor.file != null)
+            if (editor.getLastFile() != null) {
+                java.io.File temp = editor.getLastFile();
+                if (editor.getFile() != null)
                     editor.saveFile(null);
                 else {
                     if (PMLfileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                         editor.saveFile(PMLfileChooser.getSelectedFile());
                     }
                 }
-                editor.lastFile = editor.file;
+                editor.setLastFile(editor.getFile());
                 editor.openFile(temp, true);
             }
         } else if (e.getSource() == menuItemExit) {
@@ -250,39 +253,39 @@ public class jSpin extends JFrame implements ActionListener {
         else if ((e.getSource() == menuItemCheck) || (e.getSource() == toolCheck)) {
             trailArea.setText("");
             runSpin.runAndWait(trailArea, false,
-                    Config.getStringProperty("SPIN"),
+                    Config.getSpin(),
                     Config.getStringProperty("CHECK_OPTIONS") + " " +
-                            editor.fileName);
+                            editor.getFileName());
         } else if ((e.getSource() == menuItemRandom) || (e.getSource() == toolRandom)) {
             int seed = Config.getIntProperty("SEED");
             trailArea.setText("");
             runSpin.run(trailArea, true,
-                    Config.getStringProperty("SPIN"),
+                    Config.getSpin(),
                     Config.getStringProperty("COMMON_OPTIONS") + " " +
                             Config.getStringProperty("RANDOM_OPTIONS") + " " +
                             (seed != 0 ? ("-n" + seed + " ") : "") +
                             " -u" + Config.getStringProperty("MAX_STEPS") + " " +
-                            editor.fileName);
+                            editor.getFileName());
             isSpinRunning();
         } else if ((e.getSource() == menuItemInter) || (e.getSource() == toolInter)) {
             trailArea.setText("");
             runSpin.run(trailArea, true,
-                    Config.getStringProperty("SPIN"),
+                    Config.getSpin(),
                     Config.getStringProperty("COMMON_OPTIONS") + " " +
                             Config.getStringProperty("INTERACTIVE_OPTIONS") + " " +
-                            editor.fileName);
+                            editor.getFileName());
             isSpinRunning();
         } else if ((e.getSource() == menuItemVerify) || (e.getSource() == toolVerify)) {
             trailArea.setText("");
             if (!ltlInternal && !LTLField.getText().equals("") &&
-                    !(new java.io.File(editor.LTLFileName).exists()))
+                    !(new java.io.File(editor.getLTLFileName()).exists()))
                 append(messageArea, "WARNING: Correctness property has not been translated\n");
             runSpin.runAndWait(trailArea, false,
-                    Config.getStringProperty("SPIN"),
+                    Config.getSpin(),
                     Config.getStringProperty("VERIFY_OPTIONS") + " " +
                             ((ltlInternal || LTLField.getText().equals("")) ? "" : "-N " + " " +
-                                    editor.LTLFileName + " ") + editor.fileName);
-            if (trailArea.getText().indexOf("Error: syntax error") != -1)
+                                    editor.getLTLFileName() + " ") + editor.getFileName());
+            if (trailArea.getText().contains("Error: syntax error"))
                 return;
             String mode = Config.getStringProperty("VERIFY_MODE");
             String CModeOptions = mode.equals(Config.Safety) ? " -DSAFETY " :
@@ -296,7 +299,7 @@ public class jSpin extends JFrame implements ActionListener {
             if (!mode.equals(Config.Safety) && Config.getBooleanProperty("FAIRNESS"))
                 panModeOptions = " -f " + panModeOptions;
             runSpin.run(trailArea, true,
-                    editor.root + java.io.File.separator +
+                    editor.getRoot() + java.io.File.separator +
                             Config.getStringProperty("PAN"),
                     panModeOptions +
                             " -m" + Config.getStringProperty("MAX_DEPTH") + " " +
@@ -306,11 +309,11 @@ public class jSpin extends JFrame implements ActionListener {
             isSpinRunning();
         } else if ((e.getSource() == menuItemTrail) || (e.getSource() == toolTrail)) {
             runSpin.run(trailArea, true,
-                    Config.getStringProperty("SPIN"),
+                    Config.getSpin(),
                     Config.getStringProperty("COMMON_OPTIONS") + " " +
                             Config.getStringProperty("TRAIL_OPTIONS") +
                             " -u" + Config.getStringProperty("MAX_STEPS") + " " +
-                            editor.fileName);
+                            editor.getFileName());
             isSpinRunning();
         } else if ((e.getSource() == menuItemStop) || (e.getSource() == toolStop))
             runSpin.killSpin();
@@ -385,7 +388,7 @@ public class jSpin extends JFrame implements ActionListener {
         else if (e.getSource() == menuItemVarWidth)
             changeOption("VARIABLE_WIDTH", true);
         else if (e.getSource() == menuItemSaveSpin) {
-            java.io.File outFile = new java.io.File(editor.OUTFileName);
+            java.io.File outFile = new java.io.File(editor.getOUTFileName());
             OUTfileChooser.setSelectedFile(outFile);
             if (OUTfileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
                 editor.writeFile(OUTfileChooser.getSelectedFile(), trailArea);
@@ -394,49 +397,48 @@ public class jSpin extends JFrame implements ActionListener {
             Config.setBooleanProperty("RAW", raw);
             menuItemRaw.setSelected(raw);
         } else if (e.getSource() == menuItemDisplayRaw)
-            displayFile(editor.root + java.io.File.separator + editor.fileRoot + ".raw");
+            displayFile(editor.getRoot() + java.io.File.separator + editor.getFileRoot() + ".raw");
 
             // Spider menu actions
         else if ((e.getSource() == menuItemSpider) || (e.getSource() == toolSpider)) {
-            if (editor.file == null) {
+            if (editor.getFile() == null) {
                 jSpin.append(messageArea, Config.OPEN_FILE);
                 return;
             }
             // Read Spider properties from the file for this program
             sp = new SpiderFile(spiderProperties,
-                    editor.root + java.io.File.separator + editor.fileRoot);
+                    editor.getRoot() + java.io.File.separator + editor.getFileRoot());
             sp.init();
             if (new SpiderOptions(this, sp, font).showDialog()) {
                 sp.saveFile();
-                new Thread() {  // Run in thread to display progress
-                    public void run() {
-                        com.spinroot.spinSpider.SpinSpider spd =
-                                new com.spinroot.spinSpider.SpinSpider(
-                                        editor.root + java.io.File.separator + editor.fileRoot,
-                                        editor.extension,
-                                        sp.getStringProperty("FORMAT"),
-                                        sp.getIntProperty("PROCESSES"),
-                                        stringToArray(sp.getStringProperty("VARIABLES")),
-                                        sp.getBooleanProperty("SPIDER_DEBUG"),
-                                        sp.getIntProperty("TRAIL_CODE"),
-                                        sp.getIntProperty("DOT_SIZE"),
-                                        sp.getIntProperty("TRAIL_STYLE"),
-                                        messageArea,
-                                        Config.getProperties());
-                        if (!spd.runSpider()) return;
-                        // If PNG format, display in a frame
-                        if (sp.getStringProperty("FORMAT").equals(Config.PNG)) {
-                            // Draw automata if requested
-                            if (sp.getIntProperty("TRAIL_CODE") == 3)
-                                new com.spinroot.spinSpider.DrawAutomata(spd).drawAutomata();
-                            new DisplayImage(editor.root + java.io.File.separator + editor.fileRoot +
-                                    com.spinroot.spinSpider.Config.names[sp.getIntProperty("TRAIL_CODE")] + ".png");
-                        }
+                // Run in thread to display progress
+                new Thread(() -> {
+                    SpinSpider spd =
+                            new SpinSpider(
+                                    editor.getRoot() + File.separator + editor.getFileRoot(),
+                                    editor.getExtension(),
+                                    sp.getStringProperty("FORMAT"),
+                                    sp.getIntProperty("PROCESSES"),
+                                    stringToArray(sp.getStringProperty("VARIABLES")),
+                                    sp.getBooleanProperty("SPIDER_DEBUG"),
+                                    sp.getIntProperty("TRAIL_CODE"),
+                                    sp.getIntProperty("DOT_SIZE"),
+                                    sp.getIntProperty("TRAIL_STYLE"),
+                                    messageArea,
+                                    Config.getProperties());
+                    if (!spd.runSpider()) return;
+                    // If PNG format, display in a frame
+                    if (sp.getStringProperty("FORMAT").equals(Config.PNG)) {
+                        // Draw automata if requested
+                        if (sp.getIntProperty("TRAIL_CODE") == 3)
+                            new DrawAutomata(spd).drawAutomata();
+                        new DisplayImage(editor.getRoot() + File.separator + editor.getFileRoot() +
+                                com.spinroot.spinSpider.Config.names[sp.getIntProperty("TRAIL_CODE")] + ".png");
                     }
-                }.start();
+                }).start();
             }
         } else if (e.getSource() == menuItemSpiderDisplay)
-            displayFile(editor.root + java.io.File.separator + editor.fileRoot + ".dbg");
+            displayFile(editor.getRoot() + java.io.File.separator + editor.getFileRoot() + ".dbg");
 
             // Help menu actions
         else if (e.getSource() == menuItemHelp)
@@ -453,10 +455,10 @@ public class jSpin extends JFrame implements ActionListener {
             String quote = Config.getBooleanProperty("SINGLE_QUOTE") ? "'" : "\"";
             String negate = Config.getBooleanProperty("NEGATE_LTL") ? "!" : "";
             runSpin.runAndWait(trailArea, false,
-                    Config.getStringProperty("SPIN"),
+                    Config.getSpin(),
                     Config.getStringProperty("TRANSLATE_OPTIONS") + " " +
                             quote + negate + "(" + LTLField.getText() + ")" + quote);
-            editor.writeFile(new java.io.File(editor.LTLFileName), trailArea);
+            editor.writeFile(new java.io.File(editor.getLTLFileName()), trailArea);
         } else if ((e.getSource() == LTLClearButton) || (e.getSource() == menuItemClear)) {
             LTLField.setText("");
             menuBar.revalidate();
@@ -524,17 +526,15 @@ public class jSpin extends JFrame implements ActionListener {
     // Create a thread to check if Spin is running
     // Enables user interface to continue running and press Stop
     void isSpinRunning() {
-        Thread th = new Thread() {
-            public void run() {
-                while (runSpin.isRunning()) {
-                    try {
-                        Thread.sleep(Config.getIntProperty("POLLING_DELAY"));
-                    } catch (InterruptedException e) {
-                    }
+        Thread th = new Thread(() -> {
+            while (runSpin.isRunning()) {
+                try {
+                    Thread.sleep(Config.getIntProperty("POLLING_DELAY"));
+                } catch (InterruptedException e) {
                 }
-                append(messageArea, "done!\n");
             }
-        };
+            append(messageArea, "done!\n");
+        });
         th.start();
     }
 
@@ -808,10 +808,11 @@ public class jSpin extends JFrame implements ActionListener {
         setVisible(true);
 
         // Open file if given as command argument
-        if (file != "")
+        if (!Objects.equals(file, "")) {
             editor.openFile(new java.io.File(file), true);
-        else
+        } else {
             editor.newFile();
+        }
     }
 
 }

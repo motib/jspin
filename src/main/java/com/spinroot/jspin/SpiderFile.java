@@ -76,7 +76,7 @@ class SpiderFile {
     }
 
     public boolean getBooleanProperty(String s) {
-        return Boolean.valueOf(properties.getProperty(s)).booleanValue();
+        return Boolean.valueOf(properties.getProperty(s));
     }
 
     void setBooleanProperty(String s, boolean newValue) {
@@ -84,7 +84,7 @@ class SpiderFile {
     }
 
     public int getIntProperty(String s) {
-        return Integer.valueOf(properties.getProperty(s)).intValue();
+        return Integer.valueOf(properties.getProperty(s));
     }
 
     void setIntProperty(String s, int newValue) {

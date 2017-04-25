@@ -21,12 +21,12 @@ class Excluded extends JFrame implements ActionListener {
     private boolean exVar;
     private String fileName;
 
-    Excluded(Editor e, java.awt.Font font, com.spinroot.filterSpin.Filter f, boolean v) {
-        editor = e;
-        filter = f;
+    Excluded(Editor editor, java.awt.Font font, com.spinroot.filterSpin.Filter filter, boolean v) {
+        this.editor = editor;
+        this.filter = filter;
         exVar = v;
-        fileName = exVar ? editor.EXCFileName : editor.EXSFileName;
-        String read = editor.readFile(new java.io.File(fileName));
+        fileName = exVar ? this.editor.getEXCFileName() : this.editor.getEXSFileName();
+        String read = this.editor.readFile(new java.io.File(fileName));
         if (read.startsWith("Error")) read = "";
         names = new JTextArea(read, 9, 32);
         names.setFont(font);

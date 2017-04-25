@@ -6,13 +6,13 @@
 package com.spinroot.spinSpider;
 
 class Transition {
-    int head;         // head state
-    int tail;         // tail state
+    final int head;         // head state
+    final int tail;         // tail state
     boolean inTrail;  // Is this transition in the trail?
 
-    public Transition(int h, int t) {
-        head = h;
-        tail = t;
+    public Transition(int head, int tail) {
+        this.head = head;
+        this.tail = tail;
         inTrail = false;
     }
 

@@ -37,16 +37,16 @@ public class SpinSpider {
     int trailStyle;  // Style of trail in dot graph color/bold
     // Databases
     ArrayList<State> states =
-            new ArrayList<State>(Config.INITIAL);
+            new ArrayList<>(Config.INITIAL);
     ArrayList<Statement> statements =
-            new ArrayList<Statement>(Config.INITIAL);
+            new ArrayList<>(Config.INITIAL);
     ArrayList<Transition> transitions =
-            new ArrayList<Transition>(Config.INITIAL);
+            new ArrayList<>(Config.INITIAL);
     ArrayList<Trail> trails =
-            new ArrayList<Trail>(Config.INITIAL);
+            new ArrayList<>(Config.INITIAL);
     // For FSM we need to compute the number of statements per process
     ArrayList<Integer> statementsPerProcess =
-            new ArrayList<Integer>(Config.INITIAL);
+            new ArrayList<>(Config.INITIAL);
     private javax.swing.JTextArea area;
     private boolean debug;       // Write debug file
     // For writing never claim:

@@ -38,7 +38,7 @@ class RunSpin {
         this.parameters = parameters;
         filter.init(Config.properties);
         // Make sure that a file has been opened
-        if (editor.file == null) {
+        if (editor.getFile() == null) {
             jSpin.append(messageArea, Config.OPEN_FILE);
             return;
         }
@@ -95,7 +95,7 @@ class RunSpin {
                 String[] sa = stringToArray(command, parameters);
 // for (int i = 0; i < sa.length; i++) System.out.println(sa[i]);
                 ProcessBuilder pb = new ProcessBuilder(sa);
-                File pf = editor.file.getParentFile();
+                File pf = editor.getFile().getParentFile();
                 if (pf != null) pb.directory(pf.getCanonicalFile());
                 pb.redirectErrorStream(true);
                 p = pb.start();
@@ -186,7 +186,7 @@ class RunSpin {
 
         // Open file for raw Spin output
         private void rawFile() {
-            String s = editor.root + File.separator + editor.fileRoot + ".raw";
+            String s = editor.getRoot() + File.separator + editor.getFileRoot() + ".raw";
             try {
                 rawWriter = new PrintWriter(new FileWriter(s));
                 jSpin.append(messageArea, "\nOpened " + s + "\n");

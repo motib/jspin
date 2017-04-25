@@ -5,6 +5,8 @@
 
 package com.spinroot.jspin;
 
+import org.apache.commons.io.FileUtils;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -12,49 +14,162 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 class Editor implements ClipboardOwner, DocumentListener {
-    private static final Border border =
-            BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray);
-    File file;               // The file to be edited
-    File lastFile;         // Previous file to be edited
-    String fileName;           // The name of the file
-    String fileRoot;           // The file name without its extension
-    String extension = "";   // The extension of the source file
-    String root;                 // The path to the file
-    String LTLFileName = ""; // LTL file name for this source file
-    String OUTFileName = ""; // Spin display output file name
-    String EXCFileName = ""; // File for excluded variable names
-    String EXSFileName = ""; // File for excluded statements
-    String PRPFileName = ""; // Property file name for this source file
-    String PRPName;               // Property file name without path
-    private JTextArea area;           // The area for editing
-    private JTextField LTLField;     // The area for LTL formulas
-    private JTextArea messageArea; // The area for messages
-    private String findString;     // The string to search for
-    private int findLoc;               // The last location where it was found
-    private boolean modified;         // Was area modified?
-    private boolean LTLmodified;     // Was LTL field modified?
-    private Border border1;           // Border - not modified
-    private Border border2;           // Border - modified
+    private static final Border border = BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray);
+    /**
+     * The file to be edited
+     */
+    private File file;
+    /**
+     * Previous file to be edited
+     */
+    private File lastFile;
+    /**
+     * The name of the file
+     */
+    private String fileName;
+    /**
+     * The file name without its extension
+     */
+    private String fileRoot;
+    /**
+     * The extension of the source file
+     */
+    private String extension = "";
+    /**
+     * The path to the file
+     */
+    private String root;
+    /**
+     * LTL file name for this source file
+     */
+    private String LTLFileName = "";
+    /**
+     * Spin display output file name
+     */
+    private String OUTFileName = "";
+    /**
+     * File for excluded variable names
+     */
+    private String EXCFileName = "";
+    /**
+     * File for excluded statements
+     */
+    private String EXSFileName = "";
+    /**
+     * Property file name for this source file
+     */
+    private String PRPFileName = "";
+    /**
+     * Property file name without path
+     */
+    private String PRPName;
+    /**
+     * The area for editing
+     */
+    private JTextArea area;
+    /**
+     * The area for LTL formulas
+     */
+    private JTextField LTLField;
+    /**
+     * The area for messages
+     */
+    private JTextArea messageArea;
+    /**
+     * The string to search for
+     */
+    private String findString;
+    /**
+     * The last location where it was found
+     */
+    private int findLoc;
+    /**
+     * Was area modified?
+     */
+    private boolean modified;
+    /**
+     * Was LTL field modified?
+     */
+    private boolean LTLmodified;
+    /**
+     * Border - not modified
+     */
+    private Border border1;
+    /**
+     * Border - modified
+     */
+    private Border border2;
     private Clipboard clipboard;
     private LineNumbers lineNumbers;
-    private com.spinroot.filterSpin.Filter filter; // For setting excluded variable names
+    /**
+     * For setting excluded variable names
+     */
+    private com.spinroot.filterSpin.Filter filter;
 
-    public Editor(JScrollPane jsp, JTextArea a, JTextArea m, JTextField l,
-                  javax.swing.event.UndoableEditListener ud, com.spinroot.filterSpin.Filter f) {
-        area = a;
-        area.getDocument().addDocumentListener(this);
-        area.getDocument().addUndoableEditListener(ud);
+    public Editor(JScrollPane jsp, JTextArea area, JTextArea m, JTextField l,
+                  javax.swing.event.UndoableEditListener ud, com.spinroot.filterSpin.Filter filter) {
+        this.area = area;
         LTLField = l;
         LTLField.getDocument().addDocumentListener(this);
         messageArea = m;
         PRPName = "";
-        clipboard = area.getToolkit().getSystemClipboard();
-        lineNumbers = new LineNumbers(area);
+        clipboard = this.area.getToolkit().getSystemClipboard();
+        lineNumbers = new LineNumbers(this.area);
         jsp.setRowHeaderView(lineNumbers);
-        filter = f;
+        this.filter = filter;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public File getLastFile() {
+        return lastFile;
+    }
+
+    public void setLastFile(File lastFile) {
+        this.lastFile = lastFile;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getFileRoot() {
+        return fileRoot;
+    }
+
+    public void setFileRoot(String fileRoot) {
+        this.fileRoot = fileRoot;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public String getRoot() {
+        return root;
+    }
+
+    public String getLTLFileName() {
+        return LTLFileName;
+    }
+
+    public String getOUTFileName() {
+        return OUTFileName;
+    }
+
+    public String getEXCFileName() {
+        return EXCFileName;
+    }
+
+    public String getEXSFileName() {
+        return EXSFileName;
     }
 
     void focus(boolean start) {
@@ -198,34 +313,12 @@ class Editor implements ClipboardOwner, DocumentListener {
     }
 
     String readFile(File fc) {
-        BufferedReader textReader = null;
         try {
-            textReader = new BufferedReader(new FileReader(fc));
+            return FileUtils.readFileToString(fc, StandardCharsets.UTF_8);
         } catch (IOException e) {
             focus(true);
-            return "Error opening file " + fc;
+            return "IO error with file " + fc;
         }
-        StringWriter textWriter = new StringWriter();
-        int c = 0;
-        try {
-            while (true) {
-                c = textReader.read();
-                if (c == -1)
-                    break;
-                else
-                    textWriter.write(c);
-            }
-        } catch (IOException e) {
-            focus(true);
-            return "Error reading file " + fc;
-        }
-        try {
-            textReader.close();
-        } catch (IOException e) {
-            focus(true);
-            return "Error closing file " + fc;
-        }
-        return textWriter.toString();
     }
 
     void saveFile(File fc) {
@@ -248,41 +341,15 @@ class Editor implements ClipboardOwner, DocumentListener {
     }
 
     void writeFile(File fc, javax.swing.text.JTextComponent area) {
-        if (fc == null || area == null)
-            return;
-        BufferedWriter textWriter = null;
-        try {
-            textWriter = new BufferedWriter(new FileWriter(fc));
-        } catch (IOException e) {
-            System.err.println("Error opening file " + fc);
-            focus(true);
-            return;
-        }
-        BufferedReader textReader =
-                new BufferedReader(new StringReader(area.getText()));
-        int c = 0;
-        try {
-            while (true) {
-                c = textReader.read();
-                if (c == -1)
-                    break;
-                else
-                    textWriter.write(c);
-            }
-        } catch (IOException e) {
-            System.err.println("Error writing file " + fc);
-            focus(true);
+        if (fc == null || area == null) {
             return;
         }
         try {
-            textWriter.flush();
-            textWriter.close();
+            FileUtils.writeStringToFile(fc, area.getText(), StandardCharsets.UTF_8);
+            messageArea.append("Saved " + fc.getName() + "\n");
         } catch (IOException e) {
-            System.err.println("Error closing file " + fc);
-            focus(true);
-            return;
+            e.printStackTrace();
         }
-        messageArea.append("Saved " + fc.getName() + "\n");
     }
 
     void find() {
@@ -318,11 +385,7 @@ class Editor implements ClipboardOwner, DocumentListener {
         area.setBorder(border2);
         final int lines = area.getLineCount();
         if (lineNumbers != null) {
-            Runnable updateAComponent = new Runnable() {
-                public void run() {
-                    lineNumbers.setHeightByLines(lines);
-                }
-            };
+            Runnable updateAComponent = () -> lineNumbers.setHeightByLines(lines);
             SwingUtilities.invokeLater(updateAComponent);
         }
     }

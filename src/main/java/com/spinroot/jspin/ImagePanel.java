@@ -4,10 +4,11 @@
  */
 package com.spinroot.jspin;
 
-import javax.swing.*;
+import javafx.embed.swing.JFXPanel;
+
 import java.awt.*;
 
-class ImagePanel extends JPanel {
+class ImagePanel extends JFXPanel {
     private Image image;
 
     ImagePanel(String fileName) {

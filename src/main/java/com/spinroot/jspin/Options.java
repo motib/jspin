@@ -9,20 +9,23 @@ import javax.swing.*;
 import java.awt.event.*;
 
 class Options extends JFrame implements ActionListener, ItemListener {
-    static final String
-            ST = "-p", LOC = "-l", GLO = "-g", SENT = "-s", REC = "-r";
+    static final String ST = "-p", LOC = "-l", GLO = "-g", SENT = "-s", REC = "-r";
     private JCheckBox stBox, locBox, gloBox, sentBox, recBox;
     private JButton okButton, cancelButton, clearAllButton, setAllButton;
     private JPanel buttonPanel, OKPanel;
-    private boolean st, loc, glo, sent, rec;
+    private boolean st;
+    private boolean loc;
+    private boolean glo;
+    private boolean sent;
+    private boolean rec;
 
     Options() {
         String s = Config.getStringProperty("COMMON_OPTIONS");
-        st = s.indexOf(ST) != -1;
-        loc = s.indexOf(LOC) != -1;
-        glo = s.indexOf(GLO) != -1;
-        sent = s.indexOf(SENT) != -1;
-        rec = s.indexOf(REC) != -1;
+        st = s.contains(ST);
+        loc = s.contains(LOC);
+        glo = s.contains(GLO);
+        sent = s.contains(SENT);
+        rec = s.contains(REC);
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new java.awt.GridLayout(5, 1));
         stBox = create(Config.Statements, st, Config.StatementsMN);
@@ -61,7 +64,7 @@ class Options extends JFrame implements ActionListener, ItemListener {
         setVisible(true);
     }
 
-    JCheckBox create(String s, boolean set, int mn) {
+    private JCheckBox create(String s, boolean set, int mn) {
         JCheckBox cb = new JCheckBox(s, set);
         cb.setMnemonic(mn);
         cb.addItemListener(this);

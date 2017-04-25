@@ -26,11 +26,11 @@ class State {
     }
 
     public String toString() {
-        String str = "(";
+        StringBuilder str = new StringBuilder("(");
         for (int proc = 0; proc < numProcs; proc++)
-            str = str + ((proc == 0) ? "" : ",") + s[proc];
+            str.append((proc == 0) ? "" : ",").append(s[proc]);
         for (int var = 0; var < numVars; var++)
-            str = str + "," + vname[var] + "=" + v[var];
+            str.append(",").append(vname[var]).append("=").append(v[var]);
         return str + ")" + (inTrail ? " *" : "");
     }
 }

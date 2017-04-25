@@ -22,11 +22,11 @@ public class Filter {
     private int lines;     // Line counter to redisplay title
 
     // Map from variable names to values
-    private TreeMap<String, String> variables = new TreeMap<String, String>();
+    private Map<String, String> variables = new TreeMap<>();
 
     // Excluded variable and statements
-    private ArrayList<String> excludedVar = new ArrayList<String>();
-    private ArrayList<String> excludedState = new ArrayList<String>();
+    private List<String> excludedVar = new ArrayList<>();
+    private List<String> excludedState = new ArrayList<>();
 
     /**
      * Initialize variables and local copies of properties
@@ -48,7 +48,7 @@ public class Filter {
 
     // Parse string to initialize excluded arrays
     public void setExcluded(String s, boolean exVar) {
-        ArrayList<String> excluded = exVar ? excludedVar : excludedState;
+        List<String> excluded = exVar ? excludedVar : excludedState;
         // Replace whitespace by separator
         s = s.replaceAll("\\s+", Config.SEPARATOR) + Config.SEPARATOR;
         excluded.clear();
@@ -68,7 +68,7 @@ public class Filter {
      * but if some +T in file is in name, display anyway.
      */
     private boolean checkExcluded(String name, boolean exVar) {
-        ArrayList<String> excluded = exVar ? excludedVar : excludedState;
+        List<String> excluded = exVar ? excludedVar : excludedState;
         for (int i = 0; i < excluded.size(); i++)
             if ((excluded.get(i).charAt(0) != '+') &&
                     (name.indexOf(excluded.get(i)) != -1)) {

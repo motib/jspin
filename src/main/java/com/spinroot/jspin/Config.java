@@ -11,8 +11,8 @@ import java.util.Properties;
 public class Config {
     public static final char sep = java.io.File.separatorChar;  // shortcut
     // Strings
-    static final String SOFTWARE_NAME = "jSpin Version 5.0";
-    static final String JAVA_VERSION = "1.5";
+    static final String SOFTWARE_NAME = "jSpin Version 6.0";
+    static final String JAVA_VERSION = "1.8";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE = "SpinSpider";
     static final String OPTIONS_TITLE = "Display";
@@ -231,10 +231,10 @@ public class Config {
 
         // Directories and file names
         properties.put("SOURCE_DIRECTORY", "jspin-examples");
-        properties.put("C_COMPILER", "c:\\mingw\\bin\\gcc.exe");
-        properties.put("SPIN", "bin" + sep + "spin.exe");
+        properties.put("C_COMPILER", "clang");
+        properties.put("SPIN", "/home/victor/Spin/spin");
         properties.put("PAN", "pan");
-        properties.put("DOT", "bin" + sep + "dot.exe");
+        properties.put("DOT", "dot");
         properties.put("HELP_FILE_NAME", "txt" + sep + "help.txt");
         properties.put("ABOUT_FILE_NAME", "txt" + sep + "copyright.txt");
 
@@ -362,6 +362,10 @@ public class Config {
         }
     }
 
+    public static String getSpin() {
+        return Config.getStringProperty("SPIN");
+    }
+
     // Interface to get/set propertyies of various types
     public static String getStringProperty(String s) {
         return properties.getProperty(s);
@@ -372,7 +376,7 @@ public class Config {
     }
 
     public static boolean getBooleanProperty(String s) {
-        return Boolean.valueOf(properties.getProperty(s)).booleanValue();
+        return Boolean.valueOf(properties.getProperty(s));
     }
 
     static void setBooleanProperty(String s, boolean newValue) {
@@ -380,7 +384,7 @@ public class Config {
     }
 
     public static int getIntProperty(String s) {
-        return Integer.valueOf(properties.getProperty(s)).intValue();
+        return Integer.valueOf(properties.getProperty(s));
     }
 
     static void setIntProperty(String s, int newValue) {

@@ -1,5 +1,5 @@
-node_modules/
-typings/
+*.tmp
+pan.*
 
 *.iml
 gen/
