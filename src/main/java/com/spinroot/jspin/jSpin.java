@@ -177,7 +177,7 @@ public class jSpin extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(java.lang.String[] args) {
+    public static void main(String[] args) {
         // Check Java version before executing
         String version = System.getProperty("java.version");
         if (version.compareTo(Config.JAVA_VERSION) < 0) {
