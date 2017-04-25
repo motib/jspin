@@ -4,7 +4,8 @@ byte critical = 0;
 
 active proctype p() {
     do 
-	:: !wantq;
+	::
+ !wantq;
        wantp = true;
        critical++;
        assert (critical == 1);
@@ -15,7 +16,8 @@ active proctype p() {
 
 active proctype q() {
     do 
-    :: !wantp;
+    ::
+ !wantp;
        wantq = true;
        critical++;
        assert (critical == 1);
@@ -23,4 +25,4 @@ active proctype q() {
        wantq = false;
     od
 }
-
+
