@@ -11,7 +11,7 @@ import java.util.Properties;
 public class Config {
     public static final char sep = java.io.File.separatorChar;  // shortcut
     // Strings
-    static final String SOFTWARE_NAME = "jSpin Version 6.0";
+    static final String SOFTWARE_NAME = "jSpin Version 5.0";
     static final String JAVA_VERSION = "1.8";
     static final String CONFIG_FILE_NAME = "config.cfg";
     static final String SPIDER_TITLE = "SpinSpider";
