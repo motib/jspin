@@ -127,7 +127,7 @@ and Reference Manual}.\\Addison-Wesley, 2004.
 \fsm{} & \url{http://www.win.tue.nl/~fvham/fsm/}\\
  & \url{http://www.mcrl2.org/}\\
 \textsc{Graphviz (dot)} & \url{http://www.graphviz.org/}\\
-\js{} & \url{http://stwww.weizmann.ac.il/g-cs/benari/jspin/}\\
+\js{} & \url{http://stwww.weizmann.ac.il/g-cs/benari/com.spinroot.jspin/}\\
 \textsc{MinGW} & \url{http://mingw.org/}\\
 \spn{} & \url{http://spinroot.com/}\\
 \hline
@@ -158,7 +158,7 @@ This section describes installation on a Windows system;
 for custom installation and for other systems, see Appendix~\ref{a.install}.
 
 \begin{itemize}
-\item Download the \js{} installation file called \p{jspin-N.exe},
+\item Download the \js{} installation file called \p{com.spinroot.jspin-N.exe},
 where \p{N} is the version number.
 Execute the installation file.
 \item Create a directory \verb=c:\mingw= and download the C 
@@ -168,9 +168,9 @@ compiler archive \p{mingw.exe} into that directory. Execute this self-extracting
 \subsection{Configuring and running \js{}}
 \begin{itemize}
 \item The installation will create the following subdirectories: \p{docs} for the
-documentation, \p{jspin} and \p{spinSpider} for the source files, 
+documentation, \p{com.spinroot.jspin} and \p{com.spinroot.spinSpider} for the source files,
 \p{txts} for the text files
-(help, about and copyright), and \p{jspin-examples} and \p{spider-examples}
+(help, about and copyright), and \p{com.spinroot.jspin-examples} and \p{spider-examples}
 for example programs.
 \item To run \js{}, execute the command \p{javaw -jar jSpin.jar}.
 An optional argument names the \prm{} file to be opened initially.
@@ -189,12 +189,12 @@ with default values is written.
 If you want to run \spd{} without \js{}, create a configuration file
 with entries for the \p{SPIN}, \p{C\_COMPILER}, \p{PAN} and \p{DOT}
 commands. The prologues for the \dtf{} file can be changed in
-\p{Config.java} in the package \p{spinSpider}.
+\p{Config.java} in the package \p{com.spinroot.spinSpider}.
 
 The \p{SpinSpider} class has a main method that can be invoked from a command
 line:
 \begin{verbatim}
-java -cp jSpin.jar spinSpider.SpinSpider arguments filename
+java -cp jSpin.jar com.spinroot.spinSpider.SpinSpider arguments filename
 \end{verbatim}
 \p{filename} is the source file name. The arguments are:
 
@@ -223,7 +223,7 @@ of a (random or guided) simulation:
 \end{verbatim}
 Next, run \fil{}:
 \begin{verbatim}
-   java -cp jSpin.jar filterSpin.FilterSpin src.raw
+   java -cp jSpin.jar com.spinroot.filterSpin.FilterSpin src.raw
 \end{verbatim}
 There are two optional arguments: \p{-v} to give a list of excluded
 variables and \p{-s} to give a list of excluded statements, as described
@@ -233,7 +233,7 @@ it can be changed in \p{Config.java}\footnote{Do not use a backslash or
 dollar sign.}). At least one separator must be given so that the
 argument is not interpreted as a file name):
 \begin{verbatim}
-   java -cp jSpin.jar filterSpin.FilterSpin -v "temp#i" -s "i+1#" src.raw
+   java -cp jSpin.jar com.spinroot.filterSpin.FilterSpin -v "temp#i" -s "i+1#" src.raw
 \end{verbatim}
 The filtered output is sent to standard output and can be piped or
 redirected as needed. The configuration file must contain values for the
@@ -257,7 +257,7 @@ maximized right text area that displays the \spn{} output.
 
 \begin{figure}[tb]
 \begin{center}
-\includegraphics[width=140mm]{jspin.png}
+\includegraphics[width=140mm]{com.spinroot.jspin.png}
 \end{center}
 \end{figure}
 
@@ -582,7 +582,7 @@ this will perform preprocessing only on the \prm{} file and display the result.
 \section{Software structure*}
 The software is divided into three Java packages.
 
-\subsection{Package \p{jspin}}
+\subsection{Package \p{com.spinroot.jspin}}
 \p{jSpin} is the main class and contains declarations
 of the GUI components and instances
 of the classes \p{Editor} and \p{RunSpin}.
@@ -655,7 +655,7 @@ If the diagram is created in \bu{PNG} format, it is displayed interactively:
 \p{DisplayImage} creates a frame and 
 the image is loaded into an instance of \p{ImagePanel}.
 
-\subsection{Package \p{filterSpin}}
+\subsection{Package \p{com.spinroot.filterSpin}}
 
 The output filtering is encapsulated in class \p{Filter}.
 For each line received from the output stream, \p{run}
@@ -668,7 +668,7 @@ it is entered in the map.
 For standalone filtering, the package 
 contains a \p{Config} class and a class \p{FilterSpin} with a main method.
 
-\subsection{Package \p{spinSpider}}
+\subsection{Package \p{com.spinroot.spinSpider}}
 
 Most of the processing of the \spd{} program is done 
 in the class \p{SpinSpider}. 
@@ -777,7 +777,7 @@ the option \p{SPIN} names the earlier version of the \spn{} executable
 
 \subsection{Custom installation of \js{}}
 \begin{itemize}
-\item Download the \js{} distribution file called \p{jspin-N.zip},
+\item Download the \js{} distribution file called \p{com.spinroot.jspin-N.zip},
 where \p{N} is the version number.
 Extract the files into a clean directory.
 %\textbf{Do not} install to a directory with spaces like \verb=c:\Program Files=.
@@ -835,7 +835,7 @@ version currently available on the \textsc{Mac}.
 
 To install \js{}:
 \begin{itemize}
-\item Unzip the file \p{jspin-V-V.zip}.
+\item Unzip the file \p{com.spinroot.jspin-V-V.zip}.
 \item Download \textsc{Graphviz} from
 \begin{quote}
 \url{http://www.pixelglow.com/graphviz/download}
@@ -846,7 +846,7 @@ application to the Applications folder.
 values of the following properties: 
 \begin{itemize}
 \item \p{SPIN} to the directory with the compiled \spn{};
-\item \p{SOURCE\_DIRECTORY} to the subdirectory \p{jspin-examples} of the directory
+\item \p{SOURCE\_DIRECTORY} to the subdirectory \p{com.spinroot.jspin-examples} of the directory
 where you unpacked \js{};
 \item \p{C\_COMPILER} to directory containing \p{gcc},
 usually \p{/usr/bin/gcc}. You can verify this by issuing the command \p{which gcc};
@@ -856,9 +856,9 @@ usually \p{/usr/bin/gcc}. You can verify this by issuing the command \p{which gc
 \end{itemize}
 
 \js{} can now be run by using the \p{Terminal} to execute the following command
-in the \p{jspin} directory:
+in the \p{com.spinroot.jspin} directory:
 \begin{quote}
-\p{java jspin.jSpin} 
+\p{java com.spinroot.jspin.jSpin}
 \end{quote}
 
 \subsection{Installing \js{} on \textsc{Linux}}\label{a.linux}
@@ -903,7 +903,7 @@ default values.
 \begin{tabular}{|p{.3\textwidth}|p{.4\textwidth}|}
 \hline
 \multicolumn{2}{|c|}{Directories for source and compilers}\\ \hline
-\textsc{\ttfamily SOURCE\_DIRECTORY} & \verb+"jspin-examples"+ \\
+\textsc{\ttfamily SOURCE\_DIRECTORY} & \verb+"com.spinroot.jspin-examples"+ \\
 \textsc{\ttfamily C\_COMPILER} &\verb+"c:\\mingw\\bin\\gcc.exe"+ \\
 \textsc{\ttfamily SPIN} &\verb+"bin\\spin.exe"+ \\
 \textsc{\ttfamily DOT} &\verb+"bin\\dot.exe"+ \\

@@ -7,9 +7,9 @@ jSpin is a graphical user interface for the Spin Model Checker
 that is used for verifying concurrent and distributed programs.
 The Spin website is http://spinroot.com.
 The jSpin website is 
-http://stwww.weizmann.ac.il/g-cs/benari/jspin/.
+http://stwww.weizmann.ac.il/g-cs/benari/com.spinroot.jspin/.
 
-PLEASE READ THE MANUALS jspin-user.pdf and spider-use.pdf!!
+PLEASE READ THE MANUALS com.spinroot.jspin-user.pdf and spider-use.pdf!!
 In particular, read the sections on installation,
 configuration and troubleshooting.
 This Help file presents a short description of the menus.
