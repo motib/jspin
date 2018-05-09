@@ -22,5 +22,6 @@ active [2] proctype P() {
 active proctype Finish() {
 	finished == 2;  /* Wait for termination */ 
 	printf("n = %d\n", n);
-	assert (n > 2); /* Assert can't be 2 */
+	assert (n > 2);
+ /* Assert can't be 2 */
 }

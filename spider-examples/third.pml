@@ -8,7 +8,8 @@ cs:       wantp = false;
 }
 
 active proctype q() {
-    do :: wantq = true;
+    do :: 
+wantq = true;
           !wantp;
 cs:       wantq = false;
     od
